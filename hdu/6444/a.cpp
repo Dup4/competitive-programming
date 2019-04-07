@@ -2,77 +2,77 @@
 using namespace std;
 
 #define ll long long
-#define N 1000010
-ll p;
-int n, m;
-int prime[N], mu[N];
-int phi[N], inv[N], g[N];
-bool check[N];
+#define N 200010
+int n, k;
+ll s, m;
+bool vis[N];
+int arr[N];
+vector <ll> vec;
+ll sum[N];
+int ql, qr, que[N];
 
-void init()
+ll get(vector <ll> &v, int limit)
 {
-	memset(check, 0, sizeof check);
-	prime[0] = 0;
-	phi[1] = 1;
-	mu[1] = 1;
-	for (int i = 2; i < N; ++i)
-	{
-		if (!check[i])
-		{
-			prime[++prime[0]] = i;
-			phi[i] = i - 1;
-			mu[i] = -1;
-		}
-		for (int j = 1; j <= prime[0]; ++j)
-		{
-			if (1ll * i * prime[j] >= N)
-				break;
-			check[i * prime[j]] = 1;
-			if (i % prime[j] == 0)
-			{
-				phi[i * prime[j]] = phi[i] * prime[j];
-				mu[i * prime[j]] = 0;
-				break;
-			}
-			else
-			{
-				phi[i * prime[j]] = phi[i] * (prime[j] - 1);
-				mu[i * prime[j]] = -mu[i]; 	
-			}
-		}
-	}
-}
-
-void work()
-{
-	inv[1] = 1;
-	for (int i = 2; i <= n; ++i)
-		inv[i] = 1ll * inv[p % i] * (p - p / i) % p;
-	for (int i = 1; i <= n; ++i)
-		g[i] = 1ll * i * inv[phi[i]] % p;
-}
-
-ll get(int n, int m)
-{
+	ql = 1, qr = 0;
 	ll res = 0;
-	for (int i = 1; i <= n; ++i)
-		res = (res + 1ll * mu[i] * (n / i) * (m / i)) % p;
+	for (int i = 0, sze = v.size(); i < sze; ++i)
+	{
+		sum[i] = v[i] + (i ? sum[i - 1] : 0);
+		if (i < limit) res = max(res, sum[i]);
+		while (ql <= qr && que[ql] + limit < i) ++ql;
+		if (ql <= qr) res = max(res, sum[i] - sum[que[ql]]);
+		while (ql <= qr && sum[que[qr]] >= sum[i]) --qr;
+		que[++qr] = i; 
+	}
 	return res;
+}
+
+
+ll work(vector <ll> &v)
+{
+	int sze = v.size();
+	ll S = 0;
+	for (int i = 0; i < sze; ++i)
+		S += v[i];
+	S = max(0ll, S);
+	int t = m / sze, remind = m % sze;
+	for (int i = 0; i < sze; ++i)
+		v.push_back(v[i]);	
+	ll ans1 = get(v, sze);
+	ll ans2 = get(v, remind);
+	if (t == 0)
+		return ans2;	
+	ans1 += (t ? 1ll * (t - 1) * S: 0); 
+	ans2 += 1ll * t * S;
+	return max(ans1, ans2);
 }
 
 int main()
 {
-	init();
 	int T; cin >> T;
-	while (T--)
+	for (int kase = 1; kase <= T; ++kase)
 	{
-		scanf("%d %d %lld\n", &n, &m, &p);
-		if (n > m) swap(n, m);
-		work();
-		ll res = 0;
+		printf("Case #%d: ", kase);
+		scanf("%d%lld%lld%d", &n, &s, &m, &k);
 		for (int i = 1; i <= n; ++i)
-			res = (res + g[i] * get(n / i, m / i)) % p; 
-		printf("%lld\n", res);
+		{
+			vis[i] = 0;
+			scanf("%d", arr + i);	
+		}
+		ll res = 0;
+		for (int i = 1; i <= n; ++i) if (!vis[i])
+		{
+			vis[i] = 1;
+			vec.clear();
+			vec.push_back(arr[i]);
+			for (ll it = (i + k - 1) % n + 1; !vis[it]; it = (it + k - 1) % n + 1)
+			{
+				vis[it] = 1;
+				vec.push_back(arr[it]);   
+			}
+			res = max(res, work(vec)); 
+		}
+		printf("%lld\n", max(0ll, s - res));
 	}
 	return 0;
 }
