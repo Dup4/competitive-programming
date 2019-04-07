@@ -3,7 +3,7 @@ using namespace std;
 
 #define ll long long
 #define N 3000010
-#define M 100010
+#define M 1000010
 int prime[N + 10];
 ll phi[N + 10], mu[N + 10];
 bool check[N + 10];
@@ -23,7 +23,7 @@ void init()
 		}
 		for (int j = 1; j <= prime[0]; ++j)
 		{
-			if (1ll * i * prime[j] >= N) break;
+			if (1ll * i * prime[j] >= N) break; 
 			check[i * prime[j]] = 1;
 			if (i % prime[j] == 0)
 			{
@@ -87,9 +87,14 @@ int main()
 	int T; scanf("%d", &T);
 	while (T--)
 	{
+		scanf("%d", &n);
+		if (n < N)
+		{
+			printf("%lld %lld\n", phi[n], mu[n]);
+			continue;
+		}
 		memset(vis_phi, 0, sizeof vis_phi);
 		memset(vis_mu, 0, sizeof vis_mu);
-		scanf("%d", &n);
 		printf("%lld %lld\n", get_phi(n), get_mu(n));
 	}
 	return 0;
