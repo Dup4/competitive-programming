@@ -2,8 +2,8 @@
 using namespace std;
 
 #define ll long long
-#define N 3000010
-#define M 1000010
+#define N 2000010
+#define M 100010
 int prime[N + 10];
 ll phi[N + 10], mu[N + 10];
 bool check[N + 10];
@@ -45,40 +45,38 @@ void init()
 	}
 }
 
-ll mp_phi[M], mp_mu[M]; int n; 
-bool vis_phi[M], vis_mu[M];
+ll Phi[M], Mu[M]; int n; 
+bool vis[M];
 ll get_phi(int x)
 {
-	if (x < N) return phi[x]; 
-	int t = n / x;
-	if (vis_phi[t])
-		return mp_phi[t];
-	vis_phi[t] = 1;
-	ll tot = (1ll * x * (x + 1)) / 2;
-	for (int i, j = 1; j < x; )
-	{
-		i = j + 1;
-		j = x / (x / i);     
-		tot -= 1ll * (j - i + 1) * get_phi(x / i);
-	}
-	return mp_phi[t] = tot;
+	if (x < N)
+		return phi[x];
+	else
+		return Phi[n / x];
 }
-
 ll get_mu(int x)
 {
-	if (x < N) return mu[x]; 
-	int t = n / x; 
-	if (vis_mu[t])
-		return mp_mu[t]; 
-	vis_mu[t] = 1;
-	ll tot = 1;
+	if (x < N)
+		return mu[x];
+	else
+		return Mu[n / x];
+}
+
+void f(int x)
+{
+	if (x < N) return;	
+	int t = n / x;
+	if (vis[t]) return; vis[t] = 1;
+	Phi[t] = (1ll * x + 1) * x / 2;
+	Mu[t] = 1;
 	for (int i, j = 1; j < x; )
 	{
 		i = j + 1;
-		j = x / (x / i);
-		tot -= 1ll * (j - i + 1) * get_mu(x / i);
+		j = x / (x / i);   
+		f(x / i);
+		Phi[t] -= 1ll * (j - i + 1) * get_phi(x / i);
+		Mu[t] -= 1ll * (j - i + 1) * get_mu(x / i);	
 	}
-	return mp_mu[t] = tot;
 }
 
 int main()
@@ -88,13 +86,7 @@ int main()
 	while (T--)
 	{
 		scanf("%d", &n);
-		if (n < N)
-		{
-			printf("%lld %lld\n", phi[n], mu[n]);
-			continue;
-		}
-		memset(vis_phi, 0, sizeof vis_phi);
-		memset(vis_mu, 0, sizeof vis_mu);
+		memset(vis, 0, sizeof vis); f(n);
 		printf("%lld %lld\n", get_phi(n), get_mu(n));
 	}
 	return 0;
