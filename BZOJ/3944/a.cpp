@@ -38,7 +38,7 @@ void init()
 			}
 		}
 	} 
-	for (int i = 1; i < N; ++i)
+	for (int i = 2; i < N; ++i)
 	{
 		phi[i] += phi[i - 1];
 		mu[i] += mu[i - 1]; 	
@@ -71,7 +71,7 @@ ll get_mu(int x)
 	if (vis_mu[t])
 		return mp_mu[t]; 
 	vis_mu[t] = 1;
-	ll tot = 1;
+	ll tot = 1; 
 	for (int i, j = 1; j < x; )
 	{
 		i = j + 1;
@@ -88,11 +88,6 @@ int main()
 	while (T--)
 	{
 		scanf("%d", &n);
-		if (n < N)
-		{
-			printf("%lld %lld\n", phi[n], mu[n]);
-			continue;
-		}
 		memset(vis_phi, 0, sizeof vis_phi);
 		memset(vis_mu, 0, sizeof vis_mu);
 		printf("%lld %lld\n", get_phi(n), get_mu(n));
