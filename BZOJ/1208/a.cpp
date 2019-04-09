@@ -1,14 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define N 500010
-
+#define N 200010
+#define INF 0x3f3f3f3f
+int n;
 struct Splay
 {
 	int root, tot;
 	struct node
 	{
-		int son[2];
+		int son[2]; 
 		int val, cnt, fa, sze;
 		node() {}
 	}t[N];
@@ -40,7 +41,7 @@ struct Splay
 		t[t[x].son[k ^ 1]].fa = y; 			
 		t[x].son[k ^ 1] = y;				//Y变成X的第q个儿子
 		t[y].fa = x;
-		pushup(x); pushup(y); 				//更新子树大小
+		pushup(y); pushup(x); 				//先更新儿子的子树大小，再更新当前点的子树大小 
 	}
 	/*
 	   splay操作
@@ -49,14 +50,14 @@ struct Splay
 	   第二种：X和Y分别是Y和Z不同的儿子
 	   X旋转两次
 	*/
-	void splay(int x, int tar)  //旋转到tar的儿子处
+	void splay(int x, int tar)  //旋转到tar的儿子处 
 	{
 		while (t[x].fa != tar) 
 		{
 			int y = t[x].fa;
 			int z = t[y].fa;
 			if (z != tar)     // 如果Z不是目标父亲
-				(t[y].son[0] == x) ^ (t[z].son[0] == y) ? rotate(x) : rotate(y); //判断是哪一种情况
+				(t[y].son[0] == x) ^ (t[z].son[0] == y) ? rotate(x) : rotate(y); //判断是哪一种情况  
 			rotate(x);        //最后都是旋转X
 		}
 		if (tar == 0)
@@ -108,7 +109,7 @@ struct Splay
 		前驱：小于X并且最大的值
 		后继：大于X并且最小的值
 	*/
-	int Next(int x, int f)
+	int Next(ll x, int f)
 	{
 		find(x);
 		int u = root;                    //根节点，此时X的父节点(存在的话)就是根节点
@@ -138,13 +139,16 @@ struct Splay
 			splay(del, 0);
 		}
 		else
+		{
 			t[nx].son[0] = 0;
+			splay(nx, 0); //主要是用于更新子树大小
+		}
 	}
 	/*
 		左子树子树大小>=K,递归左子树
 	   	否则K- 左子树大小，递归右子树	
 	*/
-	int kth(int k)
+	ll kth(int k)
 	{
 		int u = root;
 		if (t[u].sze < k)
@@ -166,42 +170,23 @@ struct Splay
 			}
 		}
 	}
-}splay;
+}sp;
 
 int main()
 {
-	int n; scanf("%d", &n);
-	splay.init();
-	//防止找不到前驱和后继 注意第K大的时候要+1
-	splay.insert(+2147483647);
-	splay.insert(-2147483647);
-	int op, x;
+	scanf("%d", &n);
+	sp.init();
+	sp.insert(INF);
+	sp.insert(-INF);
+	char op[0]; int x;
+	int lazy = 0; 
 	while (n--)
 	{
-		scanf("%d%d", &op, &x);
-		switch(op)
+		scanf("%s%lld", op, &x);
+		switch(op[0]) :
 		{
-			case 1: 
-				splay.insert(x);
-				break;
-			case 2:
-				splay.Delete(x);
-				break;
-			case 3:
-				splay.find(x);
-				printf("%d\n", splay.t[splay.t[splay.root].son[0]].sze);
-				break;
-			case 4:
-				printf("%d\n", splay.kth(x + 1));
-				break;
-			case 5:
-				printf("%d\n", splay.t[splay.Next(x, 0)].val);
-				break;
-			case 6:
-				printf("%d\n", splay.t[splay.Next(x, 1)].val);
-				break;
-			default:
-				assert(0);
+			case 'I' :
+				
 		}
 	}
 }
