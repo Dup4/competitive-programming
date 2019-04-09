@@ -13,6 +13,7 @@ struct Splay
 		node() {}
 	}t[N];
 	void init() { root = tot = 0; }
+	//更新子树大小
 	void pushup(int u) 
 	{
 		int ls = t[u].son[0], rs = t[u].son[1];
@@ -152,7 +153,7 @@ int main()
 			case 6:
 				printf("%d\n", splay.t[splay.Next(x, 1)].val);
 				break;
-			default :
+			default:
 				assert(0);
 		}
 	}
