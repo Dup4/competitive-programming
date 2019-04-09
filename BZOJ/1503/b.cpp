@@ -88,7 +88,7 @@ inline int Next(int x,int f)
 inline int kth(int x)
 {
     int u=root;
-    //if(t[u].size<x||x<=0)return -INF;
+    if(t[u].size<x||x<=0)return -INF;
     while(233)
     {
         int y=t[u].ch[0];
@@ -125,7 +125,7 @@ void Delete(int x)
 }
 int main()
 {
-	insert(-INF); 
+	//insert(-INF); 
     insert(+INF);
     scanf("%d%d",&n,&mm);
     int peo=0;
@@ -147,11 +147,13 @@ int main()
         if(ch[0]=='S')
         {
             add-=x;
+			/*
 			while (peo >= 1 && kth(2) < mm - add)  
 			{
 				Delete(kth(2)), ++ans, --peo;
 			}
-			/*	
+			*/
+				
             int gg=Next(mm-add,1);
             splay(gg,0);
             ans+=t[t[root].ch[0]].size;
@@ -159,19 +161,15 @@ int main()
             t[t[root].ch[0]].size=t[t[root].ch[0]].cnt=0;
             t[root].ch[0]=0;t[0].size=0;
             pushup(root);
-			*/
+			
         }
         if(ch[0]=='F')
         {
-			if (peo - x < 0)
-				puts("-1");
-			else
-			{
-				int gg = kth(2);
-            	printf("%d\n",gg+add);
-			}
-        }
-    }
+			//peo = t[root].size - 1;
+        	int gg=kth(peo-x+1);
+            printf("%d\n",gg==-INF?-1:(gg+add));
+    	}
+	}
     printf("%d\n",ans);
     return 0;
 }

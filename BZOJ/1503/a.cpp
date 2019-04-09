@@ -138,12 +138,12 @@ struct Splay
 		{
 			--t[del].cnt;
 			--t[del].sze; 
-			//splay(nx, 0);
 			splay(del, 0); 
 		}
 		else
 		{
 			t[nx].son[0] = 0;
+			//pushup(nx); pushup(last);
 			splay(nx, 0);
 		}
 	}

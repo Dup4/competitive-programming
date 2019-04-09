@@ -2,15 +2,16 @@
 using namespace std;
 
 #define N 200010
-#define INF 0x3f3f3f3f
-int n;
+#define INF 0x3f3f3f3f3f3f3f3f
+#define ll long long
+const ll p = 1000000;
 struct Splay
 {
 	int root, tot;
 	struct node
 	{
-		int son[2]; 
-		int val, cnt, fa, sze;
+		int son[2]; ll val;
+		int cnt, fa, sze;
 		node() {}
 	}t[N];
 	//初始化
@@ -41,7 +42,7 @@ struct Splay
 		t[t[x].son[k ^ 1]].fa = y; 			
 		t[x].son[k ^ 1] = y;				//Y变成X的第q个儿子
 		t[y].fa = x;
-		pushup(y); pushup(x); 				//先更新儿子的子树大小，再更新当前点的子树大小 
+		pushup(x); pushup(y); 				//更新子树大小
 	}
 	/*
 	   splay操作
@@ -50,14 +51,14 @@ struct Splay
 	   第二种：X和Y分别是Y和Z不同的儿子
 	   X旋转两次
 	*/
-	void splay(int x, int tar)  //旋转到tar的儿子处 
+	void splay(int x, int tar)  //旋转到tar的儿子处
 	{
 		while (t[x].fa != tar) 
 		{
 			int y = t[x].fa;
 			int z = t[y].fa;
 			if (z != tar)     // 如果Z不是目标父亲
-				(t[y].son[0] == x) ^ (t[z].son[0] == y) ? rotate(x) : rotate(y); //判断是哪一种情况  
+				(t[y].son[0] == x) ^ (t[z].son[0] == y) ? rotate(x) : rotate(y); //判断是哪一种情况
 			rotate(x);        //最后都是旋转X
 		}
 		if (tar == 0)
@@ -69,7 +70,7 @@ struct Splay
 	    如果存在，直接计数	
 		如果不存在，找到父节点位置新增节点
 	*/
-	void insert(int x)
+	void insert(ll x)
 	{
 		int u = root, fa = 0;
 		while (u && t[u].val != x) 
@@ -96,7 +97,7 @@ struct Splay
 		但是，要注意如果找不到，则会找到它的前驱或者后继
 		要进行特判	
 	*/
-	void find(int x)
+	void find(ll x)
 	{
 		int u = root;
 		if (!u) return;
@@ -127,7 +128,7 @@ struct Splay
 		那么如果X存在，那么它必然在根节点的右儿子的左儿子
 		并且左儿子是叶子节点	
 	*/
-	void Delete(int x) 
+	void Delete(ll x) 
 	{
 		int last = Next(x, 0);
 		int nx = Next(x, 1);
@@ -141,7 +142,8 @@ struct Splay
 		else
 		{
 			t[nx].son[0] = 0;
-			splay(nx, 0); //主要是用于更新子树大小
+			pushup(nx); pushup(last);
+			//splay(nx, 0);		
 		}
 	}
 	/*
@@ -170,23 +172,40 @@ struct Splay
 			}
 		}
 	}
-}sp;
+}sp[2];
 
 int main()
 {
-	scanf("%d", &n);
-	sp.init();
-	sp.insert(INF);
-	sp.insert(-INF);
-	char op[0]; int x;
-	int lazy = 0; 
+	int n; scanf("%d", &n);
+	for (int i = 0; i < 2; ++i)
+	{
+		sp[i].init();
+		sp[i].insert(INF);
+		sp[i].insert(-INF);
+	}
+	ll res = 0;
+	int op; ll x;
 	while (n--)
 	{
-		scanf("%s%lld", op, &x);
-		switch(op[0]) :
+		scanf("%d%lld", &op, &x);
+		if (sp[op ^ 1].t[sp[op ^ 1].root].sze == 2) 
+			sp[op].insert(x);
+		else
 		{
-			case 'I' :
-				
-		}
+			ll x1 = sp[op ^ 1].t[sp[op ^ 1].Next(x, 0)].val;
+			ll x2 = sp[op ^ 1].t[sp[op ^ 1].Next(x, 1)].val;
+			if (abs(x1 - x) <= abs(x2 - x))
+			{
+				res += abs(x1 - x);
+				sp[op ^ 1].Delete(x1);
+			}
+			else
+			{
+				res += abs(x2 - x);
+				sp[op ^ 1].Delete(x2);
+			}
+			res %= p;
+		}	
 	}
+	printf("%lld\n", res);
 }
