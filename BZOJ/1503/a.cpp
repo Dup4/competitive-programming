@@ -43,6 +43,7 @@ struct Splay
 		t[x].son[k ^ 1] = y;				//Y变成X的第q个儿子
 		t[y].fa = x;
 		pushup(y); pushup(x); 				//先更新儿子的子树大小，再更新当前点的子树大小 
+		if (z) pushup(z);
 	}
 	/*
 	   splay操作
@@ -57,9 +58,9 @@ struct Splay
 		{
 			int y = t[x].fa;
 			int z = t[y].fa;
-			if (z != tar)     // 如果Z不是目标父亲
+			if (z != tar)     // 如果Z不是目标父亲 
 				(t[y].son[0] == x) ^ (t[z].son[0] == y) ? rotate(x) : rotate(y); //判断是哪一种情况  
-			rotate(x);        //最后都是旋转X
+			rotate(x);        //最后都是旋转X 
 		}
 		if (tar == 0)
 			root = x;
@@ -81,12 +82,12 @@ struct Splay
 		if (u) ++t[u].cnt;
 		else
 		{
-			u = ++tot;
+			u = ++tot; 
 			if (fa)
 				t[fa].son[x > t[fa].val] = u; 
 			t[u].son[0] = t[u].son[1] = 0;
 			t[u].fa = fa;
-			t[u].val = x;
+			t[u].val = x;   
 			t[u].cnt = t[u].sze = 1;
 		}
 		splay(u, 0);
@@ -136,16 +137,16 @@ struct Splay
 		int del = t[nx].son[0];
 		if (t[del].cnt > 1) 
 		{
-			--t[del].cnt;
-			--t[del].sze; 
+			--t[del].cnt; 
 			splay(del, 0); 
-		}
+		} 
 		else
 		{
 			t[nx].son[0] = 0;
 			//pushup(nx); pushup(last);
-			splay(nx, 0);
+			splay(nx, 0);   
 		}
+		splay(nx, 0);
 	}
 	/*
 		左子树子树大小>=K,递归左子树
@@ -178,7 +179,7 @@ struct Splay
 int main()
 {
 	scanf("%d%lld", &n, &m);
-	sp.init();
+	sp.init(); 
 	sp.insert(INF);
 	sp.insert(-INF);
 	char op[10]; int cnt = 0, sze = 2;  ll x, lazy = 0;
@@ -200,7 +201,7 @@ int main()
 					sp.Delete(sp.kth(2)), ++cnt, --sze;  
 				break;
 			case 'F' :
-				sze = sp.t[sp.root].sze;
+				sze = sp.t[sp.root].sze; 
 				if (sze - x < 2)  
 					puts("-1");
 				else
