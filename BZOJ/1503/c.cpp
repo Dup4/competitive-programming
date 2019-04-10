@@ -89,7 +89,7 @@ struct Splay
 			t[u].val = x;   
 			t[u].cnt = t[u].sze = 1;
 		}
-		pushup(u); //防止u已经处于根节点，而使得它的子树大小没有更新
+		pushup(u);
 		splay(u, 0);
 	}
 	/*
@@ -134,9 +134,8 @@ struct Splay
 	{
 		int last = Next(x, 0);
 		int nx = Next(x, 1);
-		splay(last, 0); splay(nx, last);
+		splay(last, 0); splay(nx, last); 
 		int del = t[nx].son[0];
-	    if (del == 0) return; //防止要删除的节点不存在	
 		if (t[del].cnt > 1) 
 		{
 			--t[del].cnt; 
@@ -144,7 +143,7 @@ struct Splay
 		} 
 		else
 		{
-			t[nx].son[0] = 0;  
+			t[nx].son[0] = 0;
 			splay(nx, 0);    
 		}
 	}
@@ -178,42 +177,27 @@ struct Splay
 
 int main()
 {
-	scanf("%d%lld", &n, &m);
 	sp.init(); 
 	sp.insert(INF);
 	sp.insert(-INF);
-	char op[10]; int cnt = 0, sze = 0;  ll x, lazy = 0;
-	while (n--)
+	char op[10]; int x;
+	while (1)
 	{
-		scanf("%s%lld", op, &x);
-		switch(op[0])  
+		scanf("%s%d", op, &x);
+		switch(op[0])
 		{
 			case 'I' :
-				if (x >= m)
-					sp.insert(x - lazy);
+				sp.insert(x);
+				printf("%d\n", sp.t[sp.root].sze);
 				break;
-			case 'A' :
-				lazy += x;
+			case 'D' :
+				sp.Delete(x);
+				printf("%d\n", sp.t[sp.root].sze);
 				break;
-			case 'S' :
-				lazy -= x; 
-				sp.Delete(-INF);
-				sp.insert(m - lazy); 	
-				cnt += sp.t[sp.t[sp.root].son[0]].sze;
-			   	sp.t[sp.root].son[0] = 0;
-				sp.pushup(sp.root);
-				sp.Delete(m - lazy);	
-				sp.insert(-INF);
-				break;
-			case 'F' :
-				sze = sp.t[sp.root].sze;
-				if (sze - x < 2)  
-					puts("-1");
-				else
-					printf("%lld\n", sp.kth(sze - x) + lazy);
-				break;
+			default :
+				assert(0);
 		}
 	}
-	printf("%d\n", cnt);
 	return 0;
 }
+
