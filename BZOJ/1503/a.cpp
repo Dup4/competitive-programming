@@ -197,13 +197,12 @@ int main()
 				break;
 			case 'S' :
 				lazy -= x; 
-				sp.Delete(-INF);
-				sp.insert(m - lazy); 	
-				cnt += sp.t[sp.t[sp.root].son[0]].sze;
+				sp.insert(m - lazy);
+				cnt += sp.t[sp.t[sp.root].son[0]].sze - 1;
 			   	sp.t[sp.root].son[0] = 0;
 				sp.pushup(sp.root);
+			  	sp.insert(-INF);	
 				sp.Delete(m - lazy);	
-				sp.insert(-INF);
 				break;
 			case 'F' :
 				sze = sp.t[sp.root].sze;
