@@ -40,11 +40,9 @@ void init() {
 			}
 		}
 	}
-	for (int i = 1; i <= 10; ++i) {
-		printf("%d %d\n", i, sig[i]);
+	for (int i = 1; i <= 100000; ++i) {
+		d.push_back(i); 
 	}
-	d.resize(100000);
-	iota(d.begin(), d.end(), 1);
 	sort(d.begin(), d.end(), cmp); 
 }
 
@@ -91,20 +89,24 @@ int main() {
 	sort(qrr + 1, qrr + 1 + T);
 	for (int i = 1; i <= T; ++i) {
 		int n = qrr[i].n, m = qrr[i].m, a = qrr[i].a, id = qrr[i].id, it;
-		res[id] = 0;
 		while (!d.empty() && sig[it = d.back()] <= a) {
 			d.pop_back();
-			for (int j = it; j < N; j += it) {
+			for (int j = it; j < N; j += it) if (mu[j / it]) {
 				bit.update(j, mu[j / it] * sig[it]);       
 			}
 		}
 		if (n > m) swap(n, m);
+		res[id] = 0;
 	   	for (int j = 1, k; j <= n; j = k + 1) {
 			k = min(n / (n / j), m / (m / j));
-			res[id] += (n / j) * (m / j) * bit.query(k, j);
+			res[id] += (n / j) * (m / j) * bit.query(j, k);
 		}	
 	}
 	for (int i = 1; i <= T; ++i) {
+		if (res[i] < 0) {
+			res[i] += 2147483647;
+			++res[i]; 
+		}
 		printf("%d\n", res[i]); 
 	}
 	return 0;
