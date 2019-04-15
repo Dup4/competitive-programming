@@ -14,8 +14,8 @@ using namespace std;
    3.再判断树上两条简单路径是否有交
 
 */
-
-#define N 100010
+#define ll long long
+#define N 200010
 struct Edge {
 	struct node {
 		int to, nx;
@@ -39,8 +39,96 @@ struct Edge {
 }G[2];
 #define erp(G, u) for (int it = G.head[u], v = G.a[it].to, cut = G.a[it].cut; ~it; it = G.a[it].nx, v = G.a[it].to, cut = G.a[it].cut)
 
+int Low[N], DFN[N], Stack[N];
+int Index, Top;
+bool Instack[N];
+void Tarjan(int u, int fa) {
+	int v;
+	Low[u] = DFN[u] = ++Index;
+	Stack[Top++] = u;
+	Instack[u] = true;
+	erp(G[0], u) if (v != fa) {
+		if (!DFN[v]) {
+			Tarjan(v, u);
+			if (Low[v] > DFN[u]) {
+				G[0].a[it].cut = true;
+				G[0].a[it ^ 1].cut = true;
+			}
+		} else if (Low[u] > DFN[v]) {
+			Low[u] = DFN[v];
+		}
+	}
+	Instack[u] = false;
+	Top--;
+}
 
+int n, m, q;
+map <ll, int> used, ismuledge;
+bool Hash(int u, int v) {
+	if (u > v) {
+		swap(u, v);
+	}
+	ll t = 1ll * u * n + v;
+	if (used.find(t) != used.end()) {
+		return 0;
+	} else {
+		mp[t] = 1;
+		return 1;
+	}
+}
+bool ismul(int u, int v) {
+	if (u > v) {
+		swap(u, v);
+	}
+	ll t = 1ll * u * n + v;
+	if (ismuledge.find(t) != ismuledge.end()) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+int pre[N];
+int find()
+
+int fa[N], top[N], deep[N], sze[N], son[N];
+void DFS(int u) {
+	erp(G[1], u) if (v != fa[u]) {
+		fa[v] = u;
+		deep[v] = deep[u] + 1;
+		DFS(v);
+		sze[u] += sze[v];
+		if (!son[u] || sze[v] > sze[son[u]]) {
+			son[u] = v;
+		}
+	}
+}
+void gettop(int u, int sp) {
+	top[u] = sp;
+	if (!son[u]) {
+		return;
+	}
+	gettop(son[u], sp);
+	erp(G[1], u) if (v != son[u] && v != fa[u]) {
+		gettop(v, v);
+	}
+}
+
+void init(int n) {
+	G[0].clear(n); G[1].clear(n);
+	used.clear(); ismuledge.clear();
+	for (int i = 0; i <= n; ++i) {
+		Instack[i] = 0;
+		son[i] = 0;
+		fa[i] = -1;
+	}
+	Index = Top = 0;
+}
 int main() {
-	
+	int T; scanf("%d", &T);
+	while (T--) {
+		scanf("%d%d%d", &n, &m, &q); init(n);
+
+	}
 	return 0;
 }
