@@ -43,13 +43,15 @@ int Low[N], DFN[N], Stack[N];
 int Index, Top;
 bool Instack[N];
 void Tarjan(int u, int fa) {
-	int v;
 	Low[u] = DFN[u] = ++Index;
 	Stack[Top++] = u;
 	Instack[u] = true;
 	erp(G[0], u) if (v != fa) {
 		if (!DFN[v]) {
 			Tarjan(v, u);
+			if (Low[u] > Low[v]) {
+				Low[u] = Low[v];
+			}
 			if (Low[v] > DFN[u]) {
 				G[0].a[it].cut = true;
 				G[0].a[it ^ 1].cut = true;
@@ -63,6 +65,7 @@ void Tarjan(int u, int fa) {
 }
 
 int n, m, q;
+int id[N], id_cnt;
 map <ll, int> used, ismuledge;
 bool Hash(int u, int v) {
 	if (u > v) {
@@ -70,9 +73,10 @@ bool Hash(int u, int v) {
 	}
 	ll t = 1ll * u * n + v;
 	if (used.find(t) != used.end()) {
+		ismuledge[t] = 1;
 		return 0;
 	} else {
-		mp[t] = 1;
+		used[t] = 1;
 		return 1;
 	}
 }
@@ -89,13 +93,23 @@ bool ismul(int u, int v) {
 }
 
 int pre[N];
-int find()
+int find(int x) {
+	return pre[x] == 0 ? x : pre[x] = find(pre[x]);
+}
+void join(int x, int y) {
+	int fx = find(x), fy = find(y);
+	if (fx != fy) {
+		pre[fx] = fy;
+	}
+}
 
-int fa[N], top[N], deep[N], sze[N], son[N];
+int fa[N], top[N], deep[N], sze[N], son[N], rt[N];
 void DFS(int u) {
+	sze[u] = 1;
 	erp(G[1], u) if (v != fa[u]) {
 		fa[v] = u;
 		deep[v] = deep[u] + 1;
+		rt[v] = rt[u];
 		DFS(v);
 		sze[u] += sze[v];
 		if (!son[u] || sze[v] > sze[son[u]]) {
@@ -113,22 +127,95 @@ void gettop(int u, int sp) {
 		gettop(v, v);
 	}
 }
+int lca(int u, int v) {
+	while (top[u] != top[v]) {
+		if (deep[top[u]] < deep[top[v]]) {
+			swap(u, v);
+		}
+		u = fa[top[u]];
+	}
+	if (deep[u] > deep[v]) {
+		swap(u, v);
+	}
+	return u;
+}
+bool ok(int a, int b, int c) {
+	int t[] = {
+		a, lca(a, c), lca(a, b), lca(b, c),
+	};
+	sort(t, t + 4, [](int x, int y) {
+		return deep[x] < deep[y];		
+	});
+	if (t[2] == a && t[3] == a) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 void init(int n) {
-	G[0].clear(n); G[1].clear(n);
+	G[0].init(n); G[1].init(n);
 	used.clear(); ismuledge.clear();
 	for (int i = 0; i <= n; ++i) {
 		Instack[i] = 0;
 		son[i] = 0;
 		fa[i] = -1;
+		id[i] = -1;
+		DFN[i] = 0;
+		pre[i] = 0;
 	}
-	Index = Top = 0;
+	Index = Top = id_cnt = 0;
 }
 int main() {
 	int T; scanf("%d", &T);
 	while (T--) {
 		scanf("%d%d%d", &n, &m, &q); init(n);
-
+		for (int i = 1, u, v; i <= m; ++i) {
+			scanf("%d%d", &u, &v);
+			if (u == v) {
+				continue;
+			} else if (Hash(u, v)) {
+				G[0].add(u, v);
+			}
+		}
+		for (int i = 1; i <= n; ++i) if (!DFN[i]) {
+			Tarjan(i, i);
+		}
+		for (int u = 1; u <= n; ++u) {
+			erp(G[0], u) if (!cut || (cut && ismul(u, v))) {
+				join(u, v); 
+			}
+		}
+		for (int i = 1; i <= n; ++i) if (find(i) == i) {
+			id[i] = ++id_cnt;
+		}  
+		for (int i = 1; i <= n; ++i) {
+			id[i] = id[find(i)];
+		}
+		for (int u = 1; u <= n; ++u) {
+			erp(G[0], u) if (cut && u <= v && !ismul(u, v)) {
+				G[1].add(id[u], id[v]);
+			}
+		}
+		for (int i = 1; i <= id_cnt; ++i) if (fa[i] == -1) {
+			fa[i] = i;
+			rt[i] = i;
+			DFS(i);
+			gettop(i, i);
+		}
+		for (int i = 1, u, v, w; i <= q; ++i) {
+			scanf("%d%d%d", &u, &v, &w);
+			u = id[u], v = id[v], w = id[w];
+			if (rt[u] != rt[v] || rt[u] != rt[w]) {
+				puts("No");
+			} else if (u == v || u == w) {
+				puts("Yes");
+			} else if (v == w) {
+				puts("No");
+			} else {
+				puts(ok(u, v, w) ? "Yes" : "No");
+			}
+		}
 	}
 	return 0;
 }
