@@ -12,12 +12,12 @@ struct Splay {
 	}t[N * 2];  
 	void init() {
 		memset(root, 0, sizeof root);
-		tot = 0;
+		tot = 0; 
 	}
 	void pushup(int x) {
 		t[x].sze = 1 + t[t[x].son[0]].sze + t[t[x].son[1]].sze;
 	}
-	void rotate(int x) {
+	void rotate(int x) {   
 		int y = t[x].fa;
 		int z = t[y].fa;
 		int k = t[y].son[1] == x;
@@ -27,11 +27,11 @@ struct Splay {
 		pushup(y); pushup(x);  
 	}
 	void splay(int &rt, int x, int tar) {
-		while (t[x].fa != tar) {
-			int y = t[x].fa;
+		while (t[x].fa != tar) {  
+			int y = t[x].fa; 
 			int z = t[y].fa;
 			if (z != tar) {
-				(t[z].son[1] == y) ^ (t[y].son[1] == x) ? rotate(x) : rotate(y);
+				(t[z].son[1] == y) ^ (t[y].son[1] == x) ? rotate(x) : rotate(y);  
 			}
 			rotate(x);
 		}
@@ -46,12 +46,14 @@ struct Splay {
 			u = t[u].son[x > t[u].val];
 		}
 		if (u) { 
+			assert(0);
 		} else {
 			u = ++tot;
 			if (fa) {
 				t[fa].son[x > t[fa].val] = u;
 			} 
 			t[u].son[0] = t[u].son[1] = 0;
+			t[u].sze = 1;  
 			t[u].val = x; t[u].fa = fa;
 		}
 		splay(rt, u, 0);
@@ -59,48 +61,45 @@ struct Splay {
 	int Next(int &rt, int x, int f) {
 		int u = rt;
 		u = t[u].son[f];  
+		if (u == 0) {
+			return -1; 
+		}
 		while (t[u].son[f ^ 1]) {
 			u = t[u].son[f ^ 1];
 		}
 		return t[u].val;
 	}
-	void merge(int now, int &rt) {
+	int merge(int now, int &rt, int pre) {
 		if (now == 0) {
-			return;
+			return pre;
 		}
 		int ls = t[now].son[0], rs = t[now].son[1]; 
-		merge(ls, rt);
+		pre = merge(ls, rt, pre);
+
 		int x = t[now].val;
-		if (x != -INF && x != INF) {
-			t[now].son[0] = t[now].son[1] = 0; 
-			int u = rt, fa = 0;
-			while (u && x != t[u].val) {
-				fa = u;
-				u = t[u].son[x > t[u].val];
-			}
-			if (fa) {
-				t[fa].son[x > t[fa].val] = now;
-			}	
-			t[now].fa = fa;
-			splay(rt, now, 0);
-			
-			int y = Next(rt, x, 0);
-			int z = Next(rt, x, 1);
-			if (x == 1) {
-				if (z == 2) {
-					--res;
-				}
-			} else if (x == n) {
-				if (y == n - 1) {
-					--res;
-				}
-			} else {
-				if (x == y + 1 && x == z - 1) {
-					--res;
-				}
-			}
+		t[now].son[0] = t[now].son[1] = 0;
+		t[now].sze = 1; 	
+		int u = rt, fa = 0;   
+		while (u && x != t[u].val) {
+			fa = u;  
+			u = t[u].son[x > t[u].val];
 		}
-		merge(rs, rt);
+		if (fa) {
+			t[fa].son[x > t[fa].val] = now;   
+		}	
+		t[now].fa = fa;
+		splay(rt, now, 0);
+		
+		int y = Next(rt, x, 0);
+		int z = Next(rt, x, 1);
+		if (y != -1 && pre != y && y == x - 1) {  
+			--res;
+		}
+		if (z == x + 1) {
+			--res;
+		}
+
+		return merge(rs, rt, x); 
 	} 
 }sp;
 map <int, int> mp; int id_cnt;
@@ -119,9 +118,11 @@ int main() {
 			x = id(x);
 			sp.insert(sp.root[x], i);  
 			int y = sp.Next(sp.root[x], i, 0);
-			if (y == i - 1) {
-				--res;
-			}	
+			if (i > 1) {
+				if (y == i - 1) {
+					--res;
+				}
+			}
 		}
 		int op, x, y;
 		while (q--) {
@@ -129,12 +130,15 @@ int main() {
 			switch(op) {
 				case 1 :
 					scanf("%d%d", &x, &y);
-					x = id(x), y = id(y);					
-					if (sp.t[sp.root[x]].sze < sp.t[sp.root[y]].sze) {
-						sp.merge(sp.root[x], sp.root[y]);
+					if (x == y) break;  
+					x = id(x), y = id(y); 	
+					if (sp.t[sp.root[x]].sze < sp.t[sp.root[y]].sze) {   
+						sp.merge(sp.root[x], sp.root[y], -2);
+					    sp.root[x] = 0;  	
 					} else {
-						sp.merge(sp.root[y], sp.root[x]);
+						sp.merge(sp.root[y], sp.root[x], -2);
 					    swap(sp.root[x], sp.root[y]);	
+						sp.root[x] = 0; 
 					}
 					break;
 				case 2 :
