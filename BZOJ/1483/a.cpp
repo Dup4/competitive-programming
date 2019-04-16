@@ -8,19 +8,23 @@ struct Splay {
 	int root[N], tot;  
 	struct node {
 		int son[2];
-		int val, fa;
-	}t[N * 40];
+		int val, fa, sze; 
+	}t[N * 2];  
 	void init() {
 		memset(root, 0, sizeof root);
 		tot = 0;
+	}
+	void pushup(int x) {
+		t[x].sze = 1 + t[t[x].son[0]].sze + t[t[x].son[1]].sze;
 	}
 	void rotate(int x) {
 		int y = t[x].fa;
 		int z = t[y].fa;
 		int k = t[y].son[1] == x;
 		t[x].fa = z; t[z].son[t[z].son[1] == y] = x;
-		t[x].son[k ^ 1].fa = y; t[y].son[k] = t[x].son[k ^ 1];
+		t[t[x].son[k ^ 1]].fa = y; t[y].son[k] = t[x].son[k ^ 1];
 		t[y].fa = x; t[x].son[k ^ 1] = y;
+		pushup(y); pushup(x);  
 	}
 	void splay(int &rt, int x, int tar) {
 		while (t[x].fa != tar) {
@@ -35,14 +39,13 @@ struct Splay {
 			rt = x;
 		}
 	}
-	void insert(int &rt, int x) {
+	void insert(int &rt, int x) { 
 		int u = rt, fa = 0;
-		while (t[u].son[x > t[u].val] && x != t[u].val) {
+		while (u && x != t[u].val) {
 			fa = u;
 			u = t[u].son[x > t[u].val];
 		}
-		if (u) {
-			assert(0);
+		if (u) { 
 		} else {
 			u = ++tot;
 			if (fa) {
@@ -53,9 +56,9 @@ struct Splay {
 		}
 		splay(rt, u, 0);
 	}
-	void Next(int &rt, int x, int f) {
+	int Next(int &rt, int x, int f) {
 		int u = rt;
-		u = t[u].son[f];
+		u = t[u].son[f];  
 		while (t[u].son[f ^ 1]) {
 			u = t[u].son[f ^ 1];
 		}
@@ -65,22 +68,56 @@ struct Splay {
 		if (now == 0) {
 			return;
 		}
-		merge(t[now].son[0]);
-		insert(rt, t[now].val);
-		merge(t[now].son[1]);
+		int ls = t[now].son[0], rs = t[now].son[1]; 
+		merge(ls, rt);
+		int x = t[now].val;
+		if (x != -INF && x != INF) {
+			t[now].son[0] = t[now].son[1] = 0; 
+			int u = rt, fa = 0;
+			while (u && x != t[u].val) {
+				fa = u;
+				u = t[u].son[x > t[u].val];
+			}
+			if (fa) {
+				t[fa].son[x > t[fa].val] = now;
+			}	
+			t[now].fa = fa;
+			splay(rt, now, 0);
+			
+			int y = Next(rt, x, 0);
+			int z = Next(rt, x, 1);
+			if (x == 1) {
+				if (z == 2) {
+					--res;
+				}
+			} else if (x == n) {
+				if (y == n - 1) {
+					--res;
+				}
+			} else {
+				if (x == y + 1 && x == z - 1) {
+					--res;
+				}
+			}
+		}
+		merge(rs, rt);
 	} 
 }sp;
+map <int, int> mp; int id_cnt;
+int id(int x) {
+	if (mp.find(x) == mp.end()) {
+		mp[x] = ++id_cnt;
+	}
+	return mp[x];
+}
 
 int main() {
 	while (scanf("%d%d", &n, &q) != EOF) {
-		sp.init(); res = n;
-		for (int i = 1; i <= n; ++i) {
-			sp[i].insert(INF);
-			sp[i].insert(-INF);
-		}	
+		sp.init(); res = n; id_cnt = 0; mp.clear();
 		for (int i = 1, x; i <= n; ++i) {
 			scanf("%d", &x);
-			sp.insert(sp.root[x], i);
+			x = id(x);
+			sp.insert(sp.root[x], i);  
 			int y = sp.Next(sp.root[x], i, 0);
 			if (y == i - 1) {
 				--res;
@@ -91,7 +128,14 @@ int main() {
 			scanf("%d", &op);
 			switch(op) {
 				case 1 :
-					
+					scanf("%d%d", &x, &y);
+					x = id(x), y = id(y);					
+					if (sp.t[sp.root[x]].sze < sp.t[sp.root[y]].sze) {
+						sp.merge(sp.root[x], sp.root[y]);
+					} else {
+						sp.merge(sp.root[y], sp.root[x]);
+					    swap(sp.root[x], sp.root[y]);	
+					}
 					break;
 				case 2 :
 					printf("%d\n", res);
