@@ -99,7 +99,11 @@ int main() {
 			continue;
 		}
 		ll res = 0;
-		for (int i = n; i >= 1; --i) if (!vec[i].empty()) { 
+		for (int i = n; i >= 1; --i) {
+			if (vec[i].empty()) {
+				res += seg.query(1, 1, n, i, n);
+				continue;
+			}	
 			for (int last = vec[i][0], j = 0, sze = (int)vec[i].size(); j < sze; ++j) {
 				if (j == sze - 1 || vec[i][j] != vec[i][j + 1] - 1) {   
 					int l = last - 1, r = vec[i][j] + 1;
@@ -117,7 +121,11 @@ int main() {
 					}
 				}
 			}
-			//cout << i << " " << seg.query(1, 1, n, i, n) << endl;
+		//	cout << i << ":\n";
+		//	for (int j = i; j <= n; ++j) {
+		//		cout << seg.query(1, 1, n, j, j) << endl;
+		//	}
+		//	puts("--------------------");
 			res += seg.query(1, 1, n, i, n);
 		}
 		printf("%lld\n", res);
