@@ -9,12 +9,12 @@ int vis[N];
 
 struct SEG {
 	struct node {
-		ll sum;
-		int lazy, cnt;
+		ll sum, lazy;
+		int cnt;
 		node () {
 			sum = lazy = cnt = 0;
 		}
-		node (ll sum, int lazy) : sum(sum), lazy(lazy) {
+		node (ll sum, ll lazy) : sum(sum), lazy(lazy) {
 			cnt = 0;
 		}
 		void add(int x) {
@@ -40,7 +40,7 @@ struct SEG {
 		t[id] = t[id << 1] + t[id << 1 | 1];
 	}
 	void pushdown(int id) {
-		int &lazy = t[id].lazy;
+		ll &lazy = t[id].lazy;
 		if (!lazy) {
 			return;
 		}
@@ -84,6 +84,7 @@ void init() {
 		vec[i].clear();
 	}
 	seg.build(1, 1, n);
+	vis[0] = vis[n + 1] = -1;
 }
 int main() {
 	while (scanf("%d", &n) != EOF) {
@@ -97,44 +98,26 @@ int main() {
 			puts("1");
 			continue;
 		}
-		for (int i = 1; i <= n; ++i) if (!vec[i].empty()) {
-			sort(vec[i].begin(), vec[i].end());
-		}
 		ll res = 0;
 		for (int i = n; i >= 1; --i) if (!vec[i].empty()) { 
 			for (int last = vec[i][0], j = 0, sze = (int)vec[i].size(); j < sze; ++j) {
-				if (j == sze - 1 || vec[i][j] != vec[i][j + 1] - 1) {  
+				if (j == sze - 1 || vec[i][j] != vec[i][j + 1] - 1) {   
 					int l = last - 1, r = vec[i][j] + 1;
-					if (l == -1 && r == n + 1) {
-						seg.update(1, 1, n, i, n, 1); 
-					} else if (l == -1) {
-						if (vis[r] > i) {
-							seg.update(1, 1, n, i, vis[r] - 1, 1);
-						} else {
-							seg.update(1, 1, n, i, n, 1);
-						}
-					} else if (r == n + 1) {
-						if (vis[l] > i) { 
-							seg.update(1, 1, n, i, vis[l] - 1, 1);
-						} else {
-							seg.update(1, 1, n, i, n, 1);
-						}
+					if (vis[l] > vis[r]) swap(l, r);
+					if (vis[l] > i) {
+						seg.update(1, 1, n, i, vis[l] - 1, 1);
+						seg.update(1, 1, n, vis[r], n, -1);
+					} else if (vis[r] > i) {
+						seg.update(1, 1, n, i, vis[r] - 1, 1);
 					} else {
-						if (vis[l] > vis[r]) swap(l, r);
-						if (vis[l] > i) {
-							seg.update(1, 1, n, i, vis[l] - 1, 1);
-							seg.update(1, 1, n, vis[r], n, -1);
-						} else if (vis[r] > i) {
-							seg.update(1, 1, n, i, vis[r] - 1, 1);
-						} else {
-							seg.update(1, 1, n, i, n, 1);
-						}
+						seg.update(1, 1, n, i, n, 1);
 					}
 					if (j != sze - 1) {
 						last = vec[i][j + 1];
 					}
 				}
 			}
+			//cout << i << " " << seg.query(1, 1, n, i, n) << endl;
 			res += seg.query(1, 1, n, i, n);
 		}
 		printf("%lld\n", res);

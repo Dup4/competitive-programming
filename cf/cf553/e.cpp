@@ -137,7 +137,7 @@ int main() {
 					}
 				}
 			}
-			res += seg.query(1, 1, n, 1, n) << endl;
+			res += seg.query(1, 1, n, 1, n);
 		}
 		printf("%lld\n", res);
 	}
