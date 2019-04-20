@@ -1,93 +1,79 @@
-#include<bits/stdc++.h>
-#define N 600010
-#define INF 0x3f3f3f3f
-#define eps 1e-10
-// #define pi 3.141592653589793
-#define P 1000000007
-#define LL long long
-#define pb push_back
-#define fi first
-#define se second
-#define cl clear
-#define si size
-#define lb lower_bound
-#define ub upper_bound
-#define mem(x) memset(x,0,sizeof x)
-#define sc(x) scanf("%d",&x)
-#define scc(x,y) scanf("%d%d",&x,&y)
-#define sccc(x,y,z) scanf("%d%d%d",&x,&y,&z)
+#include <bits/stdc++.h>
 using namespace std;
-//#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
-#include <ext/pb_ds/hash_policy.hpp>
-#include <ext/pb_ds/priority_queue.hpp>
-using namespace __gnu_pbds;
-typedef pair<int,int> pi;
-typedef pair<int,pi> pp;
-typedef __gnu_pbds::priority_queue<pp,greater<pp> > heap;
 
-map<pi,int> mp;
-vector<pi> a[N<<1];
-LL nx[N],ny[N],sz[N],ans[N],fa[N],res;
-pi st[N];
-int op=0;
-int getfa(int x){
-	return(fa[x]==x?x:getfa(fa[x]));
-}
+#define ll long long
+#define N 100010
+int n, q, arr[N];
 
-void ins(int x,int fl,int fr,int l,int r,pi t){
-	if (l==fl && fr==r) a[x].pb(t);else
-	{
-		int mid=l+r>>1;
-		if (fr<=mid) ins(x<<1,fl,fr,l,mid,t);else
-		if (fl>mid) ins(x<<1|1,fl,fr,mid+1,r,t);else{
-			ins(x<<1,fl,mid,l,mid,t);
-			ins(x<<1|1,mid+1,fr,mid+1,r,t);
+struct SEG {
+	struct node {
+		int cnt;
+		ll sum1, sum2;
+		node () {
+			cnt = sum1 = sum2 = 0;
+		}
+		node (int cnt, ll sum1, ll sum2) : cnt(cnt), sum1(sum1), sum2(sum2) {}
+		node operator + (const node &other) const {
+			node res = node();
+			res.cnt = cnt + other.cnt;
+			res.sum1 = sum1 + other.sum1;
+			res.sum2 = sum2 + other.sum2 + other.sum1 * cnt;
+			return res;
+		}
+	}t[N << 2], res;
+	void build(int id, int l, int r) {
+		if (l == r) {
+			t[id] = node(1, arr[l], arr[l]);
+			return;
+		}
+		int mid = (l + r) >> 1;
+		build(id << 1, l, mid);
+		build(id << 1 | 1, mid + 1, r);
+		t[id] = t[id << 1] + t[id << 1 | 1];
+	}
+	void update(int id, int l, int r, int pos, int v) {
+		if (l == r) {
+			t[id] = node(1, v, v);
+			return;
+		}
+		int mid = (l + r) >> 1;
+		if (pos <= mid) update(id << 1, l, mid, pos, v);
+		else update(id << 1 | 1, mid + 1, r, pos, v);
+		t[id] = t[id << 1] + t[id << 1 | 1];
+	}
+	void query(int id, int l, int r, int ql, int qr) {
+		if (l >= ql && r <= qr) {
+			res = res + t[id];
+			return;
+		}
+		int mid = (l + r) >> 1;
+		if (ql <= mid) query(id << 1, l, mid, ql, qr);
+		if (qr > mid) query(id << 1 | 1, mid + 1, r, ql, qr);
+	}
+}seg;
+
+int main() {
+	while (scanf("%d%d", &n, &q) != EOF) {
+		for (int i = 1; i <= n; ++i) {
+			scanf("%d", arr + i);
+		}
+		seg.build(1, 1, n);
+		int op, x, y;
+		while (q--) {
+			scanf("%d%d%d", &op, &x, &y);
+			switch(op) {
+				case 1 :
+					seg.update(1, 1, n, x, y);
+					break;
+				case 2 :
+					seg.res = SEG::node(0, 0, 0);
+					seg.query(1, 1, n, x, y);
+					printf("%lld\n", seg.res.sum2); 	
+					break;
+				default :
+					assert(0);
+			}
 		}
 	}
+	return 0;
 }
-
-void spy(int x,int l,int r){
-	int tm=op;
-	for (auto i:a[x]){
-		int x=getfa(i.fi),y=getfa(i.se);
-		if (x!=y){
-			if (sz[x]<sz[y]) swap(x,y);
-			st[++op]=pi(x,y);
-			fa[y]=x;
-			res-=nx[x]*ny[x]+nx[y]*ny[y];
-			sz[x]+=sz[y]; nx[x]+=nx[y]; ny[x]+=ny[y];
-			res+=nx[x]*ny[x];
-		}
-	}
-	if (l==r) ans[l]=res;else{
-		spy(x<<1,l,l+r>>1);
-		spy(x<<1|1,(l+r>>1)+1,r);
-	}
-	while(tm!=op){
-		int x=st[op].fi,y=st[op--].se;
-		res-=nx[x]*ny[x];
-		sz[x]-=sz[y]; nx[x]-=nx[y]; ny[x]-=ny[y];
-		res+=nx[x]*ny[x]+nx[y]*ny[y];
-		fa[y]=y;
-	}
-}
-
-int main()
-{
-	int n;
-	sc(n);
-	for (int i=1,x,y;i<=n;i++){
-		scc(x,y); y+=3e5;
-		if(mp[pi(x,y)]){
-			ins(1,mp[pi(x,y)],i-1,1,n,pi(x,y));
-			mp.erase(pi(x,y));
-		}else mp[pi(x,y)]=i;
-	}
-	for (auto i:mp) ins(1,i.se,n,1,n,i.fi);
-	for (int i=1;i<=6e5;i++) (i<=3e5?nx:ny)[i]=sz[i]=1,fa[i]=i;
-	spy(1,1,n);
-	printf("%lld",ans[1]);
-	for (int i=2;i<=n;i++) printf(" %lld",ans[i]);
-}
-
