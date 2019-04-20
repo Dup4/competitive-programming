@@ -24,7 +24,7 @@ struct SEG {
 		node operator + (const node &other) const {
 			node res = node();
 			res.cnt = cnt + other.cnt;
-			res.Max = max(Max, other.Max);
+			res.Max = max(Max, other.Max);    
 			res.sum = sum + other.sum;
 		}
 	}t[N << 2];
@@ -33,7 +33,7 @@ struct SEG {
 			t[id] = node();
 			t[id].Max = l;
 			t[id].sum = l;
-			t[id].cnt = 1;
+			t[id].cnt = 1;  
 			return;
 		}
 		int mid = (l + r) >> 1;
