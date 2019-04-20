@@ -64,7 +64,7 @@ int main() {
 		top = 0;
 		Sta[++top] = 0;
 		for (int i = 1; i <= n; ++i) {
-			while (a[i] < a[Sta[top]]) {
+			while (a[i] <= a[Sta[top]]) {
 				--top;
 			}
 			f[i] = Sta[top];
@@ -74,7 +74,7 @@ int main() {
 		top = 0;
 		Sta[++top] = n + 1;
 		for (int i = n; i >= 1; --i) {
-			while (a[i] < a[Sta[top]]) {
+			while (a[i] <= a[Sta[top]]) {
 				--top;
 			}
 			g[i] = Sta[top];
