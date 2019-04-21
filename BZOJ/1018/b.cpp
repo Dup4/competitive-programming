@@ -8,10 +8,22 @@ using namespace std;
 int n, m, q;
 map <pii, int> mp;  
 pii qrr[N]; int vis[N], res[N];
-int pre[N], sz[N], Top; 
-pii Sta[N << 1];
+int pre[N], sz[N], Top;
+struct node {
+	int x, y, w;
+	node () {}
+	node (int x, int y, int w) : x(x), y(y), w(w) {}
+};
+node Sta[N << 1];
 int find(int x) {
-	return pre[x] == 0 ? x : find(pre[x]);
+	if (pre[x] == 0) {
+		return x;
+	}
+	int y = find(pre[x]);
+	if (y != pre[x]) {
+		Sta[++Top] = node(x, pre[x], -1); 
+	}
+	return pre[x] = y; 
 }
 
 struct SEG {
@@ -37,7 +49,7 @@ struct SEG {
 				if (sz[x] > sz[y]) {
 					swap(x, y);
 				}
-				Sta[++Top] = pii(x, y);
+				Sta[++Top] = node(x, y, sz[x]);
 				sz[y] += sz[x];
 				pre[x] = y;
 			}
@@ -58,9 +70,13 @@ struct SEG {
 			work(id << 1 | 1, mid + 1, r);
 		}
 		while (Top != tp) {
-			int x = Sta[Top].fi, y = Sta[Top].se; --Top;
-			sz[y] -= sz[x];
-			pre[x] = 0; 		
+			int x = Sta[Top].x, y = Sta[Top].y, w = Sta[Top].w; --Top;
+			if (w == -1) {
+				pre[x] = y;
+			} else {
+				sz[y] -= w;
+				pre[x] = 0;
+			}
 		}
 	}
 }seg;
