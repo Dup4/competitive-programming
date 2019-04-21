@@ -39,7 +39,7 @@ int main() {
 					g[j + a[i]] = (g[j + a[i]] + g[j]) % p;
 				}
 			}
-			res = (res - g[mid] + p) % p;
+			res = (res - g[mid] + p) % p;    
 		}
 		printf("%d\n", (bit3[n] - (res * 3) % p + p) % p); 
 	}
