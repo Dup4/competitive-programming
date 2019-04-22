@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define N 20010
+#define N 200010
 #define pii pair <int, int>
 #define fi first
 #define se second
-int n, q;
+int n, q, lastans;
 struct SEG {
 	struct node {
 		int ls, rs;
@@ -36,38 +36,42 @@ struct SEG {
 		build(t[id].rs, mid + 1, r);  
 	}
 	void update(int &now, int pre, int l, int r, int pos, int fa) {  
-		now = ++tot;
+		int tmp = ++tot; 
 		if (l == r) {
-			t[now] = node();
-			t[now].fa = fa;
-			t[now].sze = t[pre].sze;
+			t[tmp] = node();
+			t[tmp].fa = fa;
+			t[tmp].sze = t[pre].sze;  
+			now = tmp;
 			return;	
 		}
-		t[now].ls = t[pre].ls;
-		t[now].rs = t[pre].rs;
+		t[tmp].ls = t[pre].ls;
+		t[tmp].rs = t[pre].rs;
 		int mid = (l + r) >> 1;
 		if (pos <= mid) {
-			update(t[now].ls, now, l, mid, pos, fa);
+			update(t[tmp].ls, t[pre].ls, l, mid, pos, fa);
 		} else {
-			update(t[now].rs, now, mid + 1, r, pos, fa); 
+			update(t[tmp].rs, t[pre].rs, mid + 1, r, pos, fa); 
 		}
+		now = tmp;
 	}
 	void add(int &now, int pre, int l, int r, int pos, int sze) {
-		now = ++tot;
+		int tmp = ++tot;
 		if (l == r) {
-			t[now] = node();
-			t[now].fa = t[pre].fa;
-			t[now].sze = t[pre].sze + sze;
+			t[tmp] = node();
+			t[tmp].fa = t[pre].fa;
+			t[tmp].sze = t[pre].sze + sze;
+			now = tmp;
 			return;
 		}
-		t[now].ls = t[pre].ls;
-		t[now].rs = t[pre].rs;
+		t[tmp].ls = t[pre].ls;
+		t[tmp].rs = t[pre].rs;
 		int mid = (l + r) >> 1;
 		if (pos <= mid) {
-			add(t[now].ls, now, l, mid, pos, sze);
+			add(t[tmp].ls, t[pre].ls, l, mid, pos, sze);
 		} else {
-			add(t[now].rs, now, mid + 1, r, pos, sze);
+			add(t[tmp].rs, t[pre].rs, mid + 1, r, pos, sze);
 		}
+		now = tmp;
 	}
 	pii query(int now, int l, int r, int pos) {
 		if (l == r) {
@@ -115,15 +119,19 @@ int main() {
 			switch(op) {
 				case 1 :
 					scanf("%d%d", &x, &y);
+					//x ^= lastans; y ^= lastans;
 					join(i, x, y);
 					break;
 				case 2 :
 					scanf("%d", &k);
+					//k ^= lastans;
 					seg.rt[i] = seg.rt[k];
 					break;
 				case 3 :
 					scanf("%d%d", &x, &y);
-					puts(same(i, x, y) ? "1" : "0");
+					//x ^= lastans, y ^= lastans;
+					lastans = same(i, x, y);
+					printf("%d\n", lastans);
 					break;
 				default :
 					assert(0);
