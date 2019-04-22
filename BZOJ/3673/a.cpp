@@ -1,15 +1,22 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/*
+	 BZOJ 3674 
+	 1 a b 合并a, b所在集合
+	 2 k 回到第k次操作之后的状态(查询算一次操作)
+	 3 a b 询问a, b是否在同一集合
+*/
+
 #define N 200010
 #define pii pair <int, int>
 #define fi first
 #define se second
-int n, q, lastans;
+int n, q;
 struct SEG {
 	struct node {
 		int ls, rs;
-		int fa, sze;
+		int fa, sze; 
 		node () {
 			ls = rs = 0; 
 			fa = 0;
@@ -35,7 +42,9 @@ struct SEG {
 		build(t[id].ls, l, mid);
 		build(t[id].rs, mid + 1, r);  
 	}
+	//更改父亲
 	void update(int &now, int pre, int l, int r, int pos, int fa) {  
+		//保留副本，防止now和pre一样的时候，改掉now，而获取不到pre的值
 		int tmp = ++tot; 
 		if (l == r) {
 			t[tmp] = node();
@@ -54,6 +63,7 @@ struct SEG {
 		}
 		now = tmp;
 	}
+	//更改子树大小
 	void add(int &now, int pre, int l, int r, int pos, int sze) {
 		int tmp = ++tot;
 		if (l == r) {
@@ -97,7 +107,8 @@ pii find(int k, int x) {
 void join(int k, int x, int y) {
 	pii fx = find(k, x), fy = find(k, y);
 	if (fx.fi != fy.fi) {  
-		if (fx.se > fy.se) {
+		//启发式合并
+		if (fx.se > fy.se) { 
 			swap(fx, fy);
 		}
 		seg.update(seg.rt[k], seg.rt[k], 1, n, fx.fi, fy.fi);
@@ -119,19 +130,15 @@ int main() {
 			switch(op) {
 				case 1 :
 					scanf("%d%d", &x, &y);
-					//x ^= lastans; y ^= lastans;
 					join(i, x, y);
 					break;
 				case 2 :
 					scanf("%d", &k);
-					//k ^= lastans;
 					seg.rt[i] = seg.rt[k];
 					break;
 				case 3 :
 					scanf("%d%d", &x, &y);
-					//x ^= lastans, y ^= lastans;
-					lastans = same(i, x, y);
-					printf("%d\n", lastans);
+					puts(same(i, x, y) ? "1" : "0");
 					break;
 				default :
 					assert(0);
