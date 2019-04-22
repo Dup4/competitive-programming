@@ -8,24 +8,26 @@ int n, m;
 ll res;
 struct SEG {
 	struct node {
-		ll Max, sum; 
+		ll Max, sum, lazy; 
 		int cnt;
 		node () {
 			Max = sum = 0;
 			cnt = 0;
+			lazy = -1;
 		}
-		void add(int x) {
-			if (x > Max) { 
-				res += 1ll * cnt * x - sum;
-				sum = 1ll * cnt * Max;
-				Max = x;  
+		void add(ll x) {
+			if (x > Max) {
+				sum = 1ll * cnt * x;
+				Max = x;
+				lazy = x;	
 			}
 		}
 		node operator + (const node &other) const {
 			node res = node();
 			res.cnt = cnt + other.cnt;
-			res.Max = max(Max, other.Max);    
+			res.Max = max(Max, other.Max);     
 			res.sum = sum + other.sum;
+			return res;
 		}
 	}t[N << 2];
 	void build(int id, int l, int r) {
@@ -42,13 +44,17 @@ struct SEG {
 		t[id] = t[id << 1] + t[id << 1 | 1];
 	}
 	void pushdown(int id) {
-		int Max = t[id].Max; 
-		t[id << 1].add(Max);
-		t[id << 1 | 1].add(Max);
+		ll &lazy = t[id].lazy; 
+	    if (lazy != -1) {
+			t[id << 1].add(lazy);
+			t[id << 1 | 1].add(lazy);
+			lazy = -1;
+		}
 	}
 	void update(int id, int l, int r, int ql, int qr) {
-		if (l >= ql && r <= qr && qr < t[id].Max) {  
-			t[id].add(qr);
+		if (l >= ql && r <= qr && t[id].Max < qr) { 
+			res += 1ll * t[id].cnt * qr - t[id].sum;    
+			t[id].add(qr); 
 			return;
 		}
 		if (l == r) {
@@ -56,8 +62,8 @@ struct SEG {
 		}
 		int mid = (l + r) >> 1;
 		pushdown(id);
+		if (qr > mid && t[id << 1].Max < qr) update(id << 1 | 1, mid + 1, r, ql, qr); 
 		if (ql <= mid) update(id << 1, l, mid, ql, qr);
-		if (qr > mid) update(id << 1 | 1, mid + 1, r, ql, qr);
 		t[id] = t[id << 1] + t[id << 1 | 1];
 	} 
 }seg;
