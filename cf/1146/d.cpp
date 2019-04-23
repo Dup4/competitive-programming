@@ -5,7 +5,7 @@ using namespace std;
 #define N 500010
 #define M 500000
 int m, a, b;
-int used[N], f;
+int used[N], f, g;
 int gcd(int a, int b) {
 	return b ? gcd(b, a % b) : a;
 }
@@ -20,6 +20,11 @@ void DFS(int x, int up) {
 	}
 }
 
+ll get(ll x) {
+	ll num = x / g; 
+	return (num * (num - 1) / 2) * g + num * (x % g + 1);       
+}
+
 int main() {
 	while (scanf("%d%d%d", &m, &a, &b) != EOF) {
 		memset(used, 0, sizeof used); 
@@ -32,10 +37,9 @@ int main() {
 			}
 			res += f;
 		}
-	
 		if (m > M) {
-			int g = gcd(a, b);
-			
+			g = gcd(a, b);
+			res += get(m) - get(M) + m - M;	
 		}
 		printf("%lld\n", res);
 	}
