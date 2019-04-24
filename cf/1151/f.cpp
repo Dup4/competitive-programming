@@ -36,9 +36,7 @@ ll qmod(ll base, ll n) {
 struct node {
 	int len;
 	ll a[N][N];
-	node () {
-		memset(a, 0, sizeof a);
-	}
+	node () {}
 	node (int len) {
 		this->len = len;
 		memset(a, 0, sizeof a);
@@ -48,7 +46,7 @@ struct node {
 		for (int i = 0; i <= len; ++i) {
 			for (int j = 0; j <= len; ++j) {
 				for (int k = 0; k <= len; ++k) {
-					(res.a[i][j] += a[i][k] * other.a[k][j] % p) %= p;
+					(res.a[i][j] += a[i][k] * other.a[k][j] % p) %= p; 
 				}
 			}
 		}
@@ -82,6 +80,9 @@ int main() {
 			m += (a[i] == 0);
 		}
 		base = node(m); res = node(m);
+		if (m == 0) {
+			res.a[0][0] = 1;
+		}
 		for (int i = 1, j = 0; i <= m; ++i) {
 			j += (a[i] == 1);
 			if (i == m) {
@@ -93,14 +94,21 @@ int main() {
 			(base.a[i][i] += i * (n - m - i) % p) %= p;
 			(base.a[i][i] += (m - i) * i % p) %= p;
 			if (i != 0) {
-				(base.a[i][i - 1] += (m - i + 1) * (n - m - i + 1) % p) %= p;
+				(base.a[i - 1][i] += (m - i + 1) * (n - m - i + 1) % p) %= p;
 			}
 			if (i != m) {
-				(base.a[i][i + 1] += (i + 1) * (i + 1) % p) %= p;
+				(base.a[i + 1][i] += (i + 1) * (i + 1) % p) %= p;
 			}
 		}
-		
+	//	for (int i = 0; i <= m; ++i) {
+	//		for (int j = 0; j <= m; ++j) {
+	//			printf("%lld%c", base.a[i][j], " \n"[j == m]);
+	//		}
+	//	}	
 		qmod(res, base, k);
+	//	for (int i = 0; i <= m; ++i) {
+	//		printf("%lld%c", res.a[0][i], " \n"[i == m]);
+	//	}
 		ll a = res.a[0][0], b = 0;
 		for (int i = 0; i <= m; ++i) {
 			(b += res.a[0][i]) %= p;
