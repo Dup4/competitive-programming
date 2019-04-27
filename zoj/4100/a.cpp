@@ -24,6 +24,7 @@ struct SEG {
 			res.sum[1] = sum[1] + other.sum[1]; 
 		}
 	}t[N << 2];
+	ll a, b, res; 
 	void build(int id, int l, int r) {
 		if (l == r) {
 			t[id] = node();
@@ -46,6 +47,11 @@ struct SEG {
 		pushup(id);
 	}
 	int query(int id, int l, int r, ll need) {
+		if (l == r) {
+			
+		}
+		int mid = (l + r) >> 1;
+
 	}
 	
 }seg;
@@ -104,7 +110,9 @@ int main() {
 				case 2 :
 					scanf("%lld", &k);
 					res[0] = max(1ll, 1ll * se - k);
-					res[1] = se - seg.query(1, 1, n, k - fee); 
+					seg.a = seg.b = seg.res = 0;
+					seg.query(1, 1, n, k - fee);
+					res[1] = se - seg.res + 1;   
 					printf("%d %d\n", res[0], res[1]);
 					break;
 				default :
