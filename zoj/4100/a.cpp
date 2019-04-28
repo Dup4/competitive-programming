@@ -48,10 +48,19 @@ struct SEG {
 	}
 	int query(int id, int l, int r, ll need) {
 		if (l == r) {
-			
+			int ql = 1, qr = t[id].sze;
 		}
 		int mid = (l + r) >> 1;
-
+		ll tot = f(t[id << 1 | 1].sum[0] + a);
+		ll used = t[id << 1 | 1].sum[1] + b;
+		if (need <= tot - used) {
+			query(id << 1 | 1, mid + 1, r, need);
+		} else {
+			a += t[id << 1 | 1].sum[0];
+			b += t[id << 1 | 1].sum[1];
+			query(id << 1, l, mid, need);
+		    	
+		}
 	}
 	
 }seg;
