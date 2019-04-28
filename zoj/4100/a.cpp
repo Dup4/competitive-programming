@@ -4,15 +4,14 @@ using namespace std;
 #define ll long long
 #define N 100010
 int n, q;
-ll fee; int se;
+ll fee, se;
 ll f(ll x) {
-	return 1ll * x * (x + 1) / 2;
+	return 1ll * x * (x - 1) / 2;
 }
 
 struct SEG {
 	struct node {
-		int sze;
-		ll sum[2];
+		ll sze, sum[2];
 		node () {
 			sze = 0;
 			sum[0] = sum[1] = 0;
@@ -21,10 +20,11 @@ struct SEG {
 			node res = node();
 			res.sze = sze + other.sze;
 			res.sum[0] = sum[0] + other.sum[0];
-			res.sum[1] = sum[1] + other.sum[1]; 
+			res.sum[1] = sum[1] + other.sum[1];    
+			return res;
 		}
 	}t[N << 2];
-	ll a, b, res; 
+	ll a, b, res, tot, used; 
 	void build(int id, int l, int r) {
 		if (l == r) {
 			t[id] = node();
@@ -36,7 +36,7 @@ struct SEG {
 	}
 	void update(int id, int l, int r, int pos, int val) {
 		if (l == r) {
-			t[id].sze += val;
+			t[id].sze += val;  
 			t[id].sum[0] = 1ll * l * t[id].sze;
 			t[id].sum[1] = 1ll * f(l) * t[id].sze;
 			return;
@@ -44,25 +44,37 @@ struct SEG {
 		int mid = (l + r) >> 1;
 		if (pos <= mid) update(id << 1, l, mid, pos, val);
 		else update(id << 1 | 1, mid + 1, r, pos, val);
-		pushup(id);
+		t[id] = t[id << 1] + t[id << 1 | 1];
 	}
-	int query(int id, int l, int r, ll need) {
+	void query(int id, int l, int r, ll need) {
 		if (l == r) {
-			int ql = 1, qr = t[id].sze;
+			int ql = 0, qr = t[id].sze, ans = 0;
+			while (qr - ql >= 0) {
+				int mid = (ql + qr) >> 1;
+				tot = f(1ll * l * mid + a);
+				used = f(l) * mid + b;
+				if (need <= tot - used) {
+					qr = mid - 1;
+					ans = mid;
+				} else {
+					ql = mid + 1; 
+				}
+			}
+			res += ans;
+			return;
 		}
 		int mid = (l + r) >> 1;
-		ll tot = f(t[id << 1 | 1].sum[0] + a);
-		ll used = t[id << 1 | 1].sum[1] + b;
+		tot = f(t[id << 1 | 1].sum[0] + a);
+		used = t[id << 1 | 1].sum[1] + b;
 		if (need <= tot - used) {
 			query(id << 1 | 1, mid + 1, r, need);
 		} else {
 			a += t[id << 1 | 1].sum[0];
 			b += t[id << 1 | 1].sum[1];
-			query(id << 1, l, mid, need);
-		    	
-		}
+			res += t[id << 1 | 1].sze; 
+			query(id << 1, l, mid, need); 
+		}   
 	}
-	
 }seg;
 
 struct UF {
@@ -119,10 +131,14 @@ int main() {
 				case 2 :
 					scanf("%lld", &k);
 					res[0] = max(1ll, 1ll * se - k);
-					seg.a = seg.b = seg.res = 0;
-					seg.query(1, 1, n, k - fee);
-					res[1] = se - seg.res + 1;   
-					printf("%d %d\n", res[0], res[1]);
+					if (k - fee <= 0) {
+						res[1] = se;
+					} else {
+						seg.a = seg.b = seg.res = 0;
+						seg.query(1, 1, n, k - fee);
+						res[1] = se - seg.res + 1;   
+					}
+					printf("%lld %lld\n", res[0], res[1]);
 					break;
 				default :
 					assert(0);
