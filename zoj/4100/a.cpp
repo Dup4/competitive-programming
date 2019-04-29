@@ -26,8 +26,8 @@ struct SEG {
 	}t[N << 2];
 	ll a, b, res, tot, used; 
 	void build(int id, int l, int r) {
+		t[id] = node();
 		if (l == r) {
-			t[id] = node();
 			return;
 		}
 		int mid = (l + r) >> 1;
@@ -38,7 +38,7 @@ struct SEG {
 		if (l == r) {
 			t[id].sze += val;  
 			t[id].sum[0] = 1ll * l * t[id].sze;
-			t[id].sum[1] = 1ll * f(l) * t[id].sze;
+			t[id].sum[1] = 1ll * f(l) * t[id].sze;   
 			return;
 		}
 		int mid = (l + r) >> 1;
@@ -48,7 +48,7 @@ struct SEG {
 	}
 	void query(int id, int l, int r, ll need) {
 		if (l == r) {
-			int ql = 0, qr = t[id].sze, ans = 0;
+			int ql = 0, qr = t[id].sze, ans = 0; 
 			while (qr - ql >= 0) {
 				int mid = (ql + qr) >> 1;
 				tot = f(1ll * l * mid + a);
@@ -95,11 +95,14 @@ struct UF {
 			seg.update(1, 1, n, p[x], -1);
 			seg.update(1, 1, n, p[y], -1);
 			fee -= f(p[x]) + f(p[y]) - e[x] - e[y];
+			if (p[x] > p[y]) {
+				swap(x, y);
+			}
 			fa[x] = y;
-			p[y] += p[x];
+			p[y] += p[x];   
 			e[y] += e[x] + 1;
 			seg.update(1, 1, n, p[y], 1);
-			--se;
+			--se;  
 			fee += f(p[y]) - e[y];
 		} else {
 			++e[x];
