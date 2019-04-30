@@ -5,6 +5,7 @@ using namespace std;
 
 class Time {
 	public :
+		Time() {}
 		Time(int h = 0, int m = 0, int s = 0) {
 			if (h < 0 || h >= 24 || m < 0 || m >= 60 || s < 0 || s >= 60) {
 				throw ("invalid argument!");
@@ -64,6 +65,7 @@ class Time {
 				   s == other.s;
 		}
 		Time operator = (const Time &other) const {
+
 			
 		}
 		friend ostream& operator << (ostream &output, const Time &x) {
