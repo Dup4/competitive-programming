@@ -14,25 +14,56 @@ bool ok(string &s) {
 	return true;
 }
 
-void solve() {
-	int mid = ((int)vec.size()) / 2;
-	string res = "";
+bool work1() {
+	int mid = ((int)vec.size() + 1) / 2; 
+	string res = ""; 
 	for (int i = 0, j = mid, sze = (int)vec.size(); i < mid || j < sze; ++i, ++j) {
 		if (j < sze) {
-			while (cnt[vec[j]]--) {
+			for (int k = 0; k < cnt[vec[j]]; ++k) {
 				res += vec[j];
 			}
 		}
 		if (i < mid) {
-			while (cnt[vec[i]]--) {
+			for (int k = 0; k < cnt[vec[i]]; ++k) {
 				res += vec[i];
-			}	
+			}
 		}
 	}
 	if (ok(res)) {
 		cout << res << "\n";
+		return true;
 	} else {
-		cout << "No answer\n";
+		return false;
+	}
+}
+
+bool work2() {
+	int mid = ((int)vec.size() + 1) / 2;
+	string res = ""; 
+	for (int i = 0, j = mid, sze = (int)vec.size(); i < mid || j < sze; ++i, ++j) {
+		if (i < mid) {
+			for (int k = 0; k < cnt[vec[i]]; ++k) {
+				res += vec[i];
+			}
+		}
+		if (j < sze) {
+			for (int k = 0; k < cnt[vec[j]]; ++k) {
+				res += vec[j];
+			}
+		}
+	}
+	if (ok(res)) {
+		cout << res << "\n";
+		return true;
+	} else {
+		return false;
+	}
+
+}
+
+void solve() {
+	if (!work1() && !work2()) {
+		puts("No answer");
 	}
 }
 
