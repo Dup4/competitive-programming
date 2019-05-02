@@ -19,12 +19,9 @@ void solve() {
 		} else if (a[i] == 2) {
 			res += 3;
 			if (i - 2 >= 1 && a[i - 2] == 3) {
-				res += 0;
+				res -= 1;
 			}
 		} else {
-			if (i - 2 >= 1 && a[i - 2] == 3) {
-				res += 1;
-			}
 			res += 4;
 		}
 	}
