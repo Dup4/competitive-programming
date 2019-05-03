@@ -1,104 +1,58 @@
-#include <iostream>
-#include <iomanip>
-#include <stdexcept>
+#include <bits/stdc++.h>
 using namespace std;
 
-class Time {
-	public :
-		Time() {}
-		Time(int h = 0, int m = 0, int s = 0) {
-			if (h < 0 || h >= 24 || m < 0 || m >= 60 || s < 0 || s >= 60) {
-				throw ("invalid argument!");
-			}
-			this->h = h;
-			this->m = m;
-			this->s = s;
-		};
-		int getHour() {
-			return h;
-		}
-		int getMinute() {
-			return m;
-		}
-		int getSecond() {
-			return s;
-		}  
-		void setTime(int h, int m, int s) {
-			if (h < 0 || h >= 24 || m < 0 || m >= 60 || s < 0 || s >= 60) {
-				throw ("invalid argument!");
-			}
-			this->h = h;
-			this->m = m;
-			this->s = s;
-		}
-		void operator++() {
-			++this->s;
-			if (this->s == 60) {
-				++this->m;
-				this->s = 0;
-			}
-			if (this->m == 60) {
-				++this->h;
-				this->m = 0;
-			}
-			if (this->h == 24) {
-				this->h = 0;
-			}
-		}
-		void operator++(int) {
-			++this->s;
-			if (this->s == 60) {
-				++this->m;
-				this->s = 0;
-			}
-			if (this->m == 60) {
-				++this->h;
-				this->m = 0;
-			}
-			if (this->h == 24) {
-				this->h = 0;
-			}
-		}
-		bool operator == (const Time &other) const {
-			return h == other.h &&
-				   m == other.m &&
-				   s == other.s;
-		}
-		Time operator = (const Time &other) const {
-
-			
-		}
-		friend ostream& operator << (ostream &output, const Time &x) {
-			output << setfill('0') << setw(2) << x.h << ":" << setfill('0') << setw(2) << x.m << ":" << setfill('0') << setw(2) << x.s << "\n";
-		    return output;	
-		}
-	private :
-		int h, m, s;  
+int n;
+int G[11][11];
+int f[11][11][11][11];
+int Move[][2] = {
+	{1, 0},
+	{0, 1},
 };
 
+bool ok(int x, int y) {
+	if (x < 1 || x > n || y < 1 || y > n) {
+		return false;
+	}
+	return true;
+}
+int dp(int x, int y, int z, int w) {
+	if (f[x][y][z][w] != -1) {
+		return f[x][y][z][w];
+	} 
+	f[x][y][z][w] = 0;
+	for (int i = 0; i < 2; ++i) {
+		int nx = x + Move[i][0];
+		int ny = y + Move[i][1];
+		for (int j = 0; j < 2; ++j) {
+			int nz = z + Move[j][0];
+			int nw = w + Move[j][1];
+			if (ok(nx, ny) && ok(nz, nw)) {
+				f[x][y][z][w] = max(f[x][y][z][w], dp(nx, ny, nz, nw));
+			}
+		}
+	}
+	if (x == z && y == w) {
+		f[x][y][z][w] += G[x][y];
+	} else {
+		f[x][y][z][w] += G[x][y] + G[z][w];
+	}
+	return f[x][y][z][w];
+}
+
 int main() {
-    int hour, minute, second;
-    cin >> hour >> minute >> second;
-    try {
-        Time t1(hour, minute, second);
-    	Time t2;
-    	cout << "t1: ";
-    	cout << t1;
-		cout << "t2: ";
-	    cout << t2;
-		t2 = t1++;
-		cout << "t1: ";
-		cout << t1;
-		cout << "t2: ";
-		cout << t2;
-		if(t1 == t2)
-        	cout << "t1 == t2" << endl;
-    	else
-            cout << "t1 != t2" << endl;
-    	int s = t1;
-    	cout << s << endl;
-    } catch(invalid_argument &ex) {
-    	cout << ex.what() << endl;	
-    }
-    return 0;
+	while (scanf("%d", &n) != EOF) {
+		memset(G, 0, sizeof G);
+		memset(f, -1, sizeof f);
+		int x, y, d;
+		while (scanf("%d%d%d", &x, &y, &d), x || y || d) {
+			G[x][y] = d;
+		}
+	//	for (int i = 1; i <= n; ++i) {
+	//		for (int j = 1; j <= n; ++j) {
+	//			printf("%d%c", G[i][j], " \n"[j == n]);
+	//		}
+	//	}
+		printf("%d\n", dp(1, 1, 1, 1));
+	}
+	return 0;
 }
