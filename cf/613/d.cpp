@@ -1,6 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/*
+	CF613D 给出一些城市，选择一些关键点，使得这些城市被孤立
+	求最小关键点数量
+	建出虚数 再DP
+	f[u] 表示u以及u子树内的最小代价
+	g[u] 表示u以及u子树内还要多少关键点没有被孤立	
+*/
+
 #define N 100010
 int n, q;
 int a[N << 1], Sta[N << 1], vis[N]; 
@@ -11,7 +19,7 @@ void add(vector < vector <int> > &G, int u, int v) {
 	G[v].push_back(u); 
 }
 
-int fa[N], deep[N], sze[N], son[N], top[N], in[N], out[N], cnt; 
+int fa[N], deep[N], sze[N], son[N], top[N], p[N]; 
 void DFS(int u) {
 	sze[u] = 1;
 	erp(G[0], u) if (v != fa[u]) {
@@ -25,17 +33,15 @@ void DFS(int u) {
 	}
 }
 void gettop(int u, int tp) {
-	in[u] = ++cnt;
+	p[u] = ++p[0];
 	top[u] = tp;
 	if (!son[u]) {
-		out[u] = cnt;
 		return;
 	}
 	gettop(son[u], tp);
 	erp(G[0], u) if (v != son[u] && v != fa[u]) {
 		gettop(v, v);
 	}
-	out[u] = cnt;
 }
 int querylca(int u, int v) {
 	while (top[u] != top[v]) {
@@ -62,6 +68,8 @@ bool Not(int k) {
 
 int f[N], g[N];
 void dp(int u, int fa) {
+	//将用到的点加入a[]，方便清空
+	a[++a[0]] = u;
 	f[u] = g[u] = 0;  
 	erp(G[1], u) if (v != fa) {
 		dp(v, u); 
@@ -85,7 +93,7 @@ void init() {
 	fa[1] = 0; deep[1] = 0;
 	memset(son, 0, sizeof son);
 	memset(vis, 0, sizeof vis); 
-	cnt = 0;
+	p[0] = 0;
 }
 int main() {
 	while (scanf("%d", &n) != EOF) {
@@ -97,33 +105,35 @@ int main() {
 		DFS(1); gettop(1, 1);
 		scanf("%d", &q);
 		while (q--) {
-			int &top = Sta[0]; 
 			scanf("%d", a);  
-			int k = a[0];
+			int k = a[0], top = 0; 
 			for (int i = 1; i <= k; ++i) {
 				scanf("%d", a + i);
 				vis[a[i]] = 1;   
 			}
+			//特判
 			if (Not(k)) {
 				for (int i = 1; i <= k; ++i) {
 					vis[a[i]] = 0;
 				}
-				continue;
+				continue; 
 			}
+			//按DFS序排序
 			sort(a + 1, a + 1 + k, [&](int x, int y) {
-				return in[x] < in[y];		
+				return p[x] < p[y];		
 			});
+			//超级根
 			Sta[top = 1] = 1; 
 			for (int i = 1; i <= k; ++i) {
+				//求出当前点与栈顶元素的lca
 				int lca = querylca(a[i], Sta[top]);  
+				//1. lca = Sta[top] 说明a[i] -> Sta[top]是一条直链，直接将a[i]加入栈即可
+				//2. lca != Sta[top] 说明a[i]和Sta[top]在不同的子树中
 				while (deep[lca] < deep[Sta[top]]) {
 					if (deep[Sta[top - 1]] <= deep[lca]) {
 						int last = Sta[top--];
 						if (Sta[top] != lca) {
 							Sta[++top] = lca;
-						}
-						if (a[a[0]] != lca) {
-							a[++a[0]] = lca;
 						}
 						add(G[1], last, lca); 
 						break;
@@ -138,9 +148,11 @@ int main() {
 			while (top > 1) { 
 				add(G[1], Sta[top], Sta[top - 1]);
 				--top;
-			}	
+			}
+			a[0] = 0;	
 			dp(1, 1);
 			printf("%d\n", f[1]);
+			//清空操作
 			for (int i = 1; i <= a[0]; ++i) {
 				vis[a[i]] = 0;
 				G[1][a[i]].clear();
