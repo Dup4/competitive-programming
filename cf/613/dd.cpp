@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define N 100010
+#define N 100011
 int n, q;
 int a[N << 1], Sta[N << 1], vis[N]; 
 vector < vector <int> > G[2];
