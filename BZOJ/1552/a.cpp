@@ -4,14 +4,14 @@ using namespace std;
 #define N 100010
 int n, a[N], b[N]; 
 
-struct SPLAY {
+struct SPLAY { 
 	struct node {
 		int son[2];
 		int val, fa, sze, lazy;
 		node () {}
-		node (int _fa, int _val) {
-			fa = _fa;
-			val = _val;
+		node (int fa, int val) {
+			this->fa = fa;
+			this->val = val;
 			son[0] = son[1] = 0;
 			lazy = 0;
 			sze = 1;
@@ -27,15 +27,15 @@ struct SPLAY {
 		rt = tot = 0;
 	}
 	void pushup(int x) {
-		t[x].sze = 1 + t[t[x].son[0]].sze = t[t[x].son[1]].sze;
+		t[x].sze = 1 + t[t[x].son[0]].sze + t[t[x].son[1]].sze;  
 	}
-	void rotate(int x) {
+	void rotate(int x) { 
 		int y = t[x].fa;
 		int z = t[y].fa;
 		int k = t[y].fa == x;
 		t[x].fa = z; t[z].son[t[z].son[1] == y] = x; 
 		t[y].son[k] = t[x].son[k ^ 1]; t[t[x].son[k ^ 1]].fa = y;
-		t[y].fa = x; t[s].son[k ^ 1] = y;
+		t[y].fa = x; t[x].son[k ^ 1] = y;
 		pushup(y); pushup(x);
 	}
 	void pushdown(int x) {
@@ -54,7 +54,7 @@ struct SPLAY {
 		}
 		while (Top) {
 			pushdown(Sta[top--]);   
-		}
+		} 
 		while (t[x].fa != tar) { 
 			int y = t[x].fa;
 			int z = t[y].fa;
