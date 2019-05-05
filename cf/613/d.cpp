@@ -116,7 +116,7 @@ int main() {
 				for (int i = 1; i <= k; ++i) {
 					vis[a[i]] = 0;
 				}
-				continue; 
+				continue;    
 			}
 			//按DFS序排序
 			sort(a + 1, a + 1 + k, [&](int x, int y) {
@@ -129,6 +129,8 @@ int main() {
 				int lca = querylca(a[i], Sta[top]);  
 				//1. lca = Sta[top] 说明a[i] -> Sta[top]是一条直链，直接将a[i]加入栈即可
 				//2. lca != Sta[top] 说明a[i]和Sta[top]在不同的子树中
+				//那么我们要维护一条链，那么栈中深度比当前点lca的深度大的都要出栈并且连变
+				//再把lca加进去，栈中的所有点又是一条链
 				while (deep[lca] < deep[Sta[top]]) {
 					if (deep[Sta[top - 1]] <= deep[lca]) {
 						int last = Sta[top--];
@@ -143,7 +145,7 @@ int main() {
 				}
 				if (Sta[top] != a[i]) {
 					Sta[++top] = a[i];
-				}
+				} 
 			}	
 			while (top > 1) { 
 				add(G[1], Sta[top], Sta[top - 1]);
