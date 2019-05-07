@@ -1,18 +1,23 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define INF 0x3f3f3f3f
 #define N 100010
-int n, a[N], b[N]; 
+#define pii pair <int, int>
+#define fi first 
+#define se second
+int n, a[N];
+pii b[N];
 
 struct SPLAY { 
-	struct node {
+	struct node {  
 		int son[2];
 		int val, fa, sze, lazy;
 		node () {}
 		node (int fa, int val) {
 			this->fa = fa;
 			this->val = val;
-			son[0] = son[1] = 0;
+			son[0] = son[1] = 0;   
 			lazy = 0;
 			sze = 1;
 		}
@@ -21,7 +26,7 @@ struct SPLAY {
 			lazy ^= 1; 
 		}
 	}t[N];
-	int rt, tot;
+	int rt, tot;  
 	int Sta[N], Top;
 	void init () {
 		rt = tot = 0;
@@ -32,12 +37,12 @@ struct SPLAY {
 	void rotate(int x) { 
 		int y = t[x].fa;
 		int z = t[y].fa;
-		int k = t[y].fa == x;
+		int k = (t[y].son[1] == x);
 		t[x].fa = z; t[z].son[t[z].son[1] == y] = x; 
 		t[y].son[k] = t[x].son[k ^ 1]; t[t[x].son[k ^ 1]].fa = y;
 		t[y].fa = x; t[x].son[k ^ 1] = y;
 		pushup(y); pushup(x);
-	}
+	} 
 	void pushdown(int x) {
 		int &lazy = t[x].lazy;
 		if (!lazy) {
@@ -49,11 +54,11 @@ struct SPLAY {
 	}
 	void splay(int x, int tar) {
 		Sta[Top = 1] = x;
-		for (int i = x; i != root; i = t[i].fa) {
+		for (int i = x; i != rt; i = t[i].fa) {
 			Sta[++Top] = t[i].fa; 
 		}
 		while (Top) {
-			pushdown(Sta[top--]);   
+			pushdown(Sta[Top--]);   
 		} 
 		while (t[x].fa != tar) { 
 			int y = t[x].fa;
@@ -83,20 +88,24 @@ struct SPLAY {
 	}
 	int Rank(int x) {
 		splay(x, 0);
-		return t[t[x].son[0]].sze + 1;
+		return t[t[x].son[0]].sze + 1;  
 	}
 	int kth(int k) {
 		int u = rt;
 		while (1) {
-			int ls = t[x].son[0];
-			int rt = t[x].son[1];
+		//	printf("%d %d %d\n", u, t[u].val, k);
+			if (t[u].lazy) {
+				pushdown(u);
+			}
+			int ls = t[u].son[0];
+			int rs = t[u].son[1];
 			int tot = t[ls].sze + 1;
 			if (tot == k) {
 				return u;
 			} else if (tot > k) {
 				u = ls;
 			} else {
-				k -= tot;
+				k -= tot; 
 				u = rs;
 			}
 		}
@@ -106,26 +115,48 @@ struct SPLAY {
 		int R = Rank(x);
 		int l = kth(R - 1);
 		int r = kth(R + 1);
-		splay(l, 0); splau(r, l);
+		splay(l, 0); splay(r, l);
 		t[r].son[0] = 0;
 		pushup(r); pushup(l);    
 	}
-}sp;
+	void Reverse(int l, int r) {
+		int pre = kth(l - 1);
+		int nx = kth(r + 1); 
+		splay(pre, 0); splay(nx, pre);
+		if (t[nx].son[0] != 0) {
+			t[t[nx].son[0]].rev();
+		}
+	}
+	void output(int x) {
+		if (!x) {
+			return;
+		}
+		output(t[x].son[0]);
+		printf("%d %d\n", x, t[x].val);
+		output(t[x].son[1]);
+	}
+}sp;  
 
 int main() {
 	while (scanf("%d", &n) != EOF) {
+		sp.init();
 		for (int i = 1; i <= n; ++i) {
 			scanf("%d", a + i);
-			b[a[i]] = i;			
+			b[i] = pii(a[i], i);						
 		}
 		for (int i = 1; i <= n; ++i) {
 			sp.insert(i);
 		}
-		for (int i = 1; i <= n; ++i) {
-			printf("%d%c", sp.kth(b[i]) + i, " \n"[i == n]);
-			
+		sort(b + 1, b + 1 + n);  
+		sp.insert(-INF);
+		sp.insert(INF); 
+		for (int i = 1; i <= n; ++i) { 
+			int x = b[i].se;
+			int y = sp.Rank(b[i].se);
+			printf("%d%c", y + i - 2, " \n"[i == n]);
+			sp.Reverse(2, y); 
+			sp.Del(x);
 		}
-
 	}	
 	return 0;
 }
