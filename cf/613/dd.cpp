@@ -1,6 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/*
+	CF613D 
+*/
+
 #define N 100011
 int n, q;
 int a[N << 1], Sta[N << 1], vis[N]; 
@@ -112,18 +116,20 @@ int main() {
 			sort(a + 1, a + 1 + k, [&](int x, int y) {
 				return in[x] < in[y];		
 			});
-
 			for (int i = k; i > 1; --i) {
 				a[++a[0]] = querylca(a[i], a[i - 1]);
 			}
+			//按照DFS序排序 并且去掉重复元素
 			sort(a + 1, a + 1 + a[0], [&](int x, int y) {
 				return in[x] < in[y];		
 			});
 			a[0] = unique(a + 1, a + 1 + a[0]) - a - 1;
 			for (int i = 1, top = 0; i <= a[0]; ++i) {
+				//判断当前点是否在栈顶节点的子树中
 				while (top && out[Sta[top]] < in[a[i]]) {
 					--top;
 				}
+				//和栈顶节点连边
 				if (top) {
 					add(G[1], Sta[top], a[i]);
 				}
