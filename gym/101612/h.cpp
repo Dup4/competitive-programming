@@ -28,8 +28,10 @@ void DFS(int u) {
 	
 
 void File() {
+	#ifndef HOME
 	freopen("hidden.in", "r", stdin);
 	freopen("hidden.out", "w", stdout);
+	#endif
 }
 void init() {
 	G.clear();
@@ -39,7 +41,7 @@ void init() {
 	memset(used, 0, sizeof used);
 }
 int main() {
-	//File();
+	File();
 	while (scanf("%d", &n) != EOF) {
 		init();
 		for (int i = 2; i <= n; ++i) {
