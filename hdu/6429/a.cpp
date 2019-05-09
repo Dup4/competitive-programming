@@ -23,12 +23,13 @@ int main() {
 		for (int i = 2; i <= n; ++i) {
 			for (int j = 1; j < i; ++j) {
 				for (int k = 0; k <= m; ++k) {
-					(f[i][i][k] += f[i - 1][j][k]) %= p; 
+					(f[i][i][k] += f[i - 1][j][k]) %= p;    
 				}
 			}
 			for (int j = 1; j < i; ++j) {
 				for (int k = 1; k < i; ++k) {
 					for (int o = 0; o <= m; ++o) {
+						(f[i][i][o] += (f[j][k][o])) %= p;
 						int nx = o - abs(j - k) + (i - k) + (i - j);
 						if (nx >= 0 && nx <= m) {
 							(f[i][k][nx] += f[j][k][o]) %= p;
