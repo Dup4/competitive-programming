@@ -13,6 +13,7 @@ void add(int &x, int y) {
 	}
 }
 
+/*
 namespace io {
     const int SIZE = 1e7 + 10;
     char inbuff[SIZE];
@@ -30,25 +31,50 @@ namespace io {
         while(!isdigit(ch)) ch = gc();
         while(isdigit(ch)) x = x * 10 + ch - '0', ch = gc();
     }
-} using io::read;
+};
+*/
+
+char ibuf[1 << 28] , * s;
+struct io
+{
+    int a[24];
+    io()
+    {
+ 
+        fread( s = ibuf , 1 , 1 << 28 , stdin );
+    }
+    ~io()
+    {
+    }
+    inline int read()
+    {
+        register int u = 0;
+        while( * s < 48 ) s++;
+        while( * s > 32 )
+            u = u * 10 + * s++ - 48;
+        return u;
+    }
+} ip;
+#define read ip.read
+#define print ip.print
 
 int main() {
-	read(n); read(m); read(k);
+	n = read(); m = read(); k = read();
 	for (int i = 1; i <= n; ++i) {
-		read(a[i]);
+		a[i] = read();
 	}
 	for (int i = 0; i <= m; ++i) {
-		read(b[i]);
+		b[i] = read();
 	}
 	ll res = 0;
 	for (int i = m; i >= 0; --i) {
-		add(res = res * k % p, b[i]);
+		res = (res * k + b[i]) % p;
 	}
-	int tot = 1;
+	ll tot = 1;
 	for (int i = 1; i <= n; ++i) { 
-		(tot = 1ll * tot * ((k - a[i] + p) % p) % p); 
+		tot = tot * (k - a[i]) % p;
 	}	
-	add(res, tot);
-	printf("%lld\n", res);
+	tot = (tot + p) % p;
+	printf("%lld\n", (res + tot) % p);
 	return 0;
 }
