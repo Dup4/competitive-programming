@@ -13,7 +13,6 @@ void add(int &x, int y) {
 	}
 }
 
-/*
 namespace io {
     const int SIZE = 1e7 + 10;
     char inbuff[SIZE];
@@ -26,55 +25,60 @@ namespace io {
         if (l == r) init();
         return (l != r) ? *(l++) : EOF;
     }
-    void read(int &x) {
-        x = 0; char ch = gc();
+    int read() {
+        int x = 0; char ch = gc();
         while(!isdigit(ch)) ch = gc();
         while(isdigit(ch)) x = x * 10 + ch - '0', ch = gc();
-    }
+    	return x;
+	}
+};
+
+/*
+namespace io {
+	const int S = (1 << 28) + 5;
+	char buf[S], *H, *T;
+	inline char Get() {
+		if (H == T) {
+			T = (H = buf) + fread(buf, 1, S, stdin);
+		}
+		if (H == T) {
+			return -1;
+		}
+		return *H++;
+	}
+	inline int read() {
+		int x = 0, fg = 1; char c = Get();
+		while (!isdigit(c) && c != '-') c = Get();
+		if (c == '-') fg = -1, c = Get();
+		while (isdigit(c)) {
+			x = x * 10 + c - '0';
+			c = Get();
+		}
+		return x * fg;
+	}
 };
 */
-
-char ibuf[1 << 28] , * s;
-struct io
-{
-    int a[24];
-    io()
-    {
- 
-        fread( s = ibuf , 1 , 1 << 28 , stdin );
-    }
-    ~io()
-    {
-    }
-    inline int read()
-    {
-        register int u = 0;
-        while( * s < 48 ) s++;
-        while( * s > 32 )
-            u = u * 10 + * s++ - 48;
-        return u;
-    }
-} ip;
-#define read ip.read
-#define print ip.print
+using namespace io;
 
 int main() {
-	n = read(); m = read(); k = read();
+	n = read();
+	m = read();
+	k = read();
 	for (int i = 1; i <= n; ++i) {
 		a[i] = read();
 	}
 	for (int i = 0; i <= m; ++i) {
 		b[i] = read();
 	}
-	ll res = 0;
+	int res = 0;
 	for (int i = m; i >= 0; --i) {
-		res = (res * k + b[i]) % p;
+		add(res = (1ll * res * k % p), b[i]);
 	}
-	ll tot = 1;
+	int tot = 1;
 	for (int i = 1; i <= n; ++i) { 
-		tot = tot * (k - a[i]) % p;
+		tot = 1ll * tot * (k - a[i]) % p;
 	}	
 	tot = (tot + p) % p;
-	printf("%lld\n", (res + tot) % p);
+	printf("%d\n", (res + tot) % p);
 	return 0;
 }
