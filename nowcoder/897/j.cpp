@@ -30,10 +30,12 @@ ll g(ll x) {
 				}
 			}
 			if (i < 62 && (((x >> (i + 2)) & 1)) == 1) {
-				--res;
 				break;
 			}
 		}
+	}
+	if ((x ^ (4 * x)) == 5 * x) { 
+		++res;
 	}
 	return res;
 }
