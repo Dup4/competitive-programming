@@ -1,53 +1,63 @@
-#include <iostream>
-#include <iomanip>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
-class BMI {
-    public :
-        //构造函数，和自定义参数列表
-        BMI() {}
-        BMI(string name, double height, double weight) : name(name), height(height), weight(weight) {}
-        //获取用户的姓名
-        string getName() {
-            return name;
-        }
-        //获取用户的BMI指数
-        double getBMI() {
-            return weight / height / height; 
-        }
-        //获取用户的BMI指数对应的健康状态
-        string reportStatus() {
-            double BMI = getBMI();
-            if (BMI < 18.5) {
-                return "Underweight";
-            } else if (BMI < 25.0) {
-                return "Normal";
-            } else if (BMI < 30.0) {
-                return "Overweight";
-            } else {
-                return "Obese";
-            }
-        }
-    private :
-        //定义私有变量 用户姓名、身高、体重
-        string name;
-        double height, weight;
+class Student {
+	public :
+		Student() {}
+		Student(int num, string name, int score, char grade) {
+			this->num = num;
+			this->name = name;
+			this->score = score;
+			this->grade = grade;
+		}
+		int getNum() {
+			return num;
+		}
+		string getName() {
+			return name;
+		}
+		int getScore() {
+			return score;
+		}
+		char getGrade() {
+			return grade;
+		}
+		friend istream &operator >> (istream &in, Student &x) {
+			in >> x.num >> x.name >> x.score;
+			if (x.score >= 90) {
+				x.grade = 'A';
+			} else if (x.score >= 80) {
+				x.grade = 'B';
+			} else if (x.score >= 70) {
+				x.grade = 'C';
+			} else if (x.score >= 60) {
+				x.grade = 'D';
+			} else {
+				x.grade = 'E';
+			}
+			return in;
+		}
+		friend ostream &operator << (ostream &out, const Student &x) {
+			out << x.num << " " << x.name << " " << x.score << " " << x.grade << endl;
+			return out;
+		}
+	private :
+		int num;
+		string name;
+		int score;
+		char grade;
 };
 
+
 int main() {
-    string name;
-    double height, weight;
-    cout << "This program reads data and computes" << endl;
-    cout << "body mass index and weight status." << endl;
-    cout << "Enter person's name: ";
-    getline(cin, name);
-    cout << "height(in meters)? ";
-    cin >> height;
-    cout << "weight(in kilograms)? ";
-    cin >> weight;
-    BMI bmi(name, height, weight);
-    cout << "The BMI for " << bmi.getName() << " is " << fixed << setprecision(2) 
-         << bmi.getBMI() << " " << bmi.reportStatus() << endl;
-    return 0;
+	Student x;
+	ofstream out("student.txt");
+	while (cin >> x) {
+		if (x.getNum() == 0) {
+			break;
+		}
+		out << x;
+		//out.write(reinterpret_cast<char *>(&x), sizeof (x));
+	}
+	return 0;
 }

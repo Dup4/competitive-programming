@@ -86,7 +86,8 @@ int main() {
 			ll l = seg[0].query(1, 1, n, 1, pos);
 			l = l * (n - pos + 1) % p;
 			ll r = seg[1].query(1, 1, n, pos, n);
-			res = (res + 1ll * l * r % p * b[i].fi % p) % p;
+			r = r * i % p;
+			res = (res + l * r % p * b[i].fi % p) % p;
 			seg[0].update(1, 1, n, 1, pos, 1);
 			seg[1].update(1, 1, n, pos, n, 1);
 		}
