@@ -1,40 +1,42 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <vector>
 using namespace std;
+void Print(int n) {
+    cout << n * n << ",";
+}
+class MyPrint {
+public:
+    void operator()(const string & s) {
+	cout << s << ",";
+    }
+};
 
-#define ll unsigned long long
+template <class InputIterator, class Function>
+void my_for_each(InputIterator l, InputIterator r, Function f) {
+	for (; l != r; ++l) {
+		f(*l);
+	}
+}
+
 int main() {
-	ll a[3];
-	ifstream in;
-	in.open("image.jpg", ios::binary);
-	in.seekg(12L, ios::beg);
-	in.read(reinterpret_cast< char * > (&a[0]), 1);   
-	in.seekg(48L, ios::beg);
-	in.read(reinterpret_cast< char * >(&a[1]), 1); 
-	in.seekg(79L, ios::beg);
-	in.read(reinterpret_cast<char *>(&a[2]), 1);
-	int res = 192;
-//	string ss = "";
-//	while (res) {
-//		int x = res % 16;
-//		res /= 16;
-//		if (x  < 10) {
-//			ss += x + '0';
-//		} else if (x == 10) {
-//			ss += 'a';
-//		} else if (x == 11) {
-//			ss += 'b';
-//		} else if (x == 12) {
-//			ss += 'c';
-//		} else if (x == 13) {
-//			ss += 'd';
-//		} else if (x == 14) {
-//			ss += 'e';
-//		} else if (x == 15) {
-//			ss += 'f';
-//		}
-//	}
-//	reverse(ss.begin(), ss.end());
-//	cout << ss << endl;
-	cout << hex << res << endl;	
-	return 0;
+    int t;
+    int a[5];
+    vector<string> vt;
+    cin >> t;
+    while(t--) {
+	vt.clear();
+	for(int i = 0;i < 5; ++i)
+	    cin >> a[i];
+	for(int i = 0;i < 5; ++i) {
+	    string s;
+	    cin >> s;
+	    vt.push_back(s);
+        }
+	my_for_each(a, a + 5, Print);
+	cout << endl;
+	my_for_each(vt.begin(), vt.end(), MyPrint());
+	cout << endl;
+    }	
+    return 0;
 }
