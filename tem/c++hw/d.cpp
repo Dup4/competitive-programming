@@ -1,54 +1,39 @@
-#include <iostream>
-#include <iomanip>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
-
-class BMI {
-	public :
-	//构造函数，和自定义参数列表
-	BMI() {}
-	BMI(string name, double height, double weight) : name(name), height(height), weight(weight) {}
-	//获取用户的姓名
-	string getName() {
-		return name;
+struct node {
+	int x, y;
+	node (int x) {
+		this->x = x;
+		int t = x;
+		y = 0;
+		for (int i = 2; i < x; ++i) if (t % i == 0) {
+			++y;
+			while (t % i == 0) {
+				t /= i;
+			}
+		}
+		//cout << x << " " << y << endl;
 	}
-	//获取用户的BMI指数
-	double getBMI() {
-		return weight / height / height;
+	bool operator < (const node &other) const {
+		if (y != other.y) {
+			return y < other.y;
+		}
+		return x < other.x;
 	}
-	//获取用户的BMI指数对应的健康状态
-	string reportStatus() {
-		double BMI = getBMI();
-		if (BMI < 18.5) {
-			return "Underweight";
-		} else if (BMI < 25.0) {
-			return "Normal";
-		} else if (BMI < 30.0) {
-			return "Overweight";
-		} else {
-		return "Obese";
-	}
-}
-	private :
-	//定义私有变量 用户姓名、身高、体重
-	string name;
-	double height, weight;
 };
 
 int main() {
-	string name;
-	double height, weight;
-	cout << "This program reads data and computes" << endl;
-	cout << "body mass index and weight status." << endl;
-	cout << "Enter person's name: ";
-	getline(cin, name);
-	cout << "height(in meters)? ";
-	cin >> height;
-	cout << "weight(in kilograms)? ";
-	cin >> weight;
-	BMI bmi(name, height, weight);
-	cout << "The BMI for " << bmi.getName() << " is " << fixed << setprecision(2) 
-		<< bmi.getBMI() << " " << bmi.reportStatus() << endl;
-    	return 0;
+	int m; cin >> m;
+	multiset <node> se;
+	for (int i = 1, x; i <= m; ++i) {
+		for (int j = 1; j <= 10; ++j) {
+			scanf("%d", &x);
+			se.insert(node(x));
+		}
+		cout << (*se.rbegin()).x << " " << (*se.begin()).x << endl;
+		se.erase(--se.end());
+		se.erase(se.begin());
+	}
+	return 0;
 }
