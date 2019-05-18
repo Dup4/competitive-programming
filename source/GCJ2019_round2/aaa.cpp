@@ -39,9 +39,6 @@ bool ok() {
 			}
 		}
 	}
-	if (m == 0 || cnt[0] == m || cnt[1] == m) {
-		return true;
-	}
 	node Max = node(-1e9, 1), Min = node(1e9, 1);
 	for (int i = 1; i <= m; ++i) {
 		if (c[i].x < 0) {
