@@ -1,51 +1,42 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-const int maxn = 1e5 + 10;
-
+#define N 200010
 int n, k;
-int fa[11][maxn];
-int cnt1[maxn];
-
-void Init() {
-	for (int i = 1; i <= n; ++i) {
-		cnt1[i] = 0;
-		fa[0][i] = 1;
-		for (int j = 1; j <= k; ++j) {
-			fa[j][i] = i;
-		}
+int fa[11][N];
+int find(int id, int x) {
+	return fa[id][x] == 0 ? x : fa[id][x] = find(id, fa[id][x]);
+}
+void join(int id, int x, int y) {
+	x = find(id, x); y = find(id, y);
+	if (x != y) {
+		fa[id][x] = y;
 	}
 }
-
-int find(int i, int x) {
-	return x == fa[i][x] ? fa[i][x] : fa[i][x] = find(i, fa[i][x]);
-}
-
-void mix(int i, int x, int y) {
-	x = find(i, x), y = find(i, y);
-	if(x != y) {
-		fa[i][x] = y;
-	}
-}
+map < vector <int>, int> mp; 
+vector < vector <int> > vec;
 
 int main() {
-	while(~scanf("%d %d", &n, &k)) {
-		Init();
+	while (scanf("%d%d", &n, &k) != EOF) {
+		vec.resize(n + 1);
+		memset(fa, 0, sizeof fa);
+		mp.clear();
 		for (int i = 1, s, u, v; i <= k; ++i) {
 			scanf("%d", &s);
 			for (int j = 1; j <= s; ++j) {
-				scanf("%d %d", &u, &v);
-				if (find(i - 1, u) != find(i - 1, v)) continue;
-				mix(i, u, v);
+				scanf("%d%d", &u, &v);
+				join(i, u, v);
 			}
 		}
 		for (int i = 1; i <= n; ++i) {
-			int tmp = find(k, i);
-			cnt1[tmp]++;
+			vec[i].clear();
+			for (int j = 1; j <= k; ++j) {
+				vec[i].push_back(find(j, i));
+			}	
+			++mp[vec[i]];
 		}
 		for (int i = 1; i <= n; ++i) {
-			printf("%d\n", cnt1[find(k, i)]);
+			printf("%d\n", mp[vec[i]]);
 		}
 	}
 	return 0;
