@@ -1,42 +1,19 @@
-#include <iostream>
-#include <string>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
-void Print(int n) {
-    cout << n * n << ",";
-}
-class MyPrint {
-public:
-    void operator()(const string & s) {
-	cout << s << ",";
-    }
-};
 
-template <class InputIterator, class Function>
-void my_for_each(InputIterator l, InputIterator r, Function f) {
-	for (; l != r; ++l) {
-		f(*l);
-	}
-}
-
-int main() {
-    int t;
-    int a[5];
-    vector<string> vt;
-    cin >> t;
-    while(t--) {
-	vt.clear();
-	for(int i = 0;i < 5; ++i)
-	    cin >> a[i];
-	for(int i = 0;i < 5; ++i) {
-	    string s;
-	    cin >> s;
-	    vt.push_back(s);
-        }
-	my_for_each(a, a + 5, Print);
-	cout << endl;
-	my_for_each(vt.begin(), vt.end(), MyPrint());
-	cout << endl;
-    }	
-    return 0;
+int main()
+{
+	int a, b, c;
+	int h = 0;
+	a = b = c = 0;
+	ifstream in("image.jpg", ios::binary);
+	in.seekg(12L);
+	in.read(reinterpret_cast<char*>(&a),1);
+	in.seekg(48L);
+	in.read(reinterpret_cast<char*>(&b),1);
+	in.seekg(79L);
+	in.read(reinterpret_cast<char*>(&c),1);
+	h=a^b^c;
+	cout << hex << h << endl;
+	return 0;
 }
