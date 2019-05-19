@@ -63,13 +63,10 @@ void FFT(Complex *y, int len, int on) {
 
 int n, m, k, len;
 vector < vector<int> > G;
-int f[N][N], g[N];
+int f[N][N];
 int vis[N];  
 
 void DFS(int u, int fa) {
-	for (int i = 0; i <= k; ++i) {
-		f[u][i] = 0;
-	}
 	if (vis[u]) {
 		f[u][0] = 1;
 	}
@@ -89,28 +86,22 @@ void DFS(int u, int fa) {
 		}
 		FFT(x1, len, -1);
 		for (int i = 0; i <= k; ++i) {
-			g[i] = f[u][i];
 			if (i) {
-				(g[i] += (ll)(x1[i - 1].x + 0.5) % p + f[v][i - 1]) %= p;
+				(f[u][i] += (ll)(x1[i - 1].x + 0.5) % p + f[v][i - 1]) %= p;
 			}
 		}
-		for (int i = 0; i <= k; ++i) {
-			f[u][i] = g[i];
-		}
 	}
-//	for (int i = 0; i <= k; ++i) {
-//		printf("%d %d %d\n", u, i, f[u][i]);
-//	}
 }
 
 void init() {
 	G.clear();
 	G.resize(n + 1);
+	memset(vis, 0, sizeof vis);
+	memset(f, 0, sizeof f);
 }
 int main() {
 	while (scanf("%d%d%d", &n, &m, &k) != EOF) {
 		init();
-		memset(vis, 0, sizeof vis);
 		for (int i = 1, u, v; i < n; ++i) {
 			scanf("%d%d", &u, &v);
 			G[u].push_back(v);
@@ -121,7 +112,7 @@ int main() {
 			vis[x] = 1;
 		}
 		len = 1;
-		while (len < 2 * k) len <<= 1;
+		while (len < 2 * k + 5) len <<= 1;
 		DFS(1, 1);
 		ll res = 0;
 		for (int i = 0; i <= k; ++i) {

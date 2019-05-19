@@ -51,9 +51,6 @@ ll qmod(ll base, ll n, ll p) {
 }
 int F[M]; 
 ll g(int n, int m) {
-	if (n > m) {
-		swap(n, m);
-	}
 	ll res = 0;
 	for (int i = 1, j; i <= n; i = j + 1) {
 		j = min(n / (n / i), m / (m / i));
@@ -77,16 +74,10 @@ int main() {
 		if (n > m) {
 			swap(n, m);
 		}
-		int b = a;
+		ll res = 0, now = 1;
 		for (int i = 1; i <= n; ++i) {
-			F[i] = fib[(b - 1 + cir) % cir];
-			F[i] = (F[i] + F[i - 1]) % p;
-			b = (1ll * b * a) % cir; 
-		}
-		ll res = 0;
-		for (int i = 1, j; i <= n; i = j + 1) { 
-			j = min(n / (n / i), m / (m / i));
-			(res += 1ll * (F[j] - F[i - 1] + p) % p * g(n / i, m / i) % p) %= p;
+		    now = now * a % cir;	
+			(res += 1ll * fib[(now - 1 + cir) % cir] * g(n / i, m / i) % p) %= p;
 		}
 		printf("%lld\n", res);
 	}
