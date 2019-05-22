@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define N 90010
+#define N 100010
 #define ll long long
 #define INFLL 0x3f3f3f3f3f3f3f3f
 #define pii pair <int, int>
@@ -19,21 +19,22 @@ struct Graph {
 	int head[N], pos;
 	void init(int n) {
 		for (int i = 0; i <= n; ++i) {
-			head[i] = 0;
+			head[i] = -1;
 		}
 		pos = 0;
 	}
 	void add(int u, int v, int w) {
-		a[++pos] = node(v, head[u], w); head[u] = pos;
-		a[++pos] = node(u, head[v], w); head[v] = pos;
+		a[pos] = node(v, head[u], w); head[u] = pos++;
+		a[pos] = node(u, head[v], w); head[v] = pos++;
 	}
 }G;   
-#define erp(u) for (int it = G.head[u], v = G.a[it].to, w = G.a[it].w, &sta = G.a[it].sta; it; it = G.a[it].nx, v = G.a[it].to, w = G.a[it].w, sta = G.a[it].sta)  
+#define erp(u) for (int it = G.head[u], v = G.a[it].to, w = G.a[it].w; ~it; it = G.a[it].nx, v = G.a[it].to, w = G.a[it].w)   
 int id(int i, int j) {
-	return (i - 1) * n + j;
+	return (i - 1) * n + j; 
 }
 pii fid(int x) {
-	return pii(x / n + 1, x % n); 
+	--x; 
+	return pii(x / n + 1, x % n + 1);  
 }
 
 struct node {
@@ -47,14 +48,13 @@ struct node {
 ll sum;
 ll dist[N];
 int used[N];
-int pre[N];
+int pre[N];    
 void Dijkstra() {
 	for (int i = 1; i <= n * n; ++i) {
 		dist[i] = INFLL;
 		used[i] = 0;
 		pre[i] = i; 
 	}
-	pre[1] = -1;
 	dist[1] = 0;
 	priority_queue <node> pq;
 	pq.push(node(1, -1, 0));
@@ -69,11 +69,8 @@ void Dijkstra() {
 			sum -= dist[u];
 			while (pre[u] != -1) {
 				erp(u) if (v == pre[u]) {
-					sta = 0;
-					break;
-				}
-				erp(pre[u]) if (v == u) {
-					sta = 0;
+					G.a[it].sta = 0;
+					G.a[it ^ 1].sta = 0;
 					break;
 				}
 				u = pre[u]; 
@@ -87,13 +84,9 @@ void Dijkstra() {
 }
 vector <int> res;
 void DFS(int u) {
-	erp(u) if (sta) { 
-		sta = 0;
-		printf("%d %d\n", u, v);
-		for (int it2 = G.head[v], vv = G.a[it2].to, &staa = G.a[it2].sta; it2; it2 = G.a[it2].nx, vv = G.a[it2].to, staa = G.a[it2].sta) if (vv == u) {
-			staa = 0;
-			break;
-		}
+	erp(u) if (G.a[it].sta == 1) { 
+		G.a[it].sta = 0;
+		G.a[it ^ 1].sta = 0;
 		DFS(v);
 		res.push_back(v);
 	}
@@ -131,8 +124,10 @@ int main() {
 		}
 		Dijkstra();
 		DFS(1);
-		res.push_back(1);      	
+		res.push_back(1);
+		reverse(res.begin(), res.end());
 		printf("%lld\n", sum);
+		printf("%d\n", (int)res.size());
 		for (int i = 0, sze = (int)res.size(); i < sze; ++i) {
 			pii cor = fid(res[i]);
 			printf("%d %d%c", cor.fi, cor.se, " \n"[i == sze - 1]);
