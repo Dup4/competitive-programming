@@ -6,6 +6,7 @@ using namespace std;
 ll res[N];
 ll small[N];
 ll tot[N];  
+ll T[N];
 int n, m, q, c;
 struct qnode {
 	//0 加点
@@ -19,7 +20,7 @@ struct qnode {
 	bool operator < (const qnode &other) const { 
 		if (x != other.x) {
 			return x < other.x;
-		} 
+		}
 	   	return id < other.id;   	
 	}
 }qrr[N << 2], trr[N << 2]; 
@@ -61,10 +62,8 @@ void CDQ(int l, int r) {
 		if (trr[i].isleft) { 
 			if (trr[i].op == 0) {
 				bit[0].update(trr[i].y, 1);
-				bit[1].update(trr[i].y, trr[i].t);   
 			}
 		} else if (trr[i].op) { 
-			res[trr[i].id] += 1ll * trr[i].op * (bit[1].query(trr[i].y) + 1ll * (c - trr[i].t) * bit[0].query(trr[i].y));
 			small[trr[i].id] += 1ll * trr[i].op * bit[0].query(trr[i].y);
 		}
 	}
@@ -72,7 +71,6 @@ void CDQ(int l, int r) {
 		if (trr[i].isleft) {  
 			if (trr[i].op == 0) {
 				bit[0].update(trr[i].y, -1);
-				bit[1].update(trr[i].y, -trr[i].t);
 			}
 		}
 	}
@@ -95,26 +93,23 @@ int main() {
 			qrr[++m] = qnode(-1, i, x[0] - 1, y[1], c - t);
 			qrr[++m] = qnode(-1, i, x[1], y[0] - 1, c - t);
 			qrr[++m] = qnode(1, i, x[1], y[1], c - t); 
+		    T[i] = t;	
 		}
 		bit[0].init();
 		sort(qrr + 1, qrr + 1 + m);
 		for (int i = 1; i <= m; ++i) {
 			if (qrr[i].op == 0) {
 				bit[0].update(qrr[i].y, 1); 
+				bit[1].update(qrr[i].y, qrr[i].t);
 			} else {
 				tot[qrr[i].id] += 1ll * qrr[i].op * bit[0].query(qrr[i].y);
+				res[qrr[i].id] += 1ll * qrr[i].op * bit[1].query(qrr[i].y);  
 			}  
-		} 
+		}	
 		bit[0].init(); bit[1].init();
-		sort(qrr + 1, qrr + 1 + m, [](qnode a, qnode b) {
-			if (a.x != b.x) {
-				return a.x < b.x;
-			}
-			return a.id < b.id;
-		});
 		CDQ(1, m);   
 		for (int i = 1; i <= q; ++i) { 
-			printf("%lld\n", res[i] + (tot[i] - small[i]) * c);
+			printf("%lld\n", tot[i] * T[i] + res[i] - (tot[i] - small[i]) * (c + 1));
 		}
 	}
 	return 0;
