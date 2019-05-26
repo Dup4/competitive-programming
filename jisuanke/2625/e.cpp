@@ -4,7 +4,7 @@ using namespace std;
 #define N 100010
 int n, q;
 int a[N];
-vector < vector <int> > G;
+vector < vector <int> > G;   
 
 int fa[N], deep[N], sze[N], son[N], top[N], p[N], cnt;
 void DFS(int u) {
@@ -14,6 +14,7 @@ void DFS(int u) {
 		fa[v] = u;
 		deep[v] = deep[u] + 1;
 		DFS(v);
+		sze[u] += sze[v];
 		if (!son[u] || sze[v] > sze[son[u]]) {
 			son[u] = v;
 		}
@@ -54,13 +55,13 @@ struct SEG {
 			} else {
 				sum &= (~x);
 			}
-			And |= x;
+			And |= x;  
 			Or |= x; 
 		}
 		node operator + (const node &other) const {
 			node res = node();
 			res.sum = sum ^ other.sum;
-			res.cnt = cnt ^ other.cnt; 
+			res.cnt = cnt + other.cnt; 
 			return res; 
 		}
 	}t[N << 2];
@@ -77,8 +78,8 @@ struct SEG {
 		t[id] = t[id << 1] + t[id << 1 | 1];
 	}
 	void pushdown(int id) {
-		int And = t[id].And;
-		int Or = t[id].Or;
+		int &And = t[id].And;
+		int &Or = t[id].Or;
 		t[id << 1].addAnd(And);
 		t[id << 1].addOr(Or);
 		t[id << 1 | 1].addAnd(And);
@@ -171,7 +172,6 @@ int main() {
 		G.clear();
 		G.resize(n + 1);
 		cnt = 0;
-		memset(son, 0, sizeof son);
 		for (int i = 1; i <= n; ++i) {
 			scanf("%d", a + i);
 		}
