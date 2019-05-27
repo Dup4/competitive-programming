@@ -4,26 +4,24 @@ using namespace std;
 #define ll long long
 #define N 100010
 int n, a[N];
+int gcd(int a, int b) {
+	return b ? gcd(b, a % b) : a;
+}
 
 ll f(int A, int B) {
+	int G = gcd(A, B);
+	if (A / G == B / G + 1) {
+		return 0;
+	}
 	ll res = 0;
 	int now = 0;
-	set <int> s;
 	while (1) {
 		now += A;
-		if (s.find(now) != s.end()) {
-			return 0;
-		}
-		s.insert(now);
 		res += a[now];
 		if (now == n - 1) {
 			return res;
 		}
 		now -= B;
-		if (s.find(now) != s.end()) {
-			return 0;
-		}
-		s.insert(now);
 		res += a[now];
 		if (now == n - 1) {
 			return res;	
@@ -44,11 +42,9 @@ int main() {
 					int x = i, y = m / i;
 					if (x < A) {
 						res = max(res, f(A, A - x)); 
-						//printf("%d %d %lld\n", A, A - x, res);
 					}
 					if (y < A && x != y) {
 						res = max(res, f(A, A - y));
-						//printf("%d %d %lld\n", A, A - y, res);
 					}
 				}
 			}
