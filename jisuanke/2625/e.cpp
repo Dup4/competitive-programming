@@ -6,7 +6,7 @@ int n, q;
 int a[N];
 vector < vector <int> > G;   
 
-int fa[N], deep[N], sze[N], son[N], top[N], p[N], cnt;
+int fa[N], deep[N], sze[N], son[N], top[N], p[N], fp[N], cnt;
 void DFS(int u) {
 	sze[u] = 1;
 	son[u] = 0;
@@ -23,6 +23,7 @@ void DFS(int u) {
 void gettop(int u, int sp) {
 	top[u] = sp;
 	p[u] = ++cnt;
+	fp[cnt] = u;
 	if (!son[u]) {
 		return;
 	}
@@ -68,7 +69,7 @@ struct SEG {
 	void build(int id, int l, int r) {
 		t[id] = node();
 		if (l == r) {
-			t[id].sum = a[l];
+			t[id].sum = a[fp[l]];
 			t[id].cnt = 1;
 			return;
 		}
@@ -194,7 +195,7 @@ int main() {
 					updateAnd(1, s, t);
 					break;
 				case 3 :
-					puts((query(1, s) ^ t) == 0 ? "NO" : "YES");
+					puts((query(1, s) ^ t) == 0 ? "NO" : "YES");  
 					break;
 				default :
 					assert(0);
