@@ -24,6 +24,7 @@ void sub(T &x, T y) {
 }
 
 void init() {
+	memset(f, 0, sizeof f);
 	memset(check, 0, sizeof check);
 	prime[0] = 0;
 	phi[1] = 1;
@@ -38,16 +39,16 @@ void init() {
 			}
 			check[i * prime[j]] = 1;
 			if (i % prime[j] == 0) {
-				phi[i * prime[j]] = 1ll * phi[i] * prime[j] % p;
+				phi[i * prime[j]] = 1ll * phi[i] * prime[j];
 				break;
 			} else {
-				phi[i * prime[j]] = 1ll * phi[i] * phi[prime[j]] % p;
+				phi[i * prime[j]] = 1ll * phi[i] * (prime[j] - 1);
 			}
 		}
 	}
 	for (int i = 1; i < N; ++i) {
 		for (int j = i; j < N; j += i) {
-			add(f[j], 1ll * i * phi[j] % p);
+			add(f[j], 1ll * i * phi[j / i] % p);
 		}
 	}
 	for (int i = 2; i < N; ++i) {
@@ -83,6 +84,7 @@ void work(int x) {
 }
 
 ll qmod(ll base, ll n) {
+	base %= p;  
 	ll res = 1;
 	while (n) {
 		if (n & 1) {
@@ -98,8 +100,8 @@ int main() {
 	while (scanf("%lld%lld%lld", &n, &m, &p) != EOF) {
 		memset(vis, 0, sizeof vis);
 		init(); 
-		ll res = 0;
 		--p;
+		ll res = 0;
 		for (int i = 1, j; i <= n; i = j + 1) { 
 			j = n / (n / i);
 			work(j); work(i - 1);
