@@ -1,50 +1,23 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define N 110
-int n, m;
-char G[N][N];
-int Move[][2] = {
-	{-1, 0},
-	{1, 0},
-	{0, -1},
-	{0, 1},
+struct node {
+	int a;
+	node() {}
+	node (int a) : a(a) {}
 };
-bool ok(int x, int y) {
-	if (x < 1 || x > n || y < 1 || y > m || G[x][y] == '#') {
-		return false;
-	}
-	return true;
+
+bool lessThan4(int x) {
+	return x < 4;
 }
 
-void DFS(int x, int y) {
-	G[x][y] = '#';
-	for (int i = 0; i < 4; ++i) {
-		int nx = x + Move[i][0];
-		int ny = y + Move[i][1];
-		if (ok(nx, ny)) {
-			DFS(nx, ny);
-		}
-	}
-}
 
 int main() {
-	int T = 0;
-	while (scanf("%d%d", &n, &m) != EOF) {
-		printf("Case %d: ", ++T);
-		for (int i = 1; i <= n; ++i) {
-			scanf("%s", G[i] + 1);
-		}
-		int res = 0;
-		for (int i = 1; i <= n; ++i) {
-			for (int j = 1; j <= m; ++j) {
-				if (G[i][j] == '-') {
-					++res;
-					DFS(i, j);
-				}
-			}
-		}
-		printf("%d\n", res);
-	}	
+	int arr[] = {1, 2, 3, 4, 5, 4, 3, 2, 1};
+	vector <int> vec(arr, arr + 9);
+	vector <int>::iterator pos;
+	pos = remove_if(vec.begin(), vec.end(), lessThan4);
+	copy(vec.begin(), pos, ostream_iterator<int> (cout, " "));
+	cout << endl;
 	return 0;
 }
