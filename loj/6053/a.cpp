@@ -43,6 +43,7 @@ int S(ll x, int y) {
 	}
 	int k = (x <= blk) ? id1[x] : id2[n / x];
 	int ret = ((g[k] - h[k] - sum[y - 1] + y - 1) % p + p) % p;
+	//把2的少加的贡献加上
 	if (y == 1) {
 		add(ret, 2);
 	}
@@ -59,17 +60,20 @@ int main() {
 	while (scanf("%lld", &n) != EOF) {
 		m = 0;
 		init(blk = sqrt(n));
+		//数论分块和预处理h(n, 0)以及g(n, 0)，但是要注意不要把1的贡献算上
 		for (ll i = 1, j; i <= n; i = j + 1) {
 			j = n / (n / i);
 			w[++m] = n / i;
 			h[m] = (w[m] + p - 1) % p;
 			g[m] = ((w[m] % p) * ((w[m] + 1) % p) / 2 - 1 + p) % p;
+			//记录位置
 			if (w[m] <= blk) {
 				id1[w[m]] = m;
 			} else {
 				id2[n / w[m]] = m;
 			}
 		}
+		//递推，第一维枚举j，就是为了数组只开一维，j那一维直接滚掉就好了
 		for (int j = 1; j <= tot; ++j) {
 			for (int i = 1; i <= m && 1ll * pri[j] * pri[j] <= w[i]; ++i) {
 				int k = (w[i] / pri[j] <= blk) ? id1[w[i] / pri[j]] : id2[n / (w[i] / pri[j])];
@@ -77,6 +81,7 @@ int main() {
 				add(h[i], p - (h[k] - (j - 1) + p) % p);
 			}
 		}
+		//注意把特殊的1的贡献加上
 		printf("%d\n", S(n, 1) + 1); 
 	}
 	return 0;
