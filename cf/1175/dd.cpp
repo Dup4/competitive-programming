@@ -12,10 +12,10 @@ int main() {
 		for (int i = 1; i <= n; ++i) {  
 			scanf("%lld", a + i);
 		}
-		for (int i = n - 1; i >= 0; --i) {
+		for (int i = n - 1; i >= 1; --i) {
 			a[i] += a[i + 1];
 		}
-		sort(a + 2, a + n + 1, [&](int x, int y) {
+		sort(a + 2, a + n + 1, [&](ll x, ll y) {
 			return x > y;		
 		});
 		ll ans = 0;
