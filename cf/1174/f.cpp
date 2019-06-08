@@ -19,7 +19,7 @@ void pre(int u) {
 		if (!son[u] || sze[v] >= sze[son[u]]) {  
 			son[u] = v; 
 		}
-		if (!son2[u] || deep[v] >= deep[son2[u]]) {
+		if (!son2[u] || deep[v] >= deep[son2[u]]) {   
 			son2[u] = v;      
 		}
 	}	
