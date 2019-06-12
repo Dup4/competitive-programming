@@ -22,7 +22,7 @@ struct node {
 		for (int i = 0; i < 5; ++i) {
 			for (int j = 0; j < 5; ++j) {
 				for (int k = 0; k < 5; ++k) {
-					add(res.a[i][j], a[i][k] * other.a[k][j] % p); 
+					add(res.a[i][j], (a[i][k] * other.a[k][j] % p + p) % p); 
 				}
 			}
 		}
@@ -94,7 +94,6 @@ int main() {
 		g[3] = res2.a[0][0]; 
 		
 		qmod(base, res, n - 3); 
-		add(res.a[0][0], p);
 		++p;
 		printf("%lld\n", qmod(f[1], g[1]) * qmod(f[2], g[2]) % p * qmod(f[3], g[3]) % p * qmod(c, res.a[0][0]) % p);
 	}
