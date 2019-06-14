@@ -13,21 +13,20 @@ int main() {
 			puts("0");
 			continue;
 		}
-		int res = 0;
-		int dir = 0;   
+		int res = 0; 
+		int dir = 1;   
 		// 0 up
 		// 1 down	
 		for (int i = 2; i <= n; ++i) {
-			if (a[i] > a[i - 1]) { // up
-				if (dir == 1) {
+			if (dir == 1) { //下降
+				if (a[i] >= a[i - 1]) {
+					dir = 0;
 					++res;
-					dir = 0;  
 				}
-			} else if (a[i] < a[i - 1]) { // down
-				dir = 1; 
 			} else {
-				dir = 0;
-				++res;     
+				if (a[i] <= a[i - 1]) {
+					dir = 1;
+				}
 			}
 		}
 		printf("%d\n", res);

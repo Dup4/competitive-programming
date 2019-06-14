@@ -13,6 +13,13 @@ int main() {
 		n = strlen(s + 1);
 		ll res = 0;
 		int tmp = 0;
+		int f = 0;
+		for (int i = 1; i <= n; ++i) {
+			if (s[i] != '0') {
+				f = i;
+				break;
+			}
+		}
 		for (int i = 1; i <= n; ++i) {
 			if (s[i] == '9') {
 				++tmp; 
@@ -22,10 +29,7 @@ int main() {
 			if (tmp == 0) {
 				++res;
 			} else {
-				res += tmp;
-				if (i - tmp >= 1 && s[i - tmp] != '0') {
-					++res;
-				}
+				res += tmp + ((i - tmp) >= f); 
 			}
 		}
 		printf("%lld\n", res);
