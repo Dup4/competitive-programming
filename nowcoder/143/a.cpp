@@ -7,7 +7,21 @@ using namespace std;
 #define pii pair <int, int>
 #define fi first
 #define se second
+const db eps = 1e-10;
 int n, k; pii a[N];
+
+bool ok(db x) {
+	vector <db> vec;
+	for (int i = 1; i <= n; ++i) {
+		vec.push_back(a[i].fi * (x - a[i].se));
+	}
+	sort(vec.begin(), vec.end());
+	db tot = 0;
+	for (int i = 0; i < n - k; ++i) {
+		tot += vec[i];
+	}
+	return tot <= 0 || fabs(tot - 0) < eps;
+}
 
 int main() {
 	while (scanf("%d%d", &n, &k) != EOF) {
@@ -16,21 +30,15 @@ int main() {
 		}
 		for (int i = 1; i <= n; ++i) {
 			scanf("%d", &a[i].se);
-			a[i].se *= a[i].fi;
 		}
-		sort(a + 1, a + 1 + n, [&](pii x, pii y){
-			if (x.se != y.se) {
-				return x.se > y.se;
-			}		
-			return x.fi < y.fi;
-		});
-		db res = 0;
-		ll x = 0, y = 0;
-		for (int i = 1; i <= n; ++i) {
-			x += a[i].se;
-			y += a[i].fi;
-			if (i >= n - k) {
-				res = max(res, x * 1.0 / y);
+		db l = 0, r = 1e3, res = 0;
+		while (fabs(r - l) >= eps) {
+			db mid = (l + r) / 2;
+			if (ok(mid)) {
+				l = mid;
+				res = mid;
+			} else {
+				r = mid;
 			}
 		}
 		printf("%.10f\n", res);
