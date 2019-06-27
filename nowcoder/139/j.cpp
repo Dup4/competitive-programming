@@ -9,7 +9,7 @@ struct node {
 	void scan(int id) {
 		this->id = id;
 		scanf("%d%d", &l, &r);
-		if (l == r) {
+		if (l >= r) {
 			l = 1;
 			r = 2;  
 		}
@@ -80,12 +80,15 @@ int main() {
 			}
 			ans[qrr[i].id] += k;
 		}
+		memset(b, 0, sizeof b); 
 		for (int i = 1; i <= n; ++i) {
 			nx[i] = n + 1;
 		}
-		for (int i = n; i >= 1; --i) {
-			c[i] = nx[a[i]];
-			nx[a[i]] = i;
+		for (int i = n; i >= 1; --i) { 
+			c[i] = nx[a[i]]; 
+			if (nx[a[i]] == n + 1) {
+				nx[a[i]] = i;    
+			}
 		}
 		bit.init();
 		sort(qrr + 1, qrr + 1 + q, [&](node x, node y){
@@ -93,8 +96,11 @@ int main() {
 		});
 		for (int i = 1, j = 1; i <= q; ++i) {
 			while (j <= n && j <= qrr[i].l) {
-				bit.update(c[j], -1);
-				++j;
+				if (b[a[j]] == 0) {
+					bit.update(c[j], -1);
+					b[a[j]] = 1;   	
+				}
+				++j; 
 			}
 			ans[qrr[i].id] += bit.query(qrr[i].r, n); 
 		}
