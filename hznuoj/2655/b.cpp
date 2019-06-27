@@ -66,6 +66,7 @@ struct BIT2 {
 
 int main() {
 	memset(f, 0, sizeof f);
+	f[0][0] = 1;
 	for (int i = 1; i <= 2018; ++i) {
 		f[i][0] = 1;
 		for (int j = 1; j <= 2018; ++j) {
