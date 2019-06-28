@@ -16,6 +16,7 @@ struct node {
 };
 vector < vector <pii> > a;
 vector < vector <node> > b;
+vector < vector <int> > c;
 
 struct BIT {
 	vector < vector <int> > a;
@@ -65,6 +66,11 @@ int main() {
 		a.resize(n * m + 1);
 		b.clear();
 		b.resize(n * m + 1);
+		c.clear();
+		c.resize(n + 10);
+		for (int i = 0; i < n + 10; ++i) {
+			c[i].resize(m + 10); 
+		}
 		bit.init();
 		for (int i = 1; i <= n; ++i) {
 			for (int j = 1, x; j <= m; ++j) {
@@ -75,20 +81,28 @@ int main() {
 		for (int i = 1, k, x1, y1, x2, y2; i <= q; ++i) {
 			read(x1); read(y1); read(x2); read(y2); read(k);
 			b[k].push_back(node(x1, y1, x2, y2));
-			bit.update(x1, y1, x2, y2, 1);
+			++c[x1][y1];
+			++c[x2 + 1][y2 + 1];
+			--c[x2 + 1][y1];
+			--c[x1][y2 + 1];
+		}
+		for (int i = 1; i <= n; ++i) {
+			for (int j = 1; j <= m; ++j) { 
+				c[i][j] += c[i - 1][j] + c[i][j - 1] - c[i - 1][j - 1];
+			}
 		}
 		int res = 0;
 		for (int i = 1; i <= n * m; ++i) {
 			for (auto it : b[i]) {
-				bit.update(it.x[0], it.y[0], it.x[1], it.y[1], -1);
+				bit.update(it.x[0], it.y[0], it.x[1], it.y[1], 1);
 			}
 			for (auto it : a[i]) {
-				if (bit.query(it.fi, it.se) != 0) {
+				if (bit.query(it.fi, it.se) != c[it.fi][it.se]) {
 					++res;
 				}
 			}
 			for (auto it : b[i]) {
-				bit.update(it.x[0], it.y[0], it.x[1], it.y[1], 1);
+				bit.update(it.x[0], it.y[0], it.x[1], it.y[1], -1);
 			}
 		}
 		printf("%d\n", res);
