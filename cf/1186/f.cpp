@@ -40,11 +40,13 @@ int main() {
 		}
 		int u, v;
 		while (needdel > 0) {
+			u = 0;
 			while (!pq.empty()) {
 				u = pq.top().se; pq.pop();
 				if (d[u] <= 0) continue;
 				else break;
 			}
+			if (u == 0) break;
 			//cout << u << " " << d[u] << endl;
 			for (auto it : G[u]) {
 				if (del[it.se]) continue;
@@ -62,11 +64,14 @@ int main() {
 		//for (int i = 1; i <= n; ++i) printf("%d%c", d[i], " \n"[i == n]);
 		int sze = (n + m + 1) / 2;
 		printf("%d\n", sze);
+		int cnt = 0;
 		for (int i = 1; i <= m; ++i) {
 			if (del[i] == 0) {
+				++cnt;
 				printf("%d %d\n", e[i][0], e[i][1]);
 			}
 		}
+		assert(sze == cnt);
 	}
 	return 0;
 }

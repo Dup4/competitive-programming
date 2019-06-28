@@ -24,7 +24,7 @@ int main() {
 				b[i] = b[i] * 10 + s[j] - '0';
 			}
 			a[i] *= f;
-			if (b[i] != 0) {
+			if (f == -1) {
 				++can;
 				if (a[i] < 0) {
 					--a[i];
@@ -33,7 +33,7 @@ int main() {
 			sum += a[i];
 		}
 		sum = abs(sum);
-	    assert(sum <= can); 	
+	    //assert(sum <= can); 	
 		for (int i = 1; i <= n; ++i) {
 			if (sum > 0 && b[i] != 0) {
 				++a[i];
