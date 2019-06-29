@@ -8,9 +8,9 @@ using namespace std;
 #define fi first
 #define se second
 const ll p = 998244353;  
-int n, m, q, b[N], d[N], vis[N], id[N], fid[N], cnt_id;
-set <pii> G[N]; vector <pii> vec; 
-int e[N][3];  
+int n, m, q, b[N], d[N], vis[N], id[N], fid[N], cnt_id; 
+set <pii> G[N]; vector <pii> vec;  
+int e[N][3];   
 
 void add(ll &x, ll y) {
 	x += y;
@@ -58,7 +58,7 @@ struct TRIE {
 			if (g) {  
 				add(res, t[t[root].son[f]].tot);	
 			} 
-			root = t[root].son[g ^ f];       
+			root = t[root].son[g ^ f ^ 1];       
 		}
 		return res; 
 	}
@@ -154,11 +154,12 @@ int main() {
 						bit.update(b[x] ^ b[it.fi], (p - it.se) % p); 
 						bit.update(y ^ b[it.fi], it.se);
 					}
+					//小点
 					if (!vis[x]) {
 						for (auto it : G[x]) {  
 							if (vis[it.fi]) {
 								trie.insert(id[it.fi], b[x], (p - it.se) % p);
-								trie.insert(id[it.fi], y, it.se);
+								trie.insert(id[it.fi], y, it.se);      
 							} 
 						}		
 					}
@@ -167,7 +168,7 @@ int main() {
 				//修改边权
 				case 2 :
 					u = e[x][0], v = e[x][1], w = e[x][2];
-					if (vis[u] == vis[v]) {
+					if (vis[u] == vis[v]) { 
 						bit.update(b[u] ^ b[v], (y - w + 2ll * p) % p); 
 						G[u].erase(pii(v, w));
 						G[v].erase(pii(u, w));
