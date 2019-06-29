@@ -9,7 +9,7 @@ int n, m;
 int del[N];  
 vector < vector <pii> > G; 
 int d[N], a[N];
-int e[N][2];
+int e[N][2];  
 
 int main() {
 	while (scanf("%d%d", &n, &m) != EOF) {
@@ -36,32 +36,35 @@ int main() {
 		for (int i = 1; i <= n; ++i) {
 			d[i] = d[i] - (d[i] + 1) / 2;
 			pq.push(pii(d[i], i));
-			//printf("%d%c", d[i], " \n"[i == n]);
 		}
 		int u, v;
 		while (needdel > 0) {
 			u = 0;
 			while (!pq.empty()) {
 				u = pq.top().se; pq.pop();
-				if (d[u] <= 0) continue;
+				if (d[u] <= 0) {
+					u = 0;
+					continue; 
+				}
 				else break;
 			}
-			if (u == 0) break;
-			//cout << u << " " << d[u] << endl;
+			if (u == 0) break;  
+		    sort(G[u].begin(), G[u].end(), [](pii x, pii y) {
+				return d[x.fi] > d[y.fi]; 		
+			});	
 			for (auto it : G[u]) {
 				if (del[it.se]) continue;
 				v = it.fi;
-				if (d[v] <= 0) continue;
-				del[it.se] = 1;  
-				--d[u]; --d[v];
-				--needdel;
+				if (d[v] <= 0) continue; 
+				del[it.se] = 1;
+				--d[u]; --needdel;
+				--d[v];
 				if (d[v] > 0) {
 					pq.push(pii(d[v], v));
 				}
-				if (d[u] <= 0 || needdel <= 0) break;  	
+				if (d[u] <= 0 || needdel <= 0) break;  
 			}
 		}
-		//for (int i = 1; i <= n; ++i) printf("%d%c", d[i], " \n"[i == n]);
 		int sze = (n + m + 1) / 2;
 		printf("%d\n", sze);
 		int cnt = 0;
@@ -71,7 +74,7 @@ int main() {
 				printf("%d %d\n", e[i][0], e[i][1]);
 			}
 		}
-		assert(sze == cnt);
+		assert(sze == cnt); 
 	}
 	return 0;
 }
