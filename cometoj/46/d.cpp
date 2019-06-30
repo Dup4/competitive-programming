@@ -107,7 +107,7 @@ int main() {
 			int &x = e[i][0], &y = e[i][1], &z = e[i][2];  
 			scanf("%d%d%d", &x, &y, &z); 
 			++d[x]; ++d[y]; 
-			G[x].insert(pii(y, z));
+			G[x].insert(pii(y, z));   
 			G[y].insert(pii(x, z));
 		}
 		for (int i = 1; i <= n; ++i) {
