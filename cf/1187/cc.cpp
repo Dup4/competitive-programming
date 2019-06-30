@@ -3,7 +3,7 @@ using namespace std;
 
 #define N 1010
 int n, m;
-int s[N], y[N];
+int s[N];
 struct node {
 	int t, l, r;
 	node() {}
@@ -19,6 +19,24 @@ bool ok(int l, int r) {
 		}
 	}
 	return 0;
+}
+
+bool check(node a) {
+	if (a.t == 1) {
+		for (int i = a.l + 1; i <= a.r; ++i) {
+			if (s[i - 1] > s[i]) {
+				return 0;
+			}
+		}
+		return 1;
+	} else {
+		for (int i = a.l + 1; i <= a.r; ++i) {
+			if (s[i - 1] > s[i]) {
+				return 1;
+			}
+		}
+		return 0;
+	}
 }
 
 void work() {
@@ -46,6 +64,12 @@ void work() {
 		if (s[i] == 0) {
 			s[i] = cnt;
 			--cnt;
+		}
+	}
+	for (int i = 1; i <= m; ++i) {
+		if (!check(a[i])) {
+			puts("NO");
+			return;
 		}
 	}
 	puts("YES");
