@@ -2,7 +2,7 @@
 using namespace std;
 
 #define ll long long
-#define N 300000
+#define N 600000
 int n, m, p; 
 struct node {
 	int x, y, z;
@@ -24,11 +24,11 @@ int main() {
 			a[i].scan();
 		}
 		sort(a + 1, a + 1 + p);
-		ll res = 0;
+		int res = 0;
 		for (int i = 1; i <= p; ++i) {
-			res = max(res, 1ll * (i - 1) + a[i].z);
+			res = max(res, (i - 1) + a[i].z);
 		}
-		printf("%lld\n", res);
+		printf("%d\n", res);
 	}
 	return 0;
 }
