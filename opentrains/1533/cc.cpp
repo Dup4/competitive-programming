@@ -2,26 +2,19 @@
 using namespace std;
 
 #define ll long long
-#define N 2010
+#define N 300000
 int n, m, p; 
 struct node {
-	int x, y;
+	int x, y, z;
 	node() {}
 	void scan() {
 		scanf("%d%d", &x, &y);
-		x = n - x + 1;
-		if (y <= m) {
-			y = m - y + 1;
-		} else {
-			y -= m;
-		}
+		--x; --y;
+		if (y >= m) ++y;
+		z = n - x + abs(y - m);
 	}
 	bool operator < (const node &other) const {
-		if (x + y != other.x + other.y) {
-			return x + y > other.x + other.y;
-		} else {
-			return y > other.y;
-		}
+		return z > other.z;
 	}
 }a[N];
 
@@ -31,10 +24,9 @@ int main() {
 			a[i].scan();
 		}
 		sort(a + 1, a + 1 + p);
-		ll base = 0, res = 0;
+		ll res = 0;
 		for (int i = 1; i <= p; ++i) {
-			res = max(res, base + a[i].x + a[i].y);
-			++base;
+			res = max(res, 1ll * (i - 1) + a[i].z);
 		}
 		printf("%lld\n", res);
 	}

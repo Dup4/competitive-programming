@@ -24,7 +24,11 @@ int main() {
 	}
 	printf("%d\n", q);
 	for (int i = 1; i <= q; ++i) {
-		pii e = pii(rd(n) + 1, rd(n) + 1);
+		pii e;
+		do {
+			e.fi = rd(n) + 1;
+			e.se = rd(n) + 1;
+		} while (e.fi == e.se);
 		printf("%d %d\n", e.fi, e.se);
 	}
 	return 0;
