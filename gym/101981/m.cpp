@@ -83,15 +83,17 @@ ll KMP(char *x, int m, char *y, int n) {
 	kmp_pre(x, m, nx);
 	while (i < 2 * n) {
 		while (-1 != j && y[i % n] != x[j]) j = nx[j];
-		if (y[i % n] == x[j]) {
-			if (j < n) {
+		if (y[i % n] == x[j]) { 
+			if (i < n) {
 				++res;
-				res += 1ll * a[i - j] * (j + 1);    
+				cout << i << " " << j << endl;
+				res += 1ll * a[i - j];  
 			} else {
 				int pre = i - j;
 				if (pre < n) {
-					++res;
-					res += 1ll * a[i - j] * min(j + 1, n - pre);
+					++res; 
+					cout << i << " " << j << endl;
+					res += 1ll * a[pre];
 				}
 			}
 		}

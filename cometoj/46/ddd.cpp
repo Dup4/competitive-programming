@@ -53,10 +53,20 @@ struct TRIE {
 }trie;
 
 int main() {
-	trie.init();
-	for (int i = 1; i <= 10; ++i) {
-		trie.insert(i, i);
+	int a, b;
+	while (scanf("%d%d", &a, &b) != EOF) {
+		trie.init();
+		for (int i = 1; i <= 1000; ++i) {
+			trie.insert(i, i);
+		}
+		int res = 0;
+		for (int i = 1; i <= 1000; ++i) {
+			if ((i ^ a) < b) {
+				res += i;
+			}
+		}
+		cout << res << endl;
+		cout << trie.query(a, b) << endl;
 	}
-	cout << trie.query(1024, 10) << endl;
 	return 0;
 }

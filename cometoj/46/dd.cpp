@@ -3,7 +3,7 @@ using namespace std;
 
 #define ll long long
 #define N 150010
-#define S 400
+#define S 1000
 #define pii pair <int, int>
 #define fi first
 #define se second
@@ -37,10 +37,10 @@ struct TRIE {
 		t[0] = node(); 
 	}
 	void insert(int id, int x, int y) {
-		int root = rt[id]; 
+		int root = rt[id], nx; 
 		for (int i = 17; i >= 0; --i) {  
 			int f = (x >> i) & 1;
-			int nx = t[root].son[f];  
+			nx = t[root].son[f];  
 			if (nx == -1) {
 				nx = ++cnt;
 				t[nx] = node();
