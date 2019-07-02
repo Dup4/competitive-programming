@@ -13,40 +13,45 @@ ll gcd(ll a, ll b) {
 	return b ? gcd(b, a % b) : a; 
 }
 
+multiset <pll> se;
+void add(ll l, ll r) {
+	se.insert(pll(l, 1));
+	se.insert(pll(r + 1, -1));
+}
+
 int main() {
 	while (scanf("%d%lld%lld", &n, &A, &B) != EOF) {
+		se.clear();
 		ll sum = 0;
 		for (int i = 1; i <= n; ++i) {
 			scanf("%lld%lld", l + i, r + i);
 			sum += r[i] - l[i] + 1;
 		}
-		ll g = gcd(a, b + 1);
+		ll g = gcd(A, B + 1);
 		if (1.0 * A * B / g > 1e18) {
 			printf("%lld\n", sum);
 			continue;
 		}
-		multiset <pll> se; 
-		ll res = 0;
 		ll T = A / g * B;
 		for (int i = 1; i <= n; ++i) {
+			if (r[i] - l[i] + 1 >= T) {
+				printf("%lld\n", T);
+				return 0;
+			}
 			l[i] %= T;
 			r[i] %= T;
-			se.insert(pll(l[i], 1));
-			se.insert(pll(r[i], 0)); 
-			se.insert(pll(r[i] + 1, -1));
+			if (l[i] > r[i]) {
+				add(l[i], T - 1);
+				add(0, r[i]);	
+			} else {
+				add(l[i], r[i]);
+			}
 		}
-		ll base = 0, x = -1e18;
-		auto it = se.begin();
-		while (1) {
-			if (base == 0 && it == se.end()) {
-				break;
-			}
-			if (base == 0) {
-				x = *it.fi;
-			}
-			while (it != se.end() && *it.fi <= x) {
-				
-			}
+		ll base = 0, lst = -1, res = 0;
+		for (auto it : se) {
+			if (base > 0) res += it.fi - lst;
+			base += it.se;
+			lst = it.fi;
 		}
 		printf("%lld\n", res); 
 	}
