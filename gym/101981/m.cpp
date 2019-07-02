@@ -32,6 +32,7 @@ void Manacher(char *s, int len) {
 			id = i;
 		}
 	}
+	memset(a, 0, sizeof a);
 	memset(num, 0, sizeof num);
 	for (int i = 2; i < l; ++i) {
 		if (isalpha(Ma[i])) {
@@ -80,11 +81,26 @@ ll KMP(char *x, int m, char *y, int n) {
 	int i = 0, j = 0;
 	ll res = 0;
 	kmp_pre(x, m, nx);
-	while (i < n) {
-		while (-1 != j && y[i] != x[j]) j = nx[j];
+	while (i < 2 * n) {
+		while (-1 != j && y[i % n] != x[j]) j = nx[j];
+		if (y[i % n] == x[j]) {
+			if (j < n) {
+				++res;
+				res += 1ll * a[i - j] * (j + 1);    
+			} else {
+				int pre = i - j;
+				if (pre < n) {
+					++res;
+					res += 1ll * a[i - j] * min(j + 1, n - pre);
+				}
+			}
+		}
 		++i; ++j;
-
+		if (j >= m) {
+			j = nx[j];
+		}
 	}
+	return res;
 }
 
 int main() {
@@ -92,7 +108,7 @@ int main() {
 		n = strlen(s); m = strlen(t);
 		reverse(s, s + n);
 		Manacher(s, n);
-		
+		printf("%lld\n", KMP(t, m, s, n));	
 	}
 	return 0;
 }
