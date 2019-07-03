@@ -2,16 +2,16 @@
 using namespace std;
 
 #define ll long long
-#define N 150010
-#define S 1000
+#define N 200010
+#define S 20000
 #define pii pair <int, int>
 #define fi first
 #define se second
-const ll p = 998244353;  
+const int p = 998244353;  
 int n, m, q, b[N], d[N], vis[N], id[N], fid[N], cnt_id; 
 set <pii> G[N]; vector <pii> vec;  
 int e[N][3];   
-void add(ll &x, ll y) {
+void add(int &x, int y) {
 	x += y;
 	if (x >= p) {
 		x -= p;
@@ -21,7 +21,7 @@ void add(ll &x, ll y) {
 struct TRIE {
 	struct node {
 		int son[2];
-		ll tot;
+		int tot;
 		node() {
 			memset(son, -1, sizeof son);    
 			tot = 0;
@@ -50,8 +50,8 @@ struct TRIE {
 			add(t[root].tot, y);
 		}
 	}
-	ll query(int id, int x, int y) {
-		ll res = 0;
+	int query(int id, int x, int y) {
+		int res = 0;
 		int root = rt[id], nx;
 		for (int i = 17; i >= 0; --i) {
 			int f = ((x >> i) & 1); 
@@ -71,25 +71,25 @@ struct TRIE {
 }trie;
 
 struct BIT {
-	ll a[N];
+	int a[N];
 	void init() {
 		memset(a, 0, sizeof a); 
 	}
-	void update(int x, ll v) {
-		++x; 
+	void update(int x, int v) {
+		++x;
 		for (; x < N; x += x & -x) {
 			add(a[x], v);  
 		}
 	}
-	ll query(int x) {
+	int query(int x) {
 		++x;
-		ll res = 0;
+		int res = 0;
 		for (; x > 0; x -= x & -x) {
 			add(res, a[x]); 
 		}
 		return res;
 	}
-	ll query(int l, int r) {
+	int query(int l, int r) {
 		return (query(r) - query(l - 1) + p) % p;
 	}
 }bit;
@@ -151,7 +151,7 @@ int main() {
 			}
 		}
 		int op, x, y, u, v, w;
-		ll res;
+		int res;
 		while (q--) {
 			scanf("%d%d%d", &op, &x, &y);
 			switch(op) {
@@ -177,14 +177,17 @@ int main() {
 				case 2 :
 					y %= p;
 					u = e[x][0], v = e[x][1], w = e[x][2];
+					if (y == w) break;
 					if (vis[u] == vis[v]) { 
-						bit.update(b[u] ^ b[v], (1ll * y - w + p) % p); 
+						bit.update(b[u] ^ b[v], (y - w + p) % p); 
 						G[u].erase(pii(v, w));
 						G[v].erase(pii(u, w));
 						G[u].insert(pii(v, y));
 						G[v].insert(pii(u, y));  
 					} else {
-						trie.insert(id[u], b[v], (1ll * y - w + p) % p);
+						trie.insert(id[u], b[v], (y - w + p) % p);
+						G[v].erase(pii(u, w));
+						G[v].insert(pii(u, y));
 					}
 					e[x][2] = y;
 					break;
@@ -194,7 +197,7 @@ int main() {
 					for (int i = 1; i <= cnt_id; ++i) {  
 						add(res, (trie.query(i, b[fid[i]], y + 1) - trie.query(i, b[fid[i]], x) + p) % p);  
 					}
-					printf("%lld\n", res % p);
+					printf("%d\n", res);
 					break;
 				default: 
 					assert(0);  
