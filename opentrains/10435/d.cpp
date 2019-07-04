@@ -10,8 +10,9 @@ struct node1{
 	node1(int id,int l,int r, int lmax):id(id), l(l), r(r), lmax(lmax){}
 	bool operator < (const node1 &other) const
 	{
-		if(lmax == other.lmax) return l < other.l;
-		else return lmax < other.lmax;
+		return lmax < other.lmax;
+	//	if(lmax == other.lmax) return l < other.l;
+	//	else return lmax < other.lmax;
 	}
 }arr[maxn];
  
