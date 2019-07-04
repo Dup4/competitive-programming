@@ -3,13 +3,13 @@ using namespace std;
 
 #define ll long long
 #define N 200010
-#define S 20000
+#define S 2000
 #define pii pair <int, int>
 #define fi first
 #define se second
 const int p = 998244353;  
 int n, m, q, b[N], d[N], vis[N], id[N], fid[N], cnt_id; 
-set <pii> G[N]; vector <pii> vec;  
+vector <vector<pii>> G; vector <pii> vec;  
 int e[N][3];   
 void add(int &x, int y) {
 	x += y;
@@ -98,8 +98,8 @@ void init() {
 	cnt_id = 0;
 	trie.init();
 	bit.init(); 
+	G.clear(); G.resize(n + 1);
 	for (int i = 1; i <= n; ++i) {
-		G[i].clear();
 		d[i] = vis[i] = 0;
 	}
 }
@@ -114,8 +114,8 @@ int main() {
 			scanf("%d%d%d", &x, &y, &z); 
 			++d[x]; ++d[y];
 		    z %= p;	
-			G[x].insert(pii(y, z));   
-			G[y].insert(pii(x, z));
+			G[x].push_back(pii(y, z));   
+			G[y].push_back(pii(x, z));
 		}
 		for (int i = 1; i <= n; ++i) {
 			if (d[i] >= S) {
@@ -133,10 +133,7 @@ int main() {
 					vec.push_back(it); 
 				}
 			} 
-		    G[i].clear();	
-			for (auto it : vec) {
-				G[i].insert(it);
-			}
+			G[i] = vec;
 		}
 		for (int i = 1; i <= n; ++i) {
 			for (auto it : G[i]) {
@@ -180,14 +177,26 @@ int main() {
 					if (y == w) break;
 					if (vis[u] == vis[v]) { 
 						bit.update(b[u] ^ b[v], (y - w + p) % p); 
-						G[u].erase(pii(v, w));
-						G[v].erase(pii(u, w));
-						G[u].insert(pii(v, y));
-						G[v].insert(pii(u, y));  
+						for (auto &it : G[u]) {
+							if (it.fi == v) {
+								it.se = y;
+								break;
+							}
+						}
+						for (auto &it : G[v]) {
+							if (it.fi == u) {
+								it.se = y;
+								break;
+							}
+						}
 					} else {
 						trie.insert(id[u], b[v], (y - w + p) % p);
-						G[v].erase(pii(u, w));
-						G[v].insert(pii(u, y));
+						for (auto &it : G[v]) {
+							if (it.fi == u) {
+								it.se = y;
+								break;
+							}
+						}
 					}
 					e[x][2] = y;
 					break;

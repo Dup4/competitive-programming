@@ -28,9 +28,6 @@ int main() {
 					int now = j * 2 - cnt[i][k] + ((S >> i) & 1);
 					if (now >= 0 && now < N) {
 						dp[i][now] = min(dp[i][now], (dp[i + 1][j] * 2 + (k ^ 1)));
-						if (i <= 2 && now <= 10) {
-						//	cout << i << " " << now << " " << i + 1 << " " << j << " " << dp[i][now] << " " << dp[i + 1][j] << endl;
-						}
 					}
 				}
 			}
