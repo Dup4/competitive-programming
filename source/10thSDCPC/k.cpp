@@ -36,13 +36,7 @@ int main() {
 			if (a >= p) {
 				printf("%lld\n", res + (remind + 1) / 2);
 			} else {
-				int two = 0;
-				int t = a;
-				while (t % 2 == 0) {
-					++two;
-					t /= 2;
-				}
-				t = (p / a) + (p % a != 0);
+				int t = (p / a) + (p % a != 0);
 				t = 1ll << t;
 				res += mod / t - p / t;
 				printf("%lld\n", res);
