@@ -1,39 +1,43 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define INF 0x3f3f3f3f
 #define N 2000010
-#define pii pair <int, int>
-#define fi first
-#define se second
-int n, m, a[N], f[N], g[N];
-int b[2100], c[2100]; 
+int n, m, a[N], b[N], used[N], last[N];
+vector <int> res;
+stack <int> sta;
 
 int main() {
 	while (scanf("%d", &n) != EOF) {
 		m = n * (n + 1);
-		for (int i = 1; i <= m; ++i) scanf("%d", a + i);
-		for (int i = 1; i <= 2 * n; ++i) b[i] = INF;
-		b[0] = -1;
-		for (int i = 1; i <= m; ++i) {  
-			int pos = upper_bound(b + 1, b + 1 + 2 * n, a[i]) - b - 1;
-			f[i] = pos + 1;
-			g[i] = c[pos];
-			if (a[i] < b[f[i]]) {
-				b[f[i]] = a[i];
-				c[f[i]] = i;
-			} 			
+		for (int i = 1; i <= m; ++i) {
+			scanf("%d", a + i);
+			b[i] = i;
 		}
-		if (b[2 * n] == INF) puts("IMPOSSIBLE");
-		else {
-			vector <int> res;
-			int it = c[2 * n];
-			while (it) {
-				res.push_back(it);
-				it = g[it];
+		sort(b + 1, b + 1 + m, [&](int x, int y) {
+			return a[x] < a[y];		
+		});
+		for (int i = 1; i <= m; ++i) a[b[i]] = i;
+		res.clear();
+		while (!sta.empty()) sta.pop();
+		memset(used, 0, sizeof used);
+		memset(last, -1, sizeof last);
+		for (int i = 1; i <= m; ++i) {
+			int x = a[i], g = x / n;
+			if (used[g]) continue;
+			if (last[g] == -1) {
+				last[g] = i;
+				sta.push(g); 
+			} else {
+				res.push_back(last[g]);
+				res.push_back(i);
+				used[g] = 1;
+				while (!sta.empty()) {
+					last[sta.top()] = -1;
+					sta.pop();
+				}
 			}
-			for (int i = 2 * n - 1; i >= 0; --i) printf("%d%c", res[i], " \n"[!i]);
 		}
+		for (int i = 0; i < 2 * n; ++i) printf("%d%c", res[i], " \n"[i == 2 * n - 1]);
 	}
 	return 0;
 }

@@ -4,7 +4,8 @@ using namespace std;
 #define ll long long
 #define N 100010
 #define MAXL 62
-int n, a[N], res;
+int n, res;
+ll a[N];
 
 struct LinearBasis {
 	ll a[MAXL + 1];
@@ -27,6 +28,7 @@ struct LinearBasis {
 					}
 				}
 				a[j] = t;
+				++res;
 				return;
 			}
 		}
@@ -38,12 +40,8 @@ int main() {
 		res = 0;
 		li = LinearBasis();
 		for (int i = 1; i <= n; ++i) {
-			scanf("%d", a + i);
+			scanf("%lld", a + i);
 			li.insert(a[i]);
-		}
-		res = 0;
-		for (int i = 0; i <= MAXL; ++i) {
-			res += !!li.a[i];
 		}
 		puts(res & 1 ? "First" : "Second");
 	}
