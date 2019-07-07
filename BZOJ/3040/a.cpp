@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
-#include<ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/priority_queue.hpp>
+#include <bits/extc++.h>
+//#include<ext/pb_ds/assoc_container.hpp>
+//#include <ext/pb_ds/priority_queue.hpp>
 using namespace std;
 using namespace __gnu_pbds;
 
@@ -20,11 +21,11 @@ struct Graph {
 		memset(head, -1, sizeof head);
 		pos = 0;
 	}
-	void add(int u, int v, int w) {
-		a[++pos] = node(v, head[u], w); head[u] = pos;
+	inline void add(int u, int v, int w) {
+		a[pos] = node(v, head[u], w); head[u] = pos++; 
 	}
 }G;
-#define erp(u) for (int it = G.head[u], v = G.a[it].to, w = G.a[it].w; it; it = G.a[it].nx, v = G.a[it].to, w = G.a[it].w)
+#define erp(u) for (int it = G.head[u], v = G.a[it].to, w = G.a[it].w; ~it; it = G.a[it].nx, v = G.a[it].to, w = G.a[it].w)
 
 struct node {
 	int u; ll w;
@@ -36,21 +37,19 @@ struct node {
 };
 #define heap __gnu_pbds::priority_queue <node, less<node>, pairing_heap_tag>
 
-ll dis[N]; bool used[N];
-heap::point_iterator id[N]; 
+ll dis[N]; 
+heap::point_iterator id[N];
+heap pq;
 void Dijkstra() {
-	for (int i = 1; i <= n; ++i) {
-		used[i] = 0;
+	for (int i = 2; i <= n; ++i) {
 		dis[i] = INFLL;
 		id[i] = 0;
 	}
+	while (!pq.empty()) pq.pop();
 	dis[1] = 0;
-	heap pq;
 	id[1] = pq.push(node(1, 0)); 
 	while (!pq.empty()) {
 		int u = pq.top().u; pq.pop();
-		if (used[u]) continue;
-		used[u] = 1;
 		erp(u) if (dis[v] > dis[u] + w) {
 			dis[v] = dis[u] + w;
 			if (id[v] == 0) {
@@ -62,29 +61,20 @@ void Dijkstra() {
 	}
 }
 
-void read(int &x) {
-	x = 0; char ch;
-	while (!isdigit(ch = getchar()));
-	while (isdigit(ch)) {
-		x = x * 10 + ch - '0';
-		ch = getchar();  
-	}
-}
-
 int main() {
 	while (scanf("%d%d", &n, &m) != EOF) {
 		scanf("%d%d%d%d%d%d", &T, &rxa, &rxc, &rya, &ryc, &rp);
 		G.init();
-		ll x = 0, y = 0, z = 0, a, b;
-		for (int i = 1, a, b; i <= T; ++i) {
+		ll x = 0, y = 0, a, b;
+		for (int i = 1; i <= T; ++i) {
 			x = (x * rxa + rxc) % rp;
 			y = (y * rya + ryc) % rp;
-			a = x % n + 1; b = y % n + 1;
-			if (a > b) swap(a, b);
+			a = min(x % n + 1, y % n + 1);
+			b = max(x % n + 1, y % n + 1);
 			G.add(a, b, 100000000 - 100 * a);
 		}
 		for (int i = 1, u, v, w; i <= m - T; ++i) {
-			read(u); read(v); read(w);
+			scanf("%d%d%d", &u, &v, &w);
 			G.add(u, v, w);
 		}
 		Dijkstra();
