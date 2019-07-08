@@ -3,25 +3,31 @@ using namespace std;
 
 #define ll long long
 #define ull unsigned long long
+const ull basep = 31;
 int n, m, lens, lent;
 vector <string> s, t;
-vector <vector<ull>> Hs, Ht;
+vector <ull> Ht;
 map <ull, int> used, has;    
-void Hash(vector <string> &s, vector <vector<ull>> &H, int sze, int len) {
-	ull base = 31;
+ull qmod(ull base, int n) {
+	ull res = 1;
+	while (n) {
+		if (n & 1) {
+			res = res * base;
+		}
+		base = base * base;
+		n >>= 1;
+	}
+	return res;
+}
+void Hash(vector <string> &s, vector <ull> &H, int sze, int len, ull base) {
+	H.clear(); H.resize(sze); 
 	for (int i = 0; i < sze; ++i) {
-		H[i].clear(); H[i].resize(len);
+		H[i] = 0;	
 		for (int j = 0; j < len; ++j) {
-			H[i][j] = H[i][j - 1] + base * (s[i][j] - 'a');   
-			base *= 31;
+			H[i] = H[i] + base * s[i][j];
+			base *= basep;
 		}
 	}
-}
-ull getHash(vector <ull> &H, int l, int r) {
-	ull R = H[r];
-	ull L = 0;
-	if (l) L = H[l - 1];
-	return R - L;  
 }
 
 int main() {
@@ -30,26 +36,35 @@ int main() {
 	while (cin >> n >> m >> lens >> lent) {
 		s.clear(); s.resize(n);
 		t.clear(); t.resize(m); 
-	    Hs.clear(); Hs.resize(n);
 		Ht.clear(); Ht.resize(m);
 		for (auto &it : s) cin >> it;
-		for (auto &it : t) cin >> it;	
-		Hash(s, Hs, n, lens); Hash(t, Ht, m, lent);
-		has.clear();
+		for (auto &it : t) cin >> it;	 
+		Hash(t, Ht, m, lent, qmod(basep, n - (n + m) / 2 + 1));
+		has.clear(); for (auto it : Ht) ++has[it];
 		int need = (n + m) / 2;
 		int tail = n - need;  
-		for (auto it : Ht) ++has[it];
 		ll res = 0;
+		ull D = qmod(basep, tail);
 		for (int i = 0; i < n; ++i) {
 			used.claer(); 
-		    ull HT = getHash(Hs[i], tail - 1, len - 1); 	
-			for (int j = 0, j < tail; ++j) {
-				if (tail - j >= need) {
-					int now = tail - need; 
-					if (getHash(Hs[i], now - 1, tail - 1) == HT) {
-						res += has[]
-					}			
+		    ull L = 0, R = 0, base;	
+			base = basep;
+			for (int j = tail; j < n; ++j) {
+				R = R + base * s[i][j];
+				base *= basep;
+			}
+			base = basep;
+			for (int j = 0; j < tail; ++j) {
+				L = L + base * s[i][j];
+				base *= basep;
+			}
+			for (int j = tail - 1; j >= 0; --j) {
+				if (has.find(L - R) != has.end()) {
+					res += has[L - R];
 				}
+				L -= D * s[i][j];
+				L *= basep;
+				L += basep * s[i][j]; 
 			}
 		}
 		cout << res << "\n";
