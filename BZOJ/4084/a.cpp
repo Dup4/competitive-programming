@@ -22,10 +22,11 @@ ull qmod(ull base, int n) {
 void Hash(vector <string> &s, vector <ull> &H, int sze, int len, ull base) {
 	H.clear(); H.resize(sze); 
 	for (int i = 0; i < sze; ++i) {
-		H[i] = 0;	
+		H[i] = 0;
+		ull tmp = base;	
 		for (int j = 0; j < len; ++j) {
-			H[i] = H[i] + base * s[i][j];
-			base *= basep;
+			H[i] = H[i] + tmp * s[i][j];
+			tmp *= basep;
 		}
 	}
 }
@@ -37,30 +38,30 @@ int main() {
 		s.clear(); s.resize(n);
 		t.clear(); t.resize(m); 
 		Ht.clear(); Ht.resize(m);
-		for (auto &it : s) cin >> it;
-		for (auto &it : t) cin >> it;	 
-		Hash(t, Ht, m, lent, qmod(basep, n - (n + m) / 2 + 1));
-		has.clear(); for (auto it : Ht) ++has[it];
-		int need = (n + m) / 2;
-		int tail = n - need;  
+		for (int i = 0; i < n; ++i) cin >> s[i];
+		for (int i = 0; i < m; ++i) cin >> t[i];
+		Hash(t, Ht, m, lent, qmod(basep, lens - (lens + lent) / 2 + 1));
+		has.clear(); for (int i = 0; i < m; ++i) ++has[Ht[i]];
+		int need = (lens + lent) / 2;
 		ll res = 0;
-		ull D = qmod(basep, tail);
+		ull D = qmod(basep, need);
 		for (int i = 0; i < n; ++i) {
-			used.claer(); 
+			used.clear(); 
 		    ull L = 0, R = 0, base;	
 			base = basep;
-			for (int j = tail; j < n; ++j) {
+			for (int j = need; j < lens; ++j) {
 				R = R + base * s[i][j];
 				base *= basep;
 			}
 			base = basep;
-			for (int j = 0; j < tail; ++j) {
+			for (int j = 0; j < need; ++j) {
 				L = L + base * s[i][j];
-				base *= basep;
+				base *= basep;    
 			}
-			for (int j = tail - 1; j >= 0; --j) {
-				if (has.find(L - R) != has.end()) {
-					res += has[L - R];
+			for (int j = need - 1; j >= 0; --j) { 
+				if (used.find(L) == used.end() && has.find(L - R) != has.end()) {
+					used[L] = 1;
+					res += has[L - R];	
 				}
 				L -= D * s[i][j];
 				L *= basep;
