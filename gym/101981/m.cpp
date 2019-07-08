@@ -48,22 +48,22 @@ void Manacher(char *s, int len) {
 		}
 	}
 
-//	for (int i = 0; i < l; ++i) {
-//		printf("%2d ", i);
-//	}
-//	puts("");
-//	for (int i = 0; i < l; ++i) {
-//		printf("%2c ", Ma[i]);
-//	}
-//	puts("");
-//	for (int i = 0; i < l; ++i) {
-//		printf("%2d ", Mp[i]);
-//	}
-//	puts("");
-//	for (int i = 0; i < n; ++i) {
-//		printf("%2d ", a[i]);
-//	}
-//	puts("");
+	for (int i = 0; i < l; ++i) {
+		printf("%2d ", i);
+	}
+	puts("");
+	for (int i = 0; i < l; ++i) {
+		printf("%2c ", Ma[i]);
+	}
+	puts("");
+	for (int i = 0; i < l; ++i) {
+		printf("%2d ", Mp[i]);
+	}
+	puts("");
+	for (int i = 0; i < n; ++i) {
+		printf("%2d ", a[i]);
+	}
+	puts("");
 }
 
 int nx[N];
@@ -86,13 +86,13 @@ ll KMP(char *x, int m, char *y, int n) {
 		if (y[i % n] == x[j]) { 
 			if (i < n) {
 				++res;
-				cout << i << " " << j << endl;
+			//	cout << i << " " << j << endl;
 				res += 1ll * a[i - j];  
 			} else {
 				int pre = i - j;
 				if (pre < n) {
 					++res; 
-					cout << i << " " << j << endl;
+			//		cout << i << " " << j << endl;
 					res += 1ll * a[pre];
 				}
 			}
