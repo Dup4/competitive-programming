@@ -31,7 +31,7 @@ void DFS(int u) {
 	sze[u] = 1;
 	erp(u) if (v != fa[u]) {
 		fa[v] = u;
-		deep[v] = deep[u] = 1;
+		deep[v] = deep[u] + 1;
 		DFS(v);
 		sze[u] += sze[v];
 		if (!son[u] || sze[v] > sze[son[u]]) son[u] = v; 
@@ -61,7 +61,7 @@ struct qnode {
 	qnode(int dep, int id, int c, int d) : dep(dep), id(id), c(c), d(d) {}
 	bool operator < (const qnode &other) const {
 		if (dep != other.dep) {
-			dep > other.dep;
+			return dep > other.dep;
 		}
 		return id < other.id;
 	}
@@ -89,8 +89,6 @@ int main() {
 			f[n + i] = n + i;	 
 		}
 		for (int i = n + m; i >= 1; --i) if (top[i] == 0) {
-			fa[i] = 0;
-			deep[i] = 0;
 			DFS(i); gettop(i, i);
 		}
 		int _q = 0;
