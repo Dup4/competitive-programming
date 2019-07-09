@@ -156,8 +156,6 @@ void init() {
 	}
 }
 int main() {
-	freopen("return.in", "r", stdin);
-	freopen("return.out", "w", stdout);
 	int T; scanf("%d", &T);
 	while (T--) {
 		scanf("%d%d", &n, &m); init();
