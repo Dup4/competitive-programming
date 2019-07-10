@@ -46,6 +46,12 @@ struct Cartesian_Tree {
 		b[t[u].id] = pii(lsze, rsze);
 		return lsze + rsze + 1; 
 	}
+	void print(int u) {
+		if (!u) return;
+		print(t[u].son[0]);
+		printf("%d %d %d\n", u, t[u].id, t[u].val);
+		print(t[u].son[1]);
+	}
 }CT;
 
 ll f(int l, int r) {
@@ -58,13 +64,16 @@ ll f(int l, int r) {
 ll getcnt(ll x) {
 	ll res = 0;
 	for (int i = 1; i <= n; ++i) {
-		ll len = x / a[i];  
-		if (len - b[i].se >= 0) {
+		ll len = x / a[i]; 
+	    if (len <= 0) continue;
+//	    cout << len << endl;	
+		if (len - b[i].se > 0) {
 			res += 1ll * min(len - b[i].se, 1ll * b[i].fi + 1) * (b[i].se + 1);  
 		}
-		if (len <= b[i].fi + b[i].se + 1) {
-			res += f(max(0ll, len - b[i].fi), b[i].se); 
+		if (len <= b[i].fi + b[i].se + 1 && len - b[i].se >= 0) {
+			res += f(max(1ll, len - b[i].fi - 1), b[i].se); 
 		}
+//		cout << res << endl;
 	}
 	return res;
 }
@@ -73,7 +82,7 @@ ll get(ll x) {
 	ll l = 0, r = 1e18, res = -1;
 	while (r - l >= 0) {
 		ll mid = (l + r) >> 1;
-	//	cout << mid << " " << getcnt(mid) << endl;
+//		cout << mid << " " << getcnt(mid) << endl;
 		if (getcnt(mid) >= x) {
 			r = mid - 1;
 			res = mid;
@@ -90,9 +99,14 @@ int main() {
 			scanf("%d", a + i);
 		}
 		CT.init(); CT.build(n, a);
-		CT.DFS(CT.root);
+		CT.DFS(CT.root); 
+	//	CT.print(CT.root);
+	//	for (int i = 1; i <= n; ++i) {
+	//		printf("%d %d %d\n", i, b[i].fi, b[i].se);
+	//	}
 		scanf("%lld%lld", &L, &R);
 		ll QL = get(L) + 1, QR = get(R) - 1;
+		cout << QL << " " << QR << endl;
 		vector <ll> res;
 		if (QL <= QR) {
 			for (int i = 1; i <= n; ++i) {
