@@ -71,7 +71,10 @@ ll getcnt(ll x) {
 			res += 1ll * min(len - b[i].se, 1ll * b[i].fi + 1) * (b[i].se + 1);  
 		}
 		if (len <= b[i].fi + b[i].se + 1 && len - b[i].se >= 0) {
-			res += f(max(1ll, len - b[i].fi - 1), b[i].se); 
+			res += f(max(1ll, len - b[i].fi), b[i].se); 
+		}
+		if (len - b[i].se < 0) {
+			res += f(1, len);
 		}
 //		cout << res << endl;
 	}
@@ -79,7 +82,7 @@ ll getcnt(ll x) {
 }
 
 ll get(ll x) {
-	ll l = 0, r = 1e18, res = -1;
+	ll l = 0, r = 1e15, res = -1;
 	while (r - l >= 0) {
 		ll mid = (l + r) >> 1;
 //		cout << mid << " " << getcnt(mid) << endl;
@@ -106,7 +109,7 @@ int main() {
 	//	}
 		scanf("%lld%lld", &L, &R);
 		ll QL = get(L) + 1, QR = get(R) - 1;
-		cout << QL << " " << QR << endl;
+	//	cout << QL << " " << QR << endl;
 		vector <ll> res;
 		if (QL <= QR) {
 			for (int i = 1; i <= n; ++i) {
