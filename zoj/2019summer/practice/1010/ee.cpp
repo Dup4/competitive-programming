@@ -52,24 +52,6 @@ void get(vector <pii> &vec) {
 		++i; 
 		vec.push_back(pii(l, r));
 	}
-//	sort(vec.begin(), vec.end(), [](pii x, pii y) {
-//		if (x.fi != y.fi) {
-//			return x.fi < y.fi;
-//		}		
-//		return x.se < y.se;
-//	});
-//	vector <pii> tmp;
-//	for (auto it : vec) {
-//		if (tmp.empty()) tmp.push_back(it);
-//		else {
-//			if (it.fi <= tmp.end()[-1].se + 1) {
-//				tmp.end()[-1].se = max(tmp.end()[-1].se, it.se);
-//			} else {
-//				tmp.push_back(it);
-//			}
-//		}
-//	}
-//	vec = tmp;
 }
 
 int main() {

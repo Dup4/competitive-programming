@@ -102,6 +102,7 @@ int main() {
 					if (x > y) {
 						res[i] = 0;	
 					} else {
+						//CDQ要求的是第k小，y - x + 1从第k大转化成第k小
 						qrr[++m] = qnode(0, i, 1, y, y - x + 1, a[y]); 
 					}
 					break;
