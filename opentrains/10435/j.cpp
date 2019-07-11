@@ -9,6 +9,7 @@ using namespace std;
 int n, a[N];
 pii b[N];
 ll L, R;
+vector <ll> res;
 
 struct Cartesian_Tree {
 	struct node {
@@ -40,9 +41,13 @@ struct Cartesian_Tree {
 		root = t[0].son[1];
 	}
 	int DFS(int u) {
-		if (!u) return 0;
-		int lsze = DFS(t[u].son[0]);
-		int rsze = DFS(t[u].son[1]);
+		int lsze = 0, rsze = 0;
+		if (t[u].son[0]) {
+			lsze = DFS(t[u].son[0]);
+		}
+		if (t[u].son[1]) {
+			rsze = DFS(t[u].son[1]);
+		}
 		b[t[u].id] = pii(lsze, rsze);
 		return lsze + rsze + 1; 
 	}
@@ -54,11 +59,10 @@ struct Cartesian_Tree {
 	}
 }CT;
 
-ll f(int l, int r) {
+ll f(ll l, ll r) {
 	if (l > r) return 0;
-	return 1ll * (r + l) * (r - l + 1) / 2;
+	return (r + l) * (r - l + 1) / 2;
 }
-
 
 //得到面积小于等于x的个数
 ll getcnt(ll x) {
@@ -67,14 +71,13 @@ ll getcnt(ll x) {
 		ll len = x / a[i]; 
 	    if (len <= 0) continue;
 //	    cout << len << endl;	
-		if (len - b[i].se > 0) {
+		if (len - b[i].se <= 0) {
+			res += f(max(1ll, len - b[i].fi), len);
+		} else {
 			res += 1ll * min(len - b[i].se, 1ll * b[i].fi + 1) * (b[i].se + 1);  
-		}
-		if (len <= b[i].fi + b[i].se + 1 && len - b[i].se >= 0) {
-			res += f(max(1ll, len - b[i].fi), b[i].se); 
-		}
-		if (len - b[i].se < 0) {
-			res += f(1, len);
+			if (len <= b[i].fi + b[i].se + 1) {
+				res += f(max(1ll, len - b[i].fi), b[i].se);
+			}
 		}
 //		cout << res << endl;
 	}
@@ -82,7 +85,7 @@ ll getcnt(ll x) {
 }
 
 ll get(ll x) {
-	ll l = 0, r = 1e15, res = -1;
+	ll l = 0, r = 1e18, res = -1;
 	while (r - l >= 0) {
 		ll mid = (l + r) >> 1;
 //		cout << mid << " " << getcnt(mid) << endl;
@@ -103,30 +106,28 @@ int main() {
 		}
 		CT.init(); CT.build(n, a);
 		CT.DFS(CT.root); 
-	//	CT.print(CT.root);
-	//	for (int i = 1; i <= n; ++i) {
-	//		printf("%d %d %d\n", i, b[i].fi, b[i].se);
-	//	}
 		scanf("%lld%lld", &L, &R);
 		ll QL = get(L) + 1, QR = get(R) - 1;
-	//	cout << QL << " " << QR << endl;
-		vector <ll> res;
+		res.clear();
 		if (QL <= QR) {
 			for (int i = 1; i <= n; ++i) {
 				ll len = QL / a[i] + (QL % a[i] != 0), low = max(1ll, len - b[i].se);
-				for (int j = low; j <= b[i].fi + 1; ++j) { 
+				for (int j = low; j <= b[i].fi + 1; ++j) {
 					if (1ll * a[i] * j > QR) break;
+						if ((int)res.size() >= R - L + 1) break;
 					ll _low = max(0ll, len - j); 
 					for (int k = _low; k <= b[i].se; ++k) {
 						if (1ll * a[i] * (j + k) > QR) break;
+						if ((int)res.size() >= R - L + 1) break;
 						res.push_back(1ll * a[i] * (j + k));
 					}	
 				}
 			}
 		}
-		int m = R - L + 1; 
+		ll m = R - L + 1;
 		ll cnt = getcnt(QL - 1) - L + 1;
-		while (cnt--) {
+		while (cnt > 0) {
+			--cnt;
 			res.push_back(QL - 1);
 		}
 		while ((int)res.size() <= m) {
