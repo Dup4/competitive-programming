@@ -87,12 +87,13 @@ int main() {
 						if (fa == -1) {
 							fa = Fa[pq[now ^ 1].top().fi][now ^ 1];
 							--mp[sze[fa]];
-							sze[fa] += it.se - it.fi + 1;
+							sze[fa] += it.se - it.fi + 1;  
 							++mp[sze[fa]];
 							Fa[it.fi][now] = fa; 
 						} else {
 							if (Fa[pq[now ^ 1].top().fi][now ^ 1] != fa) {
 								--mp[sze[fa]];
+								--mp[sze[Fa[pq[now ^ 1].top().fi][now ^ 1]]];
 								sze[fa] += sze[Fa[pq[now ^ 1].top().fi][now ^ 1]]; 
 								++mp[sze[fa]]; 
 								Fa[pq[now ^ 1].top().fi][now ^ 1] = fa;
