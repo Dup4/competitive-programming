@@ -85,7 +85,7 @@ ll getcnt(ll x) {
 }
 
 ll get(ll x) {
-	ll l = 0, r = 1e18, res = -1;
+	ll l = 1, r = 1e15, res = -1;
 	while (r - l >= 0) {
 		ll mid = (l + r) >> 1;
 //		cout << mid << " " << getcnt(mid) << endl;
@@ -105,20 +105,21 @@ int main() {
 			scanf("%d", a + i);
 		}
 		CT.init(); CT.build(n, a);
-		CT.DFS(CT.root); 
+		CT.DFS(CT.root);
+	//    for (int i = 1; i <= n; ++i) {
+	//		printf("%d %d %d\n", i, b[i].fi, b[i].se);
+	//	}	
 		scanf("%lld%lld", &L, &R);
 		ll QL = get(L) + 1, QR = get(R) - 1;
 		res.clear();
 		if (QL <= QR) {
 			for (int i = 1; i <= n; ++i) {
 				ll len = QL / a[i] + (QL % a[i] != 0), low = max(1ll, len - b[i].se);
-				for (int j = low; j <= b[i].fi + 1; ++j) {
+				for (ll j = low; j <= b[i].fi + 1; ++j) {
 					if (1ll * a[i] * j > QR) break;
-						if ((int)res.size() >= R - L + 1) break;
 					ll _low = max(0ll, len - j); 
-					for (int k = _low; k <= b[i].se; ++k) {
+					for (ll k = _low; k <= b[i].se; ++k) {
 						if (1ll * a[i] * (j + k) > QR) break;
-						if ((int)res.size() >= R - L + 1) break;
 						res.push_back(1ll * a[i] * (j + k));
 					}	
 				}
