@@ -2,7 +2,12 @@
 using namespace std;
 
 int main() {
-	int a[10];
-	cout << a[11] << endl;
+	set <int> se;
+	for (int i = 1; i <= 10; ++i) se.insert(i);
+	set <int>::iterator it;
+	for (it = se.begin(); it != se.end(); ) {
+		cout << *it << endl;
+		se.erase(it++);
+	}
 	return 0;
 }
