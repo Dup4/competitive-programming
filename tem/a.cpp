@@ -2,10 +2,7 @@
 using namespace std;
 
 int main() {
-	int a, b;
-	while (cin >> a >> b) {
-		a ^= b ^= a ^= b;
-		cout << a << " " << b << endl;
-	}
+	int a[10];
+	cout << a[11] << endl;
 	return 0;
 }
