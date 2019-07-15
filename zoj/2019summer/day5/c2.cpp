@@ -76,9 +76,9 @@ void dp2(int u, int pre) {
 		if (v != pre) {
 			dp2(v, u);
 			int dep = deep[v] - deep[u]; 
-			for (int i = 0; i < 4; ++i) {
+			for (int i = 0; i < 3; ++i) {
 				ll Max = 0; 
-				for (int j = 0; j < 4; ++j) {
+				for (int j = 0; j < 3; ++j) {
 					if (dep + j + i > 2) {
 						Max = max(Max, f2[v][j]);	
 					}
@@ -140,7 +140,7 @@ int main() {
 		} else {
 			dp2(a[1], a[1]);
 			ll res = 0;  
-			for (int i = 0; i < 4; ++i) res = max(res, f[a[1]][i]);
+			for (int i = 0; i < 3; ++i) res = max(res, f2[a[1]][i]);
 			printf("%lld\n", res);
 		}
 		for (int i = 1; i <= a[0]; ++i) {
