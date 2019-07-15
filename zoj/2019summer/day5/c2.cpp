@@ -2,11 +2,12 @@
 using namespace std;
 
 #define ll long long
-#define N 100010
+#define INFLL 0x3f3f3f3f3f3f3f3f
+#define N 200010
 int n, q, k, m, w[N];
 vector <vector<int>> G[2];
 int a[N << 2], Sta[N << 2], vis[N];
-ll f[N][2], f2[N][4];  
+ll f[N][2], f2[N][5];  
 int fa[N], deep[N], sze[N], son[N], top[N], in[N], out[N], cnt_in;
 void DFS(int u) {
 	sze[u] = 1;
@@ -68,25 +69,35 @@ void dp(int u, int pre) {
 // 0 表示选择本身
 // 1 表示选择的最近的点离根距离为1
 // 2 表示选择的最近的点离根距离为2
-// 3 ............................3
 void dp2(int u, int pre) {
-	f2[u][0] = f2[u][1] = f2[u][2] = f2[u][3] = 0;
-	if (vis[u]) f2[u][0] = w[u];
+	f2[u][0] = f2[u][1] = f2[u][2] = 0;
+	if (vis[u]) f2[u][0] = w[u]; 
+	ll Max = 0;   
 	for (auto v : G[1][u]) {
 		if (v != pre) {
 			dp2(v, u);
-			int dep = deep[v] - deep[u]; 
-			for (int i = 0; i < 3; ++i) {
-				ll Max = 0; 
-				for (int j = 0; j < 3; ++j) {
-					if (dep + j + i > 2) {
-						Max = max(Max, f2[v][j]);	
-					}
+			int dep = deep[v] - deep[u];     
+			if (dep == 1) {
+			 	f2[u][0] += f2[v][2];	
+				f2[u][1] += max(f2[v][1], f2[v][2]);
+				f2[u][2] += max(f2[v][1], f2[v][2]);  
+				Max = max(Max, f2[v][0] - max(f2[v][1], f2[v][2]));
+			} else if (dep == 2) {
+				f2[u][0] += max(f2[v][1], f2[v][2]);
+				f2[u][1] += max(f2[v][0], max(f2[v][1], f2[v][2]));	
+				f2[u][2] += max(f2[v][0], max(f2[v][1], f2[v][2]));
+			} else if (dep >= 3) {
+				ll tmp = 0;
+				for (int i = 0; i < 3; ++i) {
+					tmp = max(tmp, f2[v][i]);
 				}
-				f2[u][i] += Max; 
+				f2[u][0] += tmp;
+				f2[u][1] += tmp;
+				f2[u][2] += tmp; 
 			}
 		}
 	}
+	f2[u][1] += Max;
 }
 
 void init() {
@@ -106,10 +117,11 @@ int main() {
 		G[0][u].push_back(v);
 		G[0][v].push_back(u);
 	}
-	DFS(1); gettop(1, 1);
+	DFS(1); gettop(1, 1);     
+//	for (int i = 1; i <= n; ++i) printf("%d %d %d\n", i, fa[i], deep[i]);
 	while (q--) {
 		scanf("%d%d", &k, &m);
-		a[0] = m;
+		a[0] = m; 
 		for (int i = 1; i <= m; ++i) {
 			scanf("%d", a + i);
 			vis[a[i]] = 1;
@@ -136,7 +148,7 @@ int main() {
 		}
 		if (k == 1) {
 			dp(a[1], a[1]);
-			printf("%lld\n", max(f[a[1]][0], f[a[1]][1])); 
+			printf("%lld\n", max(f[a[1]][0], f[a[1]][1]));   
 		} else {
 			dp2(a[1], a[1]);
 			ll res = 0;  
