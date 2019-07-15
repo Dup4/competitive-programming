@@ -111,13 +111,14 @@ int main() {
 			scanf("%lld%d", &m, &x);
 			++m;
 			if (m <= st) {
-				printf("%d%c", seg.query(seg.rt[m - 1], 1, n, x), " \n"[i == q]);
+				printf("%d ", seg.query(seg.rt[m - 1], 1, n, x));
 			} else {
 				m -= st;
 				m %= (ed - st + 1);
-				printf("%d%c", seg.query(seg.rt[st + m - 1], 1, n, x), " \n"[i == q]);
+				printf("%d ", seg.query(seg.rt[st + m - 1], 1, n, x));
 			}
 		}
+		puts("");
 	}
 	return 0;
 }
