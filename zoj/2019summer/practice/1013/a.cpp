@@ -3,7 +3,7 @@ using namespace std;
 
 #define N 100010
 #define ll long long
-#define INFLL 0x3f3f3f3f
+#define INFLL 0x3f3f3f3f3f3f3f3f
 int n, m;
 struct node {
 	int l, r;
