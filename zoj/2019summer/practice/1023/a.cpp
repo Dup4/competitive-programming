@@ -157,8 +157,8 @@ int main() {
 			vec[getid(a[i])].push_back(i);
 		}
 		for (int i = 0; i < cnt_id; ++i) {
-			if ((int)vec[i].size() <= S_unit) {
-				int sze = (int)vec[i].size();
+			int sze = (int)vec[i].size();
+			if (1ll * sze * sze <= 2ll * n * log(2 * n) / log(2)) {
 				for (register int j = 1; j < sze; ++j) {
 					for (register int k = 0; k < j; ++k) {
 						++res[vec[i][j] - vec[i][k]]; 

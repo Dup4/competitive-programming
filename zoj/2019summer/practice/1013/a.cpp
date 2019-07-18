@@ -100,7 +100,7 @@ struct SEG {
 			return;
 		}
 		int mid = (l + r) >> 1;
-		ll kk = t[id].l, bb = t[id].b;
+		ll kk = t[id].k, bb = t[id].b;
 		ll l1 = 1ll * l * kk + bb, r1 = 1ll * r * kk + bb;
 		ll l2 = 1ll * l * k + b, r2 = 1ll * r * k + b;
 		if (l1 <= l2 && r1 <= r2) return;
