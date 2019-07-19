@@ -2,67 +2,83 @@
 using namespace std;
 
 #define ll long long
-#define db double
 #define N 10010
 int n;
-ll m, a[N];
-ll gcd(ll a, ll b) {
-	return b ? gcd(b, a % b) : a;
-}
+ll a[N], m;
 
-struct node {
-	int id, x;
-	ll sum;
-	node() {
-		id = -1;
-		x = sum = 0;
+struct frac{
+    ll x,y;
+	frac() {}
+	frac(ll x, ll y) : x(x), y(y) {}
+    frac operator+(const frac &u){
+        ll p,q;
+        p=x*u.y+y*u.x;
+        q=u.y*y;
+        ll d=__gcd(p,q);
+        p/=d; q/=d;
+        return (frac){p,q};
+    }
+    frac operator-(const frac &u){
+        ll p,q;
+        p=x*u.y-y*u.x;
+        q=u.y*y;
+        ll d=__gcd(p,q);
+        p/=d; q/=d;
+        return (frac){p,q};
+    }
+    frac operator*(const frac &u){
+        ll p,q;
+        p=u.x*x;
+        q=u.y*y;
+        ll d=__gcd(p,q);
+        p/=d; q/=d;
+        return (frac){p,q};
+    }
+    frac operator/(const frac &u){
+        ll p,q;
+        p=u.y*x;
+        q=u.x*y;
+        ll d=__gcd(p,q);
+        p/=d; q/=d;
+        return (frac){p,q};
+    }
+	void sqr() {
+		*this = (*this) * (*this);
 	}
-	node(int id, int x, ll sum) : id(id), x(x), sum(sum) {}
-	bool operator < (const node &other) const {
-		return sum > other.sum; 
-	}
+    void print(){
+        if (y==1) printf("%lld\n",x);
+        else printf("%lld/%lld\n",x,y);
+    }
 };
 
-ll solve(ll M) {
-	ll tot = 0;
-	priority_queue <node> pq;
-	for (int i = 1; i <= n; ++i) {
-		tot += a[i] * a[i] * M * M; 
-		pq.push(node(i, 0, -2ll * a[i] * M * m + 1ll * m * m));  
-	}
-	ll T = M;
-	while (T--) {
-		node tmp = pq.top(); pq.pop();
-		tot += tmp.sum;
-		++tmp.x;
-		tmp.sum = -2ll * a[tmp.id] * M * m + 1ll * m * m + 2ll * tmp.x * m * m;
-		pq.push(tmp);	
-	}
-	return tot;
+ll gcd(ll a, ll b) {
+	return b ? gcd(b, a % b) : a; 
 }
 
 int main() {
 	while (scanf("%d%lld", &n, &m) != EOF) {
 		for (int i = 1; i <= n; ++i) scanf("%lld", a + i);
-		ll l = 1, r = 1e3, res = -1;
-		while (r - l >= 0) {
-			ll midl = (l + r) >> 1;
-			ll midr = (midl + r) >> 1;
-			ll sl = solve(midl);
-			ll sr = solve(midr);
-			if (sl * midr * midr <= sr * midl * midl) {
-				res = midl;
-				r = midr - 1;
+		sort(a + 1, a + 1 + n, [&](ll x, ll y){
+			return x > y;		
+		});
+		ll k = m;
+	    ll ans = 0;	
+		for (int i = 1; i <= n; ++i) {
+			if (i < n && (1ll * i * (a[i] - a[i + 1])) <= k) {
+				k -= 1ll * i * (a[i] - a[i + 1]);  
 			} else {
-				l = midl + 1;
+				ans = 1ll * (i * a[i] - k) * (i * a[i] - k);
+				for (int j = i + 1; j <= n; ++j) {
+					ans += 1ll * i * a[j] * a[j]; 
+				}
+				ll q = 1ll * i * m * m;
+				ll G = gcd(ans, q);
+				ans /= G; q /= G; 
+				if (q == 1) printf("%lld\n", ans);
+				else printf("%lld/%lld\n", ans, q);
+				break;
 			}
 		}
-		res = m;
-		ll p = solve(res);
-		ll G = gcd(p, res);
-		p /= G; res /= G;
-		if (res == 1) printf("%lld\n", p);
-		else printf("%lld/%lld\n", p, res);
 	}
 	return 0;
 }

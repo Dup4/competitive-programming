@@ -2,63 +2,79 @@
 using namespace std;
 
 #define ll long long
-#define db double
 #define N 10010
 int n;
-ll m, a[N];
-ll gcd(ll a, ll b) {
-	return b ? gcd(b, a % b) : a;
-}
+ll a[N], m;
 
-struct node {
-	int id, x;
-	ll sum;
-	node() {
-		id = -1;
-		x = sum = 0;
+struct frac{
+    ll x,y;
+	frac() {}
+	frac(ll x, ll y) : x(x), y(y) {}
+	ll gcd(ll a, ll b) {
+		return b ? gcd(b, a % b) : a; 
 	}
-	node(int id, int x, ll sum) : id(id), x(x), sum(sum) {}
-	bool operator < (const node &other) const {
-		return sum > other.sum; 
+    frac operator+(const frac &u){
+        ll p, q; 
+        p = x * u.y + y * u.x;
+        q = u.y * y;
+        ll d = gcd(p, q);
+        p /= d; q /= d;
+        return (frac){p, q};
+    }
+    frac operator-(const frac &u){
+        ll p, q;
+        p = x * u.y - y * u.x;
+        q = u.y * y;
+        ll d = gcd(p, q);
+        p /= d; q /= d;
+        return (frac){p, q};
+    }
+    frac operator*(const frac &u){
+        ll p, q;
+        p = u.x * x;
+        q = u.y * y;
+        ll d = gcd(p, q);
+        p /= d; q /= d;
+        return (frac){p, q};
+    }
+    frac operator/(const frac &u){
+        ll p, q;
+        p = u.y * x;
+        q = u.x * y;
+        ll d = gcd(p,q);
+        p /= d; q /= d;
+        return (frac){p,q};
+    }
+	void sqr() {
+		*this = (*this) * (*this);
 	}
+    void print(){
+		y == 1 ?
+			printf("%lld\n", x) :
+			printf("%lld/%lld\n", x, y);
+    }
 };
-
-ll solve(ll M) {
-	ll tot = 0;
-	priority_queue <node> pq;
-	for (int i = 1; i <= n; ++i) {
-		tot += a[i] * a[i] * M * M; 
-		pq.push(node(i, 0, -2ll * a[i] * M * m + 1ll * m * m));  
-	}
-	ll T = M;
-	while (T--) {
-		node tmp = pq.top(); pq.pop();
-		tot += tmp.sum;
-		++tmp.x;
-		tmp.sum = -2ll * a[tmp.id] * M * m + 1ll * m * m + 2ll * tmp.x * m * m;
-		pq.push(tmp);	
-	}
-	return tot;
-}
 
 int main() {
 	while (scanf("%d%lld", &n, &m) != EOF) {
 		for (int i = 1; i <= n; ++i) scanf("%lld", a + i);
-		ll p = 1e9, q = 1;  
-		for (int i = 1; i <= 1000; ++i) {
-			ll qq = i * i;
-			ll pp = solve(i);
-			if (pp * q < qq * p) {
-				p = pp;
-				q = qq;
+		sort(a + 1, a + 1 + n, [&](ll x, ll y){
+			return x > y;		
+		});
+		ll k = m;
+		frac ans = frac(0, 1);
+		for (int i = 1; i <= n; ++i) {
+			if (i < n && (1ll * i * (a[i] - a[i + 1])) <= k) {
+				k -= 1ll * i * (a[i] - a[i + 1]);  
+			} else {
+				ans = ans + frac(1ll * (i * a[i] - k) * (i * a[i] - k), 1ll * i * m * m);
+				for (int j = i + 1; j <= n; ++j) {
+					ans = ans + frac(1ll * a[j] * a[j], m * m); 
+				}
+				ans.print();
+				break;
 			}
 		}
-		q *= m * m;
-		ll G = gcd(p, q);
-		p /= G;
-		q /= G;
-		if (q == 1) printf("%lld\n", p);
-		else printf("%lld/%lld\n", p, q);
 	}
 	return 0;
 }
