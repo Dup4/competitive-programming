@@ -5,7 +5,9 @@ using namespace std;
 int n, l, k;
 char s[N];
 int fa[N];
-int f[N][12];
+int f[N][12][2];
+// f[i][j][0] 表示到第i位，划分成j段，最后一段的颜色固定的最小代价
+// f[i][j][1] 表示到第i位，划分成j段，最后一段的颜色任意并且不算入j的最小代价
 
 void Min(int &x, int y) {
 	if (y <= x) x = y;
@@ -23,20 +25,32 @@ int main() {
 			}
 		}
 		memset(f, 0x3f, sizeof f);
-		f[1][1] = 0;   
+		for (int i = 0; i < 12; ++i) 
+			for (int j = 0; j < 2; ++j)
+				f[0][i][j] = 0;
+		f[1][0][1] = 1;
+		f[1][1][0] = 0;   
 		for (int i = 2; i <= n; ++i) {
-			for (int j = 1; j <= k; ++j) {
-				int pos = max(i - l - 1, 1);
-				Min(f[i][j], f[pos][j - 1] + 1);
-				if (fa[pos] == fa[i]) {
-					Min(f[i][j], f[pos][j]);
-				}
-				if (fa[pos + 1] == fa[i]) {
-					Min(f[i][j], f[pos][j - 1]);
-				}
+			for (int j = 0; j <= k; ++j) {
+				int pos = max(i - l - 1, 0);
+				if (j) Min(f[i][j][0], f[pos][j - 1][0] + 1);
+				if (j) Min(f[i][j][0], f[pos][j - 1][1] + 1);
+				pos = max(i - l, 0);
+				Min(f[i][j][0], f[pos][j][0] + 1);
+				if (j) Min(f[i][j][0], f[pos][j - 1][1] + 1);
+				Min(f[i][j][1], f[pos][j][1] + 1);
+				if (j) Min(f[i][j][1], f[pos][j][0] + 1);
+				pos = max(fa[i] - 1, 0);
+				if (j) Min(f[i][j][0], f[pos][j - 1][0]);
+				if (j) Min(f[i][j][0], f[pos][j - 1][1]);
 			}
 		}		
-		printf("%d\n", f[n][k]);
+		int res = min(f[n][0][1], f[n][k][0]);
+		for (int i = 1; i < k; ++i) {
+			Min(res, f[n][i][0]);
+			Min(res, f[n][i][1]);
+		}
+		printf("%d\n", res);
 	}
 	return 0;
 }
