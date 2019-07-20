@@ -115,7 +115,7 @@ int main() {
 		scanf("%lld%lld", &k, &n);
 		invk = qmod(k, p - 2);
 		if (n == -1) { 
-			printf("%lld\n", inv2);
+			printf("%lld\n", 2 * qmod(k + 1, p - 2) % p);
 			continue;
 		}
 		for (int i = 1; i <= m; ++i) f[i] = 0;
@@ -129,7 +129,7 @@ int main() {
 			g[i] = (g[i - 1] + f[i]) % p;
 		}
 		vector <int> vec;
-		for (int i = 0; i <= 20; ++i) vec.push_back(f[i]);
+		for (int i = 0; i <= 2 * k; ++i) vec.push_back(f[i]);
 		printf("%d\n", linear_seq::gao(vec, n));
 	}
 	return 0;
