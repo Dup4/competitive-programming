@@ -3,7 +3,8 @@ using namespace std;
 
 #define N 100010
 int n, l, k;
-char s[N], fa[N];
+char s[N];
+int fa[N];
 int f[N][15];
 
 void Min(int &x, int y) {
@@ -25,23 +26,26 @@ int main() {
 		}
 		memset(f, 0x3f, sizeof f);
 		f[1][1] = 0;
-		for (int i = 1; i <= n; ++i) {
+		for (int i = 2; i <= n; ++i) {
 			for (int j = 1; j <= k; ++j) {
 				int pos = max(i - l, 1);
+				//将[pos + 1, i]染成同一种颜色
 				Min(f[i][j], f[pos][j - 1] + 1);
-
-				f[i][j] = f[pre][j] + 1;
-				int pre2 = max(pre - 1, 0);
-				f[i][j] = min(f[i][j], f[pre2][j - 1] + 1);
-				if (a[i] == a[pre]) {
-					f[i][j] = min(f[i][j], f[pre][j - 1]);
-					if (s[i] == s[pre2]) {
-						f[i][j] = min(f[i][j], )
+				//将[pos + 1, i]染成和s[pos]的颜色一样
+				Min(f[i][j], f[pos][j] + 1);
+				if (fa[i] == fa[pos + 1]) {
+				    Min(f[i][j], f[pos][j - 1]);	
+					int pos2 = max(pos - 1, 1);
+					if (s[i] == s[pos2]) {
+						//考虑此时f[pos][j]这个状态下的颜色要么是任意的，要么和前面一个位置的颜色一样
+						//如果是任意的，可以任意的，可以直接合并
+						//如果和前面一个位置的颜色一样，也可以直接合并
+						Min(f[i][j], f[pos][j]);
 					}
-					
 				}
 			}
 		}
+		printf("%d\n", f[n][k]);
 	}
 	return 0;
 }
