@@ -1,38 +1,34 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-typedef long long ll;
-
+#define ll long long
 const ll p = (ll)1e9 + 7;
 
-ll qpow(ll x, ll n) {
+ll qmod(ll base, ll n) {
 	ll res = 1;
 	while (n) {
-		if (n & 1) {
-			res = res * x % p; 
-		}
-		x = x * x % p;
+		if (n & 1) res = res * base % p;
+		base = base * base % p;
 		n >>= 1;
 	}
 	return res;
 }
-
 int n, m;
 
 int main() {
-	int t;
-	scanf("%d", &t);
-	while(t--) {
+	ll res = 1;
+	int T;
+	scanf("%d", &T);
+	while(T--) {
 		scanf("%d %d", &n, &m);
 		if (n == 1) {
-			puts("1");
-			continue;
+			res *= 1;
 		} else if (m == 0) {
-			puts("0");
-			continue;
+			res = 0;
+		} else {
+			res = res * qmod(n - 1, p - 2) % p;
 		}
-		printf("%lld\n", 1ll * qpow(n - 1, p - 2));
+		printf("%lld\n", res);
 	}
 	return 0;
 }

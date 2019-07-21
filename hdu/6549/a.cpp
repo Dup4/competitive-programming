@@ -6,6 +6,10 @@ int n, l, k;
 char s[N], fa[N];
 int f[N][15];
 
+void Min(int &x, int y) {
+	if (x > y) x = y;
+}
+
 int main() {
 	while (scanf("%d%d%d", &n, &l, &k) != EOF) {
 		k = min(n, k);
@@ -20,10 +24,12 @@ int main() {
 			}
 		}
 		memset(f, 0x3f, sizeof f);
-		f[0][0] = 0;
+		f[1][1] = 0;
 		for (int i = 1; i <= n; ++i) {
-			int pre = max(i - l, 0);
 			for (int j = 1; j <= k; ++j) {
+				int pos = max(i - l, 1);
+				Min(f[i][j], f[pos][j - 1] + 1);
+
 				f[i][j] = f[pre][j] + 1;
 				int pre2 = max(pre - 1, 0);
 				f[i][j] = min(f[i][j], f[pre2][j - 1] + 1);
