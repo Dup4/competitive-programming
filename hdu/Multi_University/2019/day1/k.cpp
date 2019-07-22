@@ -104,44 +104,40 @@ ll Mod(LL x, LL p) {
 int main() {
 	init();
 	int T; scanf("%d", &T);
-	while (T--) {
-		LL n; read(n);
-		int D = 1e7;
-		ll res = 0;
-		for (int i = 1; i <= D; ++i) {
-			ll tmp = 0;
-			LL L = i, R = (i + 1);
-			L = L * L * L, R = R * R * R; R -= 1;
-		//	cout << L << " " << R << endl;
-			if (L > n) break;
-			if (R <= n) {
-				if (i == 1) add(tmp, (R - L + 1) % p);
-				else {
-					LL Loop = (R - L) / i;
-					add(tmp, Loop % p * F[i] % p);
-					add(tmp, i);
-				}
-			} else {
-				R = n;
-				if (i == 1) add(tmp, (R - L + 1) % p);
-				else {
-					LL L2 = (L / i + (L % i != 0)) * i;  
-					if (L2 >= R) {
-						add(tmp, (f(i, Mod(R, i)) - f(i, Mod(L - 1, i)) + p) % p);
-					} else {
-						add(tmp, (f(i, Mod(L2, i)) - f(i, Mod(L - 1, i)) + p) % p);
-						LL R2 = (R / i) * i;
-						LL Loop = (R2 - L2) / i;
-						add(tmp, Loop % p * f(i, i) % p); 
-						if (R > R2) {
-							add(tmp, f(i, Mod(R, i)));
-						}
-					}
-				}
-			}
-			add(res, tmp);
-		}
-		printf("%lld\n", res);
-	}
+//	while (T--) {
+//		LL n; read(n);
+//		int D = 1e7;
+//		ll res = 0;
+//		for (int i = 1; i <= D; ++i) {
+//			ll tmp = 0;
+//			LL L = i, R = (i + 1);
+//			L = L * L * L, R = R * R * R; R -= 1;
+//			if (L > n) break;
+//			if (R <= n) {
+//				if (i == 1) add(tmp, (R - L + 1) % p);
+//				else {
+//					ll Loop = ((R - L) / i) % p;
+//					add(tmp, Loop % p * F[i] % p);
+//					add(tmp, i);  
+//				}
+//			} else {
+//				R = n;
+//				LL L2 = (L / i + (L % i != 0)) * i;  
+//				if (L2 >= R) {
+//					add(tmp, (f(i, Mod(R, i)) - f(i, Mod(L - 1, i)) + p) % p);
+//				} else {
+//					add(tmp, (f(i, Mod(L2, i)) - f(i, Mod(L - 1, i)) + p) % p);
+//					LL R2 = (R / i) * i;
+//					ll Loop = ((R2 - L2) / i) % p;
+//					add(tmp, Loop % p * F[i] % p);  
+//					if (R > R2) {
+//						add(tmp, f(i, Mod(R, i)));
+//					}
+//				}
+//			}
+//			add(res, tmp);
+//		}
+//		printf("%lld\n", res);
+//	}
 	return 0;
 }
