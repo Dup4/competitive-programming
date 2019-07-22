@@ -54,20 +54,25 @@ int main() {
 			ll tmp = 0;
 			sort(vec[i].begin(), vec[i].end());
 			vec[i].erase(unique(vec[i].begin(), vec[i].end()), vec[i].end());
-			int sze = vec[i].size();
+			int sze = vec[i].size(); 
 			for (auto it : vec[i]) { //枚举上边
-				for (auto it2 : vec[i]) { //枚举腰
+				int l = 0, r = 0;
+				while (l < sze && vec[i][l] < it + 1) ++l;
+				for (auto it2 : vec[i]) { //枚举腰 
 					if (it != it2 && cnt[it2] >= 2) {
-						int pos = upper_bound(vec[i].begin(), vec[i].end(), it) - vec[i].begin();
-						tmp += sze - pos;
+						while (r < sze - 1 && vec[i][r + 1] < it + 2 * it2) ++r;
+						if (l < sze && r < sze && l <= r) {
+							tmp += r - l + 1;
+							if (vec[i][l] <= it2 && it2 <= vec[i][r]) {
+								if (cnt[it2] < 3) --tmp;
+							}
+						}
+					} else if (it == it2 && cnt[it] >= 3) {
+						while (r < sze - 1 && vec[i][r + 1] < it + 2 * it2) ++r;
+						if (l < sze && r < sze && l <= r) {
+							tmp += r - l + 1;
+						}	
 					}
-				}
-			}
-			for (auto it : vec[i]) {
-				if (cnt[it] >= 3) {
-					int pos = upper_bound(vec[i].begin(), vec[i].end(), it) - vec[i].begin();
-					tmp += sze - pos;
-					if (cnt[it] >= 4) ++tmp;
 				}
 			}
 			res += tmp * mu[i];
