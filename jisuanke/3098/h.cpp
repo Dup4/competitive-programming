@@ -15,11 +15,11 @@ struct node {
 }qrr[N];
 
 void FWT(ll *a, int len, int mode) {
-	for (int i = 2; i <= len; i <<= 1) {
-		int step = i >> 1;
-		for (int j = 0; j < len; j += i) {
-			for (int k = j; k < j + step; ++k) {
-				a[k + step] += a[k] * mode;
+	for (int i = 1; i < len; i <<= 1) {
+		for (int p = i << 1, j = 0; j < len; j += p) {
+			for (int k = 0; k < i; ++k) {
+				if (mode == 1) a[i + j + k] = (a[j + k] + a[i + j + k]);
+				else a[i + j + k] = (a[i + j + k] - a[j + k]);
 			}
 		}
 	}

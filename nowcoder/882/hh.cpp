@@ -6,8 +6,7 @@ using namespace std;
 #define pii pair <int, int>
 #define fi first
 #define se second
-int n, m, G[N][N], a[N];
-pii b[N];
+int n, m, G[N][N], a[N][N];
 
 struct Cartesian_Tree {
 	struct node {
@@ -19,6 +18,7 @@ struct Cartesian_Tree {
 		}
 	}t[N];
 	int root;
+	pii b[N];
 	void init() {
 		t[0] = node(0, 0, 0);
 	}
@@ -41,12 +41,12 @@ struct Cartesian_Tree {
 	}
 	int DFS(int u) {
 		if (!u) return 0;
-		int lsze = DFS(t[u].son[0]);
+		int lsze = DFS(t[u].son[0]);  
 		int rsze = DFS(t[u].son[1]);
 		b[t[u].id] = pii(lsze, rsze);
 		return lsze + rsze + 1;
 	}
-}T;
+}T[N]; 
 
 ll f(ll l, ll r) {
 	if (l > r) return 0;
@@ -73,11 +73,11 @@ ll getMin(int x, int n, int *a, pii *b) {
 		ll len = x / a[i];
 		ll l = b[i].fi, r = b[i].se;
 		if (len <= 0) continue;
-		if (len - r <= 0) {
+		if (len - r <= 0) { //右边部分大于len
 			res += f(max(1ll, len - l), len);
-		} else {
+		} else { //右边部分小于len
 			res += 1ll * min(len - r, 1ll * l + 1) * (r + 1);
-			if (len <= l + r + 1) {
+			if (len <= l + r + 1) {  //全长大于len 
 				res += f(max(1ll, len - l), r);
 			}
 		}
@@ -89,40 +89,48 @@ ll getMin(int x, int n, int *a, pii *b) {
 ll getMax(int x, int n, int *a, pii *b) {
 	ll res = 0;
 	for (int i = 1; i <= n; ++i) {
-		ll len = x / a[i];
-		ll l = b[i].fi, r = b[i].se;
-		if (len <= 0) continue;
-		
+		if (!a[i]) continue;
+		int len = x / a[i] + (x % a[i] != 0);
+		int l = b[i].fi, r = b[i].se;
+		if (len <= 1) {
+			res += 1ll * (l + 1) * (r + 1);
+			continue;
+		}
+		if (len > l + r + 1) continue;
+		--len;
+		if (l >= len) { //左边大于len
+			res += 1ll * (l + 1 - len) * (r + 1);
+			if (r >= len) { //右边大于len
+				res += f(r + 1 - len, r);
+			} else { //右边小于len
+				res += f(1, r);
+			}
+		} else {
+			res += f(max(1, r + 1 - len), r + 1 - (len - l));
+		}
 	}
+	return res;
 }
 
 
 ll check(int x) {
 	ll res = 0; 
-	//对每一行处理出向上的最大高度，就转换成直方图的形式再用笛卡尔树直接计算即可
-	for (int i = 1; i <= m; ++i) a[i] = 0;
 	for (int i = 1; i <= n; ++i) {
-		for (int j = 1; j <= m; ++j) {
-			if (G[i][j]) ++a[j];
-			else a[j] = 0;
-		}
-		T.init();
-		T.build(m, a);
-		T.DFS(T.root);
-		res += getMax(x, m, a, b);
+		res += getMax(x, m, a[i], T[i].b);
 	}
+	return res;
 }
 
 //求第k大全1矩形
 int solve(ll k) {
-	int l = 1, r = n * m, res = -1;
+	int l = 1, r = n * m, res = 0;
 	while (r - l >= 0) {
 		int mid = (l + r) >> 1;
-		if (check(mid) <= k) {
-			r = mid - 1;
+		if (check(mid) >= k) {
+			l = mid + 1;
 			res = mid; 
 		} else {
-			l = mid + 1; 
+			r = mid - 1;
 		}
 	}
 	return res;
@@ -133,6 +141,17 @@ int main() {
 		for (int i = 1; i <= n; ++i) 
 			for (int j = 1; j <= m; ++j)
 				scanf("%1d", G[i] + j);
+		//对每一行处理出向上的最大高度，就转换成直方图的形式再用笛卡尔树直接计算即可
+		for (int i = 1; i <= m; ++i) a[0][i] = 0;
+		for (int i = 1; i <= n; ++i) {
+			for (int j = 1; j <= m; ++j) {
+				if (G[i][j]) a[i][j] = a[i - 1][j] + 1;
+				else a[i][j] = 0;
+			}
+			T[i].init();
+			T[i].build(m, a[i]);
+			T[i].DFS(T[i].root);
+		}	
 		printf("%d\n", solve(2));
 	}	
 	return 0;

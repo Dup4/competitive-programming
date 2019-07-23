@@ -27,16 +27,16 @@ int main() {
 			scanf("%d", &op);
 			if (op == 1) {
 				scanf("%d%d", &x, &y);
-				if (x == y) continue;
+				if (x == y) continue; 
 				if (x > y) swap(x, y); 
 				for (int i = 1; i <= S; ++i) {
 					if ((a[x] - 1) % i == 0) {
 						int pre = a[x] - i;
-						if (pre >= 1 && id[pre] <= y) {
+						if (pre >= 1 && id[pre] <= y && id[pre] > x) {
 							--f[i];
 						} 
 						int nx = a[x] + i;
-						if (nx <= n && id[nx] <= y) {
+						if (nx <= n && id[nx] <= y && id[nx] > x) {
 							++f[i]; 
 						}
 					}
@@ -44,11 +44,11 @@ int main() {
 				for (int i = 1; i <= S; ++i) {
 					if ((a[y] - 1) % i == 0) {
 						int pre = a[y] - i;
-						if (pre >= 1 && id[pre] > x) {
+						if (pre >= 1 && id[pre] > x && id[pre] < y) {
 							++f[i];
 						}	
 						int nx = a[y] + i;
-						if (nx <= n && id[nx] > x) {
+						if (nx <= n && id[nx] > x && id[nx] < y) {
 							--f[i];
 						}
 					}
@@ -57,8 +57,9 @@ int main() {
 				swap(a[x], a[y]);
 			} else {
 				scanf("%d", &k);
-				if (k <= S) printf("%d\n", f[k] + 1);
-				else {
+				if (k <= S) {
+					printf("%d\n", f[k] + 1); 
+				} else {
 					int res = 1; 
 					int it = 1;
 					while (it + k <= n) {
