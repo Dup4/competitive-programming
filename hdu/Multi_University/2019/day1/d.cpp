@@ -1,24 +1,36 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define ll long long
 #define N 100010
 #define db double
 int n;
-db l[N], s[N], v[N];
+int l[N], s[N], v[N];
 db f[N];
+
+template <class T> 
+inline void read(T &x) {
+	x = 0; char ch;
+	while (!isdigit(ch = getchar()));
+	while (isdigit(ch)) {
+		x = x * 10 - '0' + ch;
+		ch = getchar();
+	}
+}
 
 int main() {
 	while (scanf("%d", &n) != EOF) {
-		for (int i = n; i >= 0; --i) scanf("%lf", l + i);
-		for (int i = n; i >= 0; --i) scanf("%lf", s + i);
-		for (int i = n; i >= 0; --i) scanf("%lf", v + i);
-		f[0] = s[0] / v[0];
-		for (int i = 1; i <= n; ++i) {
-			f[i] = f[i - 1];
-			f[i] = max(f[i], s[i] / v[i]);
-			f[i] = max(f[i], f[i - 1] + (l[i - 1] / v[i]) + (s[i] - s[i - 1] - l[i - 1]) / v[i]);
+		ll sum = 0;
+		for (int i = n; i >= 0; --i) read(l[i]), sum += l[i];
+		for (int i = n; i >= 0; --i) read(s[i]);
+		for (int i = n; i >= 0; --i) read(v[i]);
+		db ans = 0; 
+		sum -= l[n]; 
+		for (int i = 0; i <= n; ++i) {
+			ans = max(ans, (sum + s[i]) * 1.0 / v[i]);
+			sum -= l[i];
 		}
-		printf("%.15f\n", f[n]);
+		printf("%.15f\n", ans);
 	}
 	return 0;
 }

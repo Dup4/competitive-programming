@@ -50,6 +50,7 @@ struct SEG {
 			}
 			return res;
 		}
+		//查询张成中与v异或后的最大的数
 		int Max(int v) {
 			int res = v;
 			for (int i = 31; i >= 0; --i) {
@@ -104,7 +105,7 @@ int main() {
 			scanf("%d%d%d%d", &op, &l, &r, &v);
 			if (op == 1) {
 				a[l] ^= v;
-				seg.update(1, 0, n, l);
+				seg.update(1, 1, n, l);
 				bit.update(l, v);
 				if (r < n) {
 					a[r + 1] ^= v;
@@ -116,6 +117,7 @@ int main() {
 				if (l + 1 <= r) {
 					seg.query(1, 1, n, l + 1, r);
 				}
+				//插入a[l]这个数
 				seg.res.insert(bit.query(l));
 				printf("%d\n", seg.res.Max(v));
 			}
