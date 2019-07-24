@@ -19,7 +19,11 @@ int get(string s) {
 struct SteinerTree {
 	int st[32], dp[32][1 << 8], endSt;
 	bool vis[32][1 << 8];
-	queue <int> que;	
+	queue <int> que;
+	//n表示总点数　　
+	//vec中存的是需要连通的点 
+	//endSt=1 << (vec.size()) 	
+	//对于vec[i],其st[vec[i]] = 1 << i
 	void init(int n, vector <int> &vec) {
 		sort(vec.begin(), vec.end());
 		vec.erase(unique(vec.begin(), vec.end()), vec.end());
@@ -31,6 +35,7 @@ struct SteinerTree {
 			st[it] = endSt;
 			endSt <<= 1;
 		}
+		//如果有点权的话，初始状态要设为点权
 		for (int i = 1; i <= n; ++i) {
 			dp[i][st[i]] = 0;
 		}
