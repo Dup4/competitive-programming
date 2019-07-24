@@ -1,8 +1,27 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define N 50010
+#define N 200010
 int n, q, a[N];
+
+struct BIT {
+	int a[N];
+	void init() {
+		memset(a, 0, sizeof a);
+	}
+	void update(int x, int v) {
+		for (; x < N; x += x & -x) {
+			a[x] ^= v;
+		}
+	}
+	int query(int x) {
+		int res = 0;
+		for (; x > 0; x -= x & -x) {
+			res ^= a[x];
+		}
+		return res;
+	}
+}bit;
 
 struct SEG {
 	struct node {
@@ -11,29 +30,29 @@ struct SEG {
 			memset(d, 0, sizeof d);
 		}
 		void insert(int x) {
-			for (int i = 30; i >= 0; --i) {
+			for (int i = 31; i >= 0; --i) {
 				if ((x >> i) & 1) {
 					if (!d[i]) {
 						d[i] = x;
-						break;
+						break; 
 					} else {
-						x ^= d[i];
+						x ^= d[i]; 
 					}
 				}
 			} 
 		}
 		node operator + (const node &other) const {
 			node res = *this;
-			for (int i = 30; i >= 0; --i) {
+			for (int i = 31; i >= 0; --i) {
 				if (other.d[i]) {
 					res.insert(other.d[i]);
 				}
 			}
 			return res;
 		}
-		int Max() {
-			int res = 0;
-			for (int i = 30; i >= 0; --i) {
+		int Max(int v) {
+			int res = v;
+			for (int i = 31; i >= 0; --i) {
 				if ((res ^ d[i]) > res) {
 					res = res ^ d[i];
 				}
@@ -77,21 +96,28 @@ struct SEG {
 int main() {
 	while (scanf("%d%d", &n, &q) != EOF) {
 		for (int i = 1; i <= n; ++i) scanf("%d", a + i);
-		for (int i = n; i >= 1; --i) a[i] ^= a[i - 1]; 
+		bit.init();
+		for (int i = n; i >= 1; --i) a[i] ^= a[i - 1], bit.update(i, a[i]); 
 		seg.build(1, 1, n);
 		int op, l, r, v;
 		while (q--) {
-			scanf("%d%d%d", &op, &l, &r);
+			scanf("%d%d%d%d", &op, &l, &r, &v);
 			if (op == 1) {
-				scanf("%d", &v);
 				a[l] ^= v;
-				a[r + 1] ^= v;
-				seg.update(1, 1, n, l);
-				if (r < n) seg.update(1, 1, n, r + 1);
+				seg.update(1, 0, n, l);
+				bit.update(l, v);
+				if (r < n) {
+					a[r + 1] ^= v;
+					seg.update(1, 1, n, r + 1);
+					bit.update(r + 1, v);
+				}
 			} else {
-				seg.res = SEG::node();
-				seg.query(1, 1, n, l, r);
-				printf("%d\n", seg.res.Max());
+				seg.res = SEG::node();  
+				if (l + 1 <= r) {
+					seg.query(1, 1, n, l + 1, r);
+				}
+				seg.res.insert(bit.query(l));
+				printf("%d\n", seg.res.Max(v));
 			}
 		}
 	}
