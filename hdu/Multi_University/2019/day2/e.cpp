@@ -1,56 +1,49 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long ll;
-const ll p = 998244353;
+#define ll long long
 #define N 3010
+const ll p = 998244353;
+ll f[N], C[N][N], pw[N]; 
 
-ll qpow(ll x, ll n) {
-    ll res = 1;
-    while (n) {
-        if (n & 1) {
-            res = res * x % p;
-        }
-        x = x * x % p;
-        n >>= 1;
-    }
-    return res;
+inline void add(ll &x, ll y) {
+	x += y;
+	if (x >= p) x -= p;
 }
 
-void add(ll &x, ll y) {
-    x += y;
-    if (x >= p) {
-        x -= y;
-    }
+ll qmod(ll base, ll n) {
+	ll res = 1;
+	while (n) {
+		if (n & 1) {
+			res = res * base % p;
+		}
+		base = base * base % p;
+		n >>= 1;
+	}
+	return res;
 }
 
-int n;
-ll f[N], a[N], b[N];
-ll sf[N], sa[N], sb[N];
-
-void Init() {
-    b[0] = 1;
-    for (int i = 1; i < N; ++i) {
-        b[i] = b[i - 1] * i % p;
-        sb[i] = (sb[i - 1] + b[i]) % p;
-    }
-    ll inv4 = qpow(4, p - 2);
-    for (int i = 1; i < N; ++i) {
-        a[i] = b[i] * i % p * (i - 1) % p * inv4 % p;
-        sa[i] = (sa[i - 1] + a[i]) % p;
-    }
-    for (int i = 1; i < N; ++i) {
-        f[i] = sa[i] * qpow(sb[i], p - 2) % p * qpow(i - 1, p - 2) % p;
-        add(f[i], f[i - 1]);
-        sf[i] = (sf[i - 1] + f[i]) % p;
-    }
-}
 
 int main() {
-    Init();
-    while (scanf("%d", &n) != EOF) {
-//        cout << a[n] << " " << sa[n] << " " << b[n] << " " << sb[n] << endl;
-        printf("%lld\n", f[n]);
-    }
-    return 0;
+	for (int i = 0; i < N; ++i) C[i][0] = C[i][i] = 1;
+	for (int i = 1; i < N; ++i) {
+		for (int j = 1; j < i; ++j) {
+			C[i][j] = (C[i - 1][j - 1] + C[i - 1][j]) % p;
+		}
+	}
+	pw[0] = 1;
+	for (int i = 1; i < N; ++i) pw[i] = pw[i - 1] * 2 % p;
+	f[0] = 0;
+	for (int i = 1; i < N; ++i) {
+		f[i] = 1ll * i * (i - 1) % p * pw[i - 2] % p;
+	   	for (int j = 0; j < i; ++j) 
+			add(f[i], C[i][j] * f[j] % p);
+		f[i] = f[i] * qmod(pw[i] - 1, p - 2) % p;	
+	}
+	for (int i = 1; i < N; ++i) add(f[i], f[i - 1]);
+	int n;
+	while (scanf("%d", &n) != EOF) {
+		printf("%lld\n", f[n] * qmod(n, p - 2) % p);
+	}
+	return 0;
 }
