@@ -25,7 +25,7 @@ int main() {
 				g[0][j] = -INF;
 				g[1][j] = INF;
 			}
-			for (int j = i; j <= n; ++j) {
+			for (int j = i; j <= n; ++j) {  
 				l[0] = l[1] = 1;
 				r[0] = r[1] = 0;
 				int pos = 1;

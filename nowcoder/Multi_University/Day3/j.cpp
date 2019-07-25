@@ -1,13 +1,20 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define ll long long
 #define N 500010
 #define INF 0x3f3f3f3f
 int n, q, m;
-unordered_map <string, int> mp; int cnt;
+map <ll, int> mp; int cnt;
 
-int get(string s) {
-	if (mp.find(s) == mp.end()) {
+ll change(char *s) {
+	ll r;
+	sscanf(s, "%lld", &r);
+	return r + 10000000000ll*(strlen(s)-1);
+}
+
+int get(ll s) { 
+	if (mp.count(s) == 0) {
 		return mp[s] = ++cnt;
 	}
 	return mp[s];  
@@ -123,27 +130,30 @@ struct SEG2 {
 	}
 }seg2;
 
+void No() {
+	puts("Invalid");
+}
+
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(0); cout.tie(0);
-	int T; cin >> T;
+	int T; scanf("%d", &T);
 	while (T--) {
-		cin >> q >> m;
+		scanf("%d%d", &q, &m);
 		mp.clear();	cnt = 0;
 		int tot = 0;
 		n = q;
 		seg.build(1, 1, n);
 		seg2.build(1, 1, n); 
-		int op, v, id; string s, cnt; 
+		int op, v, id; char tmp[20]; ll s;
 		for (int i = 1; i <= q; ++i) {
-			cin >> op >> s >> v;
+			scanf("%d%s%d", &op, tmp, &v);
+			s = change(tmp);
 			id = get(s);
 			if (op == 0) {
 				seg.query(1, 1, n, id);
 				if (seg.res.lst == INF) {
 					seg.update(1, 1, n, id, i, v);
 					seg2.update(1, 1, n, i, 1, id);
-					cout << v << "\n";
+					printf("%d\n", v);
 					if (tot >= m) {
 						int iid = seg.t[1].pos;
 						seg2.update(1, 1, n, seg.t[1].lst, 0, iid);
@@ -155,24 +165,24 @@ int main() {
 					seg2.update(1, 1, n, seg.res.lst, 0, id); 
 					seg2.update(1, 1, n, i, 1, id);
 					seg.update(1, 1, n, id, i, seg.res.v);
-				    cout << seg.res.v << "\n";	
+					printf("%d\n", seg.res.v);
 				}
 			} else {
 				seg.query(1, 1, n, id);
 				if (seg.res.lst == INF) {
-					cout << "Invalid\n";
+					No();
 					continue;
 				}
 				if (v == 0) {
-					cout << seg.res.v << "\n";
+					printf("%d\n", seg.res.v);
 				}
 				else {
 					int Rank = seg2.query1(1, 1, n, 1, seg.res.lst);
-					if ((v == -1 && Rank == 1) || (Rank == tot && v == 1)) cout << "Invalid\n";
+					if ((v == -1 && Rank == 1) || (Rank == tot && v == 1)) No();
 					else {
 						int ppos = seg2.query2(1, 1, n, Rank + v);
 						seg.query(1, 1, n, ppos);
-						cout << seg.res.v << "\n";  
+						printf("%d\n", seg.res.v);
 					}
 				}
 			}

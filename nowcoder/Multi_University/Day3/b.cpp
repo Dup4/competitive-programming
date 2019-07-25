@@ -33,7 +33,7 @@ int main() {
 				mp[S[i]] = i;
 			}
 		}
-		printf("%d %d\n", res[0], res[1]);
+		printf("%d\n", res[0]);
 	}
 	return 0;
 }

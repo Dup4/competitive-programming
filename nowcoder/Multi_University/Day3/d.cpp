@@ -7,7 +7,8 @@ using namespace std;
 #define fi first
 #define se second
 ll p, n, m;
-int fac[N], tot;
+pii fac[N];
+int tot;  
 
 struct node {
 	ll a[2][2];
@@ -28,7 +29,20 @@ struct node {
 		}
 		return res;
 	}
-}base, res;
+}base, res; 
+
+ll eular(ll n) {
+	ll ans = n;
+	for (int i = 2; i * i <= n; ++i) {
+		if (n % i == 0) {
+			ans -= ans / i;
+			while (n % i == 0) 
+				n /= i;
+		}
+	}
+	if (n > 1) ans -= ans / n;
+	return ans;
+}
 
 node qmod(node base, ll n) {
 	node res = node(); res.set();
@@ -38,6 +52,48 @@ node qmod(node base, ll n) {
 		}
 		base = base * base; 
 		n >>= 1;
+	}
+	return res;
+}
+
+ll qpow(ll base, ll n) {
+	ll res = 1;
+	while (n) {
+		if (n & 1) {
+			res = res * base;
+		}
+		base = base * base;
+		n >>= 1;
+	}
+	return res;
+}
+
+void getfac(pii *fac, int &tot, ll x) {
+	tot = 0;
+	for (int i = 2; i * i <= x; ++i) {
+		if (x % i == 0) {
+			fac[++tot] = pii(i, 0);
+			while (x % i == 0) {
+				++fac[tot].se;
+				x /= i;
+			}
+		}
+	}
+	if (x != 1) fac[++tot] = pii(x, 1);
+	
+}
+
+ll calc(ll t, ll n, ll m) {
+	ll res = 0;
+	getfac(fac, tot, t);
+	for (int j = 1; j <= min(30ll, m); ++j) {
+		ll g = 1;
+		for (int o = 1; o <= tot; ++o) {
+			int a = fac[o].fi, b = fac[o].se;
+			g *= qpow(a, b / j + (b % j != 0)); 
+		}
+		res += (n / g);
+		if (j == 30) res += (n / g) * (m - j);
 	}
 	return res;
 }
@@ -52,28 +108,20 @@ int main() {
 		scanf("%lld%lld%lld", &p, &n, &m);
 		if (p == 2 || p == 5) {
 			puts("0");
-		} else if (p == 3) {
-			ll t = 3;
-			printf("%lld\n", (n / t) * m);	
-		} else {
-			tot = 0;
-			int limit = sqrt(p - 1) + 10;
-			ll tmp = p - 1;
-			for (int i = 2; i <= limit && i <= tmp; ++i) {
-				while (tmp % i == 0) {
-					fac[++tot] = i;
-					tmp /= i;
-				}
-			}
-			if (tmp != 1) fac[++tot] = tmp;
-			ll t = p - 1;
+		} else {  
+			ll t = eular(p * 9);   
+		    getfac(fac, tot, t);	
 			for (int i = 1; i <= tot; ++i) {
-				res = qmod(base, t / fac[i] - 1);
-				if (res.a[0][0] == 0) {
-					t = t / fac[i];
+				for (int j = 1; j <= fac[i].se; ++j) {
+					res = qmod(base, t / fac[i].fi - 1);
+					if (res.a[0][0] == 0) {
+						t = t / fac[i].fi;
+					} else {
+						break;
+					}
 				}
 			}
-			printf("%lld\n", (n / t) * m);
+			printf("%lld\n", calc(t, n, m));
 		}
 	}
 	return 0;
