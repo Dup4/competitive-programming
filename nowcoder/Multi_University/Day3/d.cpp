@@ -108,8 +108,10 @@ int main() {
 		scanf("%lld%lld%lld", &p, &n, &m);
 		if (p == 2 || p == 5) {
 			puts("0");
-		} else {  
-			ll t = eular(p * 9);   
+		} else if (p == 3) {
+			printf("%lld\n", calc(3, n, m));
+		} else {	
+			ll t = p - 1;  
 		    getfac(fac, tot, t);	
 			for (int i = 1; i <= tot; ++i) {
 				for (int j = 1; j <= fac[i].se; ++j) {

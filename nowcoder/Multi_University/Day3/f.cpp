@@ -7,6 +7,23 @@ using namespace std;
 #define fi first
 #define se second
 
+struct fastio{
+    static const int s=1<<24;
+    int p,l;
+    fastio(){p=l=0;}
+    inline char gc(){
+        static char bf[s];
+        if(p==l)p=0,l=fread(bf,1,s,stdin);
+        return p==l?-1:bf[p++];
+    }
+    inline bool read(int&x){
+        char c=gc();
+        while((c<'0'||c>'9')&&~c)c=gc();
+        if(c==-1)return 0;x=0;
+        for(;c>='0'&&c<='9';c=gc())x=x*10+c-'0';
+        return 1;
+    }
+}io;
 
 int a[N][N];
 int f[N][N][9][9], g[N][N][9][9];
@@ -68,12 +85,13 @@ int main() {
 		mm[i] = ((i & (i - 1)) == 0) ? mm[i - 1] + 1 : mm[i - 1];
 	}
 	int n, m;
-	int T; scanf("%d", &T);
+	int T; io.read(T);
 	while (T--) {
+		io.read(n); io.read(m);
 		scanf("%d%d", &n, &m);
 		for (int i = 1; i <= n; ++i) {
 			for (int j = 1; j <= n; ++j) {
-				scanf("%d", &a[i][j]);
+				io.read(a[i][j]);
 			}
 		}
 		init(n, n);
@@ -88,6 +106,7 @@ int main() {
 						else break;
 					}
 					if (pos <= k) res = max(res, (j - i + 1) * (k - pos + 1));
+					if ((j - i + 1) * (n - pos + 1) <= res) break;
 				}
 			}
 		}
