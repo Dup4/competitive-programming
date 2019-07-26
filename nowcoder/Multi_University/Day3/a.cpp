@@ -24,12 +24,15 @@ void read(int &res)
     while (isdigit(c)) res = res * 10 + c - '0', c = getchar();
 }
 
+
+//两侧暴力 
 void force(int l, int r)
 {
     for (int i = l, u, v; i <= r; ++i)
     {
         isHasSin[i] ^= 1;
-        u = edge[i].first, v = edge[i].second;                             
+        u = edge[i].first, v = edge[i].second;  
+		//对于大点直接更新其边的块状态		
         if (vis[u])
             valBig[id[u]][pos[i]] ^= Hash[v];
         if (vis[v])
@@ -37,12 +40,15 @@ void force(int l, int r)
     }
 }
 
+
+//更新操作
 void update(int l, int r) 
 {
     if (pos[l] == pos[r]) force(l, r);
     else
     {
         force(l, posr[pos[l]]);
+		//整块状态翻转
         for (int i = pos[l] + 1; i < pos[r]; ++i) isHasUnit[i] ^= 1;
         force(posl[pos[r]], r); 
     }
@@ -55,14 +61,18 @@ int query(int u)
     {
         for (int i = 1; i <= pos[m]; ++i)
         {
+			//直接异或上单点更新的状态
             res ^= valBig[id[u]][i];
+			//如果整块翻转了，那么再异或上这块的原来的异或值
             if (isHasUnit[i]) res ^= valBigOri[id[u]][i];
         }
     }
     else
     {
+		//小点
         for (auto it : vec[u])
         {
+			//如果单个更新次数和区间更新次数异或为１，说明没有抵消掉，需要更新
             if (isHasSin[it] ^ isHasUnit[pos[it]])
             {
                 int v = edge[it].first == u ? edge[it].second : edge[it].first;
@@ -102,13 +112,14 @@ void Run()
             ++degree[u];
             ++degree[v]; 
         }
-        for (int i = 1; i <= n; ++i) if (degree[i] >= unit)
+        for (int i = 1; i <= n; ++i) if (degree[i] >= unit)  
         {
             vis[i] = 1;
             id[i] = ++id[0];  
             for (int j = 1; j <= pos[m]; ++j)
                 valBig[id[i]][j] = 0, valBigOri[id[i]][j] = 0;  
         }
+		//初始化大点的边块的状态
         for (int i = 1, u, v; i <= m; ++i) 
          {
             u = edge[i].first; v = edge[i].second;
@@ -138,7 +149,6 @@ void Run()
 
 int main()
 {
-
     Run();
     return 0;
 }
