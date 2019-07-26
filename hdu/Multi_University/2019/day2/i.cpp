@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
-#define N 300010
+#define N 310010
 #define ALP 26
 
 struct Manacher {
@@ -29,11 +29,13 @@ struct Manacher {
 				id = i;
 			}
 		}
-		
 	}
 	//判断s[l]-s[r]是否是一个回文串
 	bool check(int l, int r) {
-		
+		int il = (l + 1) * 2, ir = (r + 1) * 2;
+		int mid = (il + ir) / 2;
+		int len = (r - l + 2) / 2;
+		return (Mp[mid] / 2) >= len;		
 	}
 }man;
 
@@ -100,36 +102,34 @@ struct PAM{
 }pam; 
 char s[N];
 int f[N], g[N]; 
-int res[N], len; 
+int res[N], len;
 
 int main() {
 	while (scanf("%s", s) != EOF) {
 		len = strlen(s);
-		man.init(len); man.work(); 
-		//	pam.init(); 
-	//	int len = strlen(s + 1);
-	//	for (int i = 1; i <= len; ++i) res[i] = 0;
-	//	for (int i = 1; i <= len; ++i) {
-	//		if (pam.add(s[i])) {
-	//			g[i] = 1;
-	//		} else {
-	//			g[i] = 0;
-	//		}
-	//		f[i] = pam.last; 
-	//	}
-	//	pam.count(); 
-	//	for (int i = 1; i <= len; ++i) {
-	//		if (f[i] == -1) continue;
-	//		int Len = pam.len[f[i]];
-	//		int cnt = pam.cnt[f[i]];
-	//		int l = i - Len + 1;
-	//		int r = i;
-	//		int mid = (l + r) >> 1;
-	//		if (mid - pam.len[f[mid]]) {
-	//			res[l] += cnt;
-	//		}
-	//	}
-	//	for (int i = 1; i <= len; ++i) printf("%d%c", res[i], " \n"[i == len]);
+		man.init(len); man.work(s); 
+		pam.init();   
+		for (int i = 0; i <= len; ++i) res[i] = 0;
+		for (int i = 0; i < len; ++i) {
+			if (pam.add(s[i])) {  
+				g[i] = 1;
+			} else {
+				g[i] = 0;
+			}
+			f[i] = pam.last; 
+		}
+		pam.count(); 
+		for (int i = 0; i < len; ++i) { 
+			if (g[i] == 0) continue;
+			int Len = pam.len[f[i]];
+			int l = i - Len + 1;
+			int r = i;
+			int mid = (l + r) >> 1; 
+			if (man.check(l, mid)) {
+				res[Len] += pam.cnt[f[i]];
+			}
+		}
+		for (int i = 1; i <= len; ++i) printf("%d%c", res[i], " \n"[i == len]);
 	}
 	return 0;
 }
