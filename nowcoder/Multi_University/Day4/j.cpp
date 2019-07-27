@@ -44,6 +44,7 @@ void Dijkstra() {
 	while (!pq.empty()) {
 		int u = pq.top().u, k = pq.top().k; pq.pop();
 		if (used[u][k]) continue;
+		if (u == T) break;
 		used[u][k] = 1;
 		erp(u) if (dist[v][k] > dist[u][k] + w) {
 			dist[v][k] = dist[u][k] + w;

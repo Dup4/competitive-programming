@@ -1,13 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 #define ll long long
-#define N 1000010
-char s[N], t[N];
+#define N 2000010
+const int p = 998244353;
+char s[N], L[N], R[N];
+ll sum[N];
 
 struct ExKMP {
 	int Next[N];
 	int extend[N];
-	void get_Next(char *s) { 
+	//下标从1开始
+	void get_Next(char *s) {
 		int lens = strlen(s + 1), p = 1, pos;
 		//Next[1]要特殊考虑
 		Next[1] = lens;
@@ -44,51 +48,51 @@ struct ExKMP {
 			}
 		}
 	}
-}exkmp;
+}exkmp[2]; 
 
-struct Manacher {
-	char Ma[N << 1];
-	int Mp[N << 1];
-	int num[N << 1];
-	//字符串从0开始
-	void work(char *s) {
-		int l = 0, len = strlen(s);
-		Ma[l++] = '$';
-		Ma[l++] = '#';
-		for (int i = 0; i < len; ++i) {
-			Ma[l++] = s[i];
-			Ma[l++] = '#';  
-		}    
-		Ma[l] = 0;
-		int mx = 0, id = 0;
-		for (int i = 0; i < l; ++i) {
-			Mp[i] = mx > i ? min(Mp[2 * id - i], mx - i) : 1;
-			while (Ma[i + Mp[i]] == Ma[i - Mp[i]]) Mp[i]++;
-			if (i + Mp[i] > mx) {
-				mx = i + Mp[i];
-				id = i;
-			}
-		}
-		for (int i = 0; i < l; ++i) num[i] = 0;
-		for (int i = 2; i < l; ++i) {
-			int r = i + Mp[i] - 1;
-			++num[i];
-			--num[r + 1];
-		}
-		for (int i = 2; i < l; ++i) num[i] += num[i - 1];
-	}
-}man;
+template <class T1, class T2>
+void add(T1 &x, T2 y) {
+	x += y;
+	if (x >= p) x -= p;
+}
+
+bool BigL(int l, int r) {
+	int LCP = exkmp[0].extend[l];
+	if (l + LCP - 1 >= r) return 1;
+	return s[l + LCP] > L[1 + LCP];
+}
+
+bool SmallR(int l, int r) {
+	int LCP = exkmp[1].extend[l];
+	if (l + LCP - 1 >= r) return 1;
+	return s[l + LCP] < R[1 + LCP];
+}
 
 int main() {
-	while (scanf("%s%s", s + 1, t + 1) != EOF) {
-		int lens = strlen(s + 1);
-		reverse(s + 1, s + 1 + lens);
-		exkmp.work(s, t);
-		man.work(s + 1);
-		ll res = 0;
-		for (int i = 2; i <= lens; ++i) {
-		//	printf("%d %d %d\n", i, man.num[2 * (i - 1)], exkmp.extend[i]);
-			res += 1ll * (man.num[2 * (i - 1)]) * exkmp.extend[i];
+	while (scanf("%s%s%s", s + 1, L + 1, R + 1) != EOF) {
+		int lens = strlen(s + 1), lenL = strlen(L + 1), lenR = strlen(R + 1);
+		exkmp[0].work(s, L); exkmp[1].work(s, R);
+		for (int i = 1; i <= lens; ++i) sum[i] = 0;
+		ll res = 1;
+		sum[1] = p - 1;
+		for (int i = 1; i <= lens; ++i) {
+			int l, r;  
+			if (s[i] == '0') {
+				if (L[1] == '0') {
+					l = r = i;
+				} else {
+					add(res, sum[i]);
+					continue;
+				}
+			} else { 
+				l = i + lenL - 1; if (!BigL(i, l)) ++l;
+				r = i + lenR - 1; if (!SmallR(i, r)) --r;	
+			}
+			if (l <= r) {
+				add(sum[l], res);
+				add(sum[r + 1], p - res);
+			}
+			add(res, sum[i]);
 		}
 		printf("%lld\n", res);
 	}

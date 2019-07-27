@@ -1,13 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
+
 #define N 1000010
-char s[N], t[N];
+const int p = 1e9 + 7;
+char s[N];
 
 struct ExKMP {
 	int Next[N];
 	int extend[N];
-	void get_Next(char *s) { 
+	//下标从1开始
+	void get_Next(char *s) {
 		int lens = strlen(s + 1), p = 1, pos;
 		//Next[1]要特殊考虑
 		Next[1] = lens;
@@ -45,52 +47,26 @@ struct ExKMP {
 		}
 	}
 }exkmp;
-
-struct Manacher {
-	char Ma[N << 1];
-	int Mp[N << 1];
-	int num[N << 1];
-	//字符串从0开始
-	void work(char *s) {
-		int l = 0, len = strlen(s);
-		Ma[l++] = '$';
-		Ma[l++] = '#';
-		for (int i = 0; i < len; ++i) {
-			Ma[l++] = s[i];
-			Ma[l++] = '#';  
-		}    
-		Ma[l] = 0;
-		int mx = 0, id = 0;
-		for (int i = 0; i < l; ++i) {
-			Mp[i] = mx > i ? min(Mp[2 * id - i], mx - i) : 1;
-			while (Ma[i + Mp[i]] == Ma[i - Mp[i]]) Mp[i]++;
-			if (i + Mp[i] > mx) {
-				mx = i + Mp[i];
-				id = i;
-			}
-		}
-		for (int i = 0; i < l; ++i) num[i] = 0;
-		for (int i = 2; i < l; ++i) {
-			int r = i + Mp[i] - 1;
-			++num[i];
-			--num[r + 1];
-		}
-		for (int i = 2; i < l; ++i) num[i] += num[i - 1];
-	}
-}man;
+int num[N];
 
 int main() {
-	while (scanf("%s%s", s + 1, t + 1) != EOF) {
-		int lens = strlen(s + 1);
-		reverse(s + 1, s + 1 + lens);
-		exkmp.work(s, t);
-		man.work(s + 1);
-		ll res = 0;
-		for (int i = 2; i <= lens; ++i) {
-		//	printf("%d %d %d\n", i, man.num[2 * (i - 1)], exkmp.extend[i]);
-			res += 1ll * (man.num[2 * (i - 1)]) * exkmp.extend[i];
+	int T; scanf("%d", &T);
+	while (T--) {
+		scanf("%s", s + 1);
+		int len = strlen(s + 1);
+		exkmp.get_Next(s);
+		for (int i = 1; i <= len; ++i) num[i] = 0;
+		for (int i = 1; i <= len; ++i) {
+			if (exkmp.Next[i]) {
+				int l = i, r = min(2 * (i - 1), i + exkmp.Next[i] - 1);
+				++num[l];
+				--num[r + 1];
+			}
 		}
-		printf("%lld\n", res);
+		for (int i = 1; i <= len; ++i) num[i] += num[i - 1];
+		int res = 1;
+		for (int i = 1; i <= len; ++i) res = 1ll * res * (num[i] + 1) % p;
+		printf("%d\n", res);
 	}
 	return 0;
 }

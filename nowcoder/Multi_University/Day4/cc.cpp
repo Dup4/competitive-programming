@@ -8,14 +8,14 @@ using namespace std;
 #define INFLL 0x3f3f3f3f3f3f3f3f
 #define N 3000010
 int n, a[N];
-ll b[N];
+ll b[N], res;
 
 struct Cartesian_Tree {
 	struct node {
-		int id, val, fa;
+		int id, val, fa; ll Min[2], Max[2], sum; 
 		int son[2];
-		node() {}
-		node (int id, int val, int fa) : id(id), val(val), fa(fa) {
+		node() {} 
+		node (int id, int val, int fa, ll Min, ll Max) : id(id), val(val), fa(fa), w(w), Min(Min), Max(Max) {
 			son[0] = son[1] = 0;
 		}
 	}t[N];
@@ -24,9 +24,9 @@ struct Cartesian_Tree {
 	void init() {
 		t[0] = node(0, -1e9, 0);
 	}
-	void build(int n, int *a) {
+	void build(int n, int *a, ll *b) {
 		for (int i = 1; i <= n; ++i) {
-			t[i] = node(i, a[i], 0);
+			t[i] = node(i, a[i], 0, b[i], b[i]);
 		}
 		for (int i = 1; i <= n; ++i) {
 			int k = i - 1;
@@ -37,55 +37,15 @@ struct Cartesian_Tree {
 			t[i].son[0] = t[k].son[1];
 			t[k].son[1] = i;
 			t[i].fa = k;
-			t[t[i].son[0]].fa = i;
+			t[t[i].son[0]].fa = i; 
 		}
 		root = t[0].son[1];
 	}
 	int DFS(int u) {
 		if (!u) return 0;
-		int lsze = DFS(t[u].son[0]);  
-		int rsze = DFS(t[u].son[1]);
-		b[t[u].id] = pii(lsze, rsze);
-		return lsze + rsze + 1;
+		return lsze + rsze + 1;  lsze +  
 	}
 }CT; 
-
-struct SEG {
-	struct node {
-		ll Max, Min;
-		node() {
-			Max = -INFLL;
-			Min = INFLL;
-		}
-		node operator + (const node &other) const {
-			node res = node();
-			res.Max = max(Max, other.Max);
-			res.Min = min(Min, other.Min);
-			return res;
-		}
-	}t[N << 2], resl, resr;
-	void build(int id, int l, int r) {
-		if (l == r) {
-			t[id] = node(); 
-			t[id].Max = t[id].Min = b[l];
-			return;
-		}
-		int mid = (l + r) >> 1;
-		build(id << 1, l, mid);
-		build(id << 1 | 1, mid + 1, r);
-		t[id] = t[id << 1] + t[id << 1 | 1];
-	}
-	node query(int id, int l, int r, int ql, int qr) {
-		if (l >= ql && r <= qr) {
-			return t[id];
-		}
-		int mid = (l + r) >> 1;
-		node res = node();
-		if (ql <= mid) res = res + query(id << 1, l, mid, ql, qr);
-		if (qr > mid) res = res + query(id << 1 | 1, mid + 1, r, ql, qr);
-		return res;
-	}
-}seg;
 
 namespace IO
 {
@@ -151,18 +111,10 @@ int main() {
 		b[i] = read();
 		b[i] += b[i - 1]; 
 	}
+	res = -INFLL;
 	CT.init();
 	CT.build(n, a);
 	CT.DFS(CT.root);
-	ll res = -INFLL;
-	seg.build(1, 0, n);
-	for (int i = 1; i <= n; ++i) {
-		int l = i - CT.b[i].fi, r = i + CT.b[i].se;
-		seg.resl = seg.query(1, 0, n, l - 1, i - 1);
-		seg.resr = seg.query(1, 0, n, i, r);
-		res = max(res, 1ll * a[i] * (seg.resr.Max - seg.resl.Min));
-		res = max(res, 1ll * a[i] * (seg.resr.Min - seg.resl.Max));
-	}
 	printf("%lld\n", res);
 	return 0;
 }
