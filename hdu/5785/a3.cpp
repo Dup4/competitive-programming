@@ -1,49 +1,16 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long
-#define N 310010
+#define N 1000005
 #define ALP 26
-
-struct Manacher {
-	int len;
-	char Ma[N << 1];
-	int Mp[N << 1];
-	void init(int len) {
-		this->len = len;
-	}
-	void work(char *s) {
-		int l = 0;
-		Ma[l++] = '$';
-		Ma[l++] = '#';
-		for (int i = 0; i < len; ++i) {
-			Ma[l++] = s[i];
-			Ma[l++] = '#';
-		}
-		Ma[l] = 0;
-		int mx = 0, id = 0;
-		for (int i = 0; i < l; ++i) {
-			Mp[i] = mx > i ? min(Mp[2 * id - i], mx - i) : 1;
-			while (Ma[i + Mp[i]] == Ma[i - Mp[i]]) Mp[i]++;
-			if (i + Mp[i] > mx) {
-				mx = i + Mp[i];
-				id = i;
-			}
-		}
-	}
-	bool check(int l, int r) {
-		int il = (l + 1) * 2, ir = (r + 1) * 2;
-		int mid = (il + ir) / 2;
-		int len = (r - l + 2) / 2;
-		return (Mp[mid] / 2) >= len;		
-	}
-}man;
-
+const ll p = 1e9 + 7;
 struct PAM{         
 	// 每个节点代表一个回文串
     int Next[N][ALP]; // next指针,参照Trie树
     int fail[N];      // fail失配后缀链接
     int cnt[N];       // 此回文串出现个数
     int num[N];       // 以节点i结尾的回文串个数
+	int sum[N];       // 以节点i结尾的回文串的长度和
     int len[N];       // 节点i的回文串长度
     int s[N];         // 存放添加的字符
     int last;         //指向上一个字符所在的节点，方便下一次add
@@ -84,10 +51,12 @@ struct PAM{
             fail[now] = Next[get_fail(fail[cur])][c];
             Next[cur][c] = now;
             num[now] = num[fail[now]] + 1;
+			sum[now] = sum[fail[now]] + len[now]; 
 			F = 1;
 		}
         last = Next[cur][c];
         cnt[last]++;
+        //返回的当前字符加入后是否新增了一个本质不同的回文串
 		return F;
 		//那么此时的p - 2就表示加入这个字符后共有多少个本质不同的回文串
     }
@@ -100,36 +69,28 @@ struct PAM{
     }
 }pam; 
 char s[N];
-int f[N], g[N]; 
-int res[N], len;
+int prenum[N], presum[N];
 
 int main() {
-	while (scanf("%s", s) != EOF) {
-		len = strlen(s);
-		man.init(len); man.work(s); 
-		pam.init();   
-		for (int i = 0; i <= len; ++i) res[i] = 0;
-		for (int i = 0; i < len; ++i) {
-			if (pam.add(s[i])) {  
-				g[i] = 1;
-			} else {
-				g[i] = 0;
-			}
-			f[i] = pam.last; 
+	while (scanf("%s", s + 1) != EOF) {
+		pam.init();
+		int len = strlen(s + 1);
+		for (int i = 1; i <= len; ++i) {
+			pam.add(s[i]);
+			prenum[i] = pam.num[pam.last];
+			presum[i] = pam.sum[pam.last];
 		}
-		pam.count(); 
-		for (int i = 0; i < len; ++i) { 
-			if (g[i] == 0) continue;
-			int Len = pam.len[f[i]];
-			int l = i - Len + 1;
-			int r = i;
-			int mid = (l + r) >> 1; 
-			if (man.check(l, mid)) {
-				res[Len] += pam.cnt[f[i]];
-			}
+		pam.init();
+		ll res = 0;
+		for (int i = len; i > 1; --i) {
+			int j = i;
+			pam.add(s[i]);
+			int sufnum = pam.num[pam.last];
+			int sufsum = pam.sum[pam.last];
+			res += (1ll * prenum[i - 1] * sufnum % p * j % p * j % p) + (1ll * sufsum * prenum[i - 1] % p - 1ll * prenum[i - 1] * sufnum % p - 1ll * sufnum * presum[i - 1] % p) * j % p - 1ll * presum[i - 1] * sufsum + 1ll * presum[i - 1] * sufnum % p;
+			res = (res + p) % p;
 		}
-		for (int i = 1; i <= len; ++i) printf("%d%c", res[i], " \n"[i == len]);
+		printf("%lld\n", res);
 	}
 	return 0;
 }
-
