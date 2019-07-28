@@ -17,13 +17,18 @@ struct RMQ {
 		}
 		for (int j = 1; j <= mm[n]; ++j) {
 			for (int i = 1; i + (1 << j) - 1 <= n; ++i) {
-				dp[i][j] = max(f[i - 1][j], f[i + (1 << (j - 1))][j - 1]);
+				Max[i][j] = max(Max[i][j - 1], Max[i + (1 << (j - 1))][j - 1]);
+				Min[i][j] = min(Min[i][j - 1], Min[i + (1 << (j - 1))][j - 1]);
 			}
 		}
 	}
-	int query(int x, int y) {
+	int queryMax(int x, int y) {
 		int k = mm[y - x + 1];
-		return max(dp[x][k], dp[y - (1 << k) + 1][k]);
+		return max(Max[x][k], Max[y - (1 << k) + 1][k]);
+	}
+	int queryMin(int x, int y) {
+		int k = mm[y - x + 1];
+		return min(Min[x][k], Min[y - (1 << k) + 1][k]);  
 	}
 }rmq;
 
@@ -37,7 +42,7 @@ int main() {
 		int l, r;
 		while (m--) {
 			scanf("%d%d", &l, &r);
-			printf("%d\n", rmq.query(l, r));
+			printf("%d\n", rmq.queryMax(l, r));
 		}
 	}
 	return 0;
