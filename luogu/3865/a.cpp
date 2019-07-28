@@ -3,6 +3,7 @@ using namespace std;
 
 #define N 100010
 #define M 20
+int n, m, a[N];
 
 struct RMQ {
 	int dp[N][M];
@@ -19,4 +20,24 @@ struct RMQ {
 			}
 		}
 	}
-};
+	int query(int x, int y) {
+		int k = mm[y - x + 1];
+		return max(dp[x][k], dp[y - (1 << k) + 1][k]);
+	}
+}rmq;
+
+
+int main() {
+	while(scanf("%d%d", &n, &m) != EOF) {
+		for (int i = 1; i <= n; ++i) {
+			scanf("%d", a + i);
+		}
+		rmq.init(n, a);
+		int l, r;
+		while (m--) {
+			scanf("%d%d", &l, &r);
+			printf("%d\n", rmq.query(l, r));
+		}
+	}
+	return 0;
+}
