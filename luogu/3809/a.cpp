@@ -62,8 +62,14 @@ int main() {
 		int len = strlen(s);
 		da.init(s, 128);
 		da.work();
+		for (int i = 1; i <= len; ++i)
+			printf("%c%c", s[i - 1], " \n"[i == len]);
 		for (int i = 1; i <= len; ++i) 
-			printf("%d%c", da.sa[i] + 1, " \n"[i == len]);
+			printf("%d%c", da.sa[i], " \n"[i == len]);
+		for (int i = 1; i <= len; ++i) 
+			printf("%d%c", da.Rank[i - 1], " \n"[i == len]);
+		for (int i = 2; i <= len; ++i) 
+			printf("%d%c", da.height[i], " \n"[i == len]);
 	}
 	return 0;
 }
