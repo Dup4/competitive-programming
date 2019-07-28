@@ -7,7 +7,9 @@ ll d; int m;
 
 #define N 30
 struct Gauss {
+	//增广矩阵
 	ll a[N][N];
+	//最后得到的解集  最终结果在x[0] - x[n - 1]
 	ll x[N];
 	inline ll gcd(ll a, ll b) {
 		return b ? gcd(b, a % b) : a;
@@ -23,6 +25,8 @@ struct Gauss {
 		x += y;
 		if (x >= p) x -= p;
 	}
+	//设置增广矩阵
+	//k为变元数量　
 	void init(int k) {
 		memset(a, 0, sizeof a);
 		ll tmp = inv(k, p);
@@ -37,11 +41,9 @@ struct Gauss {
 			add(a[i - 1][i - 1], p - 1);  
 			a[i - 1][k] = (p - 1) % p;
 		}
-	//	for (int i = 0; i < k; ++i)
-	//		for (int j = 0; j <= k; ++j) {
-	//			printf("%lld%c", a[i][j], " \n"[j == k]);
-	//		}
 	}
+	//equ为方程数量　var为变元数量
+	//右equ行　equ + 1列，最后一列为常量
 	int work(int equ, int var) {
 		int max_r, col, k;
 		for (k = 0, col = 0; k < equ && col < var; ++k, ++col) {
@@ -58,7 +60,7 @@ struct Gauss {
 				for (int j = col; j < var + 1; ++j) {
 					swap(a[k][j], a[max_r][j]);
 				}
-			}
+			} 
 			for (int i = k + 1; i < equ; ++i) {
 				if (a[i][col] != 0) {
 					ll LCM = lcm(abs(a[i][col]), abs(a[k][col]));
@@ -73,9 +75,9 @@ struct Gauss {
 		}
 		for (int i = k; i < equ; ++i) {
 			if (a[i][col] != 0) 
-				return -1;
+				return -1; //无解
 		}
-		if (k < var) return var - k;
+		if (k < var) return var - k; //多解
 		for (int i = var - 1; i >= 0; --i) {
 			ll tmp = a[i][var];
 			for (int j = i + 1; j < var; ++j) {
