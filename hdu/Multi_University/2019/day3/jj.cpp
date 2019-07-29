@@ -2,15 +2,14 @@
 using namespace std;
 
 #define ll long long
-#define N 100010
+#define N 200010
 const ll p = 1e9 + 7;
 int n, q, f[N], y[N];
 vector <vector<int>> G;
-ll Y[N], Y2[N], Y3[N];     
-template <class T1, class T2>
-void add(T1 &x, T2 y) {
+ll Y[N];     
+void add(ll &x, ll y) {
 	x += y;
-	if (x >= p) x -= p;  
+	if (x >= p) x -= p;
 }
 
 int fa[N], deep[N], sze[N], son[N], top[N], in[N], fin[N], out[N], cnt;
@@ -19,8 +18,6 @@ void DFS(int u) {
 	for (auto v : G[u]) if (v != fa[u]) {
 		fa[v] = u;
 		Y[v] = (Y[u] + y[v]) % p;
-		Y2[v] = (Y2[u] + y[v]) % p;
-		Y3[v] = (Y3[v] + y[u]) % p;
 		deep[v] = deep[u] + 1;
 		DFS(v);
 		sze[u] += sze[v];
@@ -56,62 +53,45 @@ int querylca(int u, int v) {
 	return u;
 }
 
-
 struct SEG {
 	struct node {
-		ll F, lazy, Y[2], Fy[2]; int cnt;    
+		ll F, Fy[2], lazy[3];     
 		node() {
-			F = lazy = 0;
-			Fy[0] = Fy[1] = Y[0] = Y[1] = 0;
-			cnt = 0;
+			F = Fy[0] = Fy[1] = 0;
+			lazy[0] = lazy[1] = lazy[2] = 0;
 		}
-		void add(ll x) {
-			(F += x * cnt % p) %= p;
-			lazy = (lazy + x) % p;
-			for (int i = 0; i < 2; ++i) {
-				Fy[i] = (Fy[i] + Y[i] * x % p) % p;
-			}
-		}
-		node operator + (const node &other) const {
-			node res = node();
-			res.cnt = cnt + other.cnt;
-			for (int i = 0; i < 2; ++i) {
-				res.Y[i] = (Y[i] + other.Y[i]) % p;
-				res.Fy[i] = (Fy[i] + other.Fy[i]) % p;
-			}
-			return res;
+		void up(ll F, ll Fy0, ll Fy1) { 
+			add(this->F, F);
+			add(Fy[0], Fy0);
+			add(Fy[1], Fy1);
+			add(lazy[0], F);
+			add(lazy[1], Fy0);
+			add(lazy[2], Fy1);
 		}
 	}t[N << 2], S, T, lca; 
 	void build(int id, int l, int r) {
 		t[id] = node();
 		if (l == r) {
-			t[id].cnt = 1;
-			t[id].Y[0] = Y2[fin[l]];
-			t[id].Y[1] = Y3[fin[l]];
 			return;
 		}
 		int mid = (l + r) >> 1;
 		build(id << 1, l, mid);
 		build(id << 1 | 1, mid + 1, r);
-		t[id] = t[id << 1] + t[id << 1 | 1];
 	}
 	void pushdown(int id) {
-		ll &lazy = t[id].lazy;
-		if (!lazy) return;
-		t[id << 1].add(lazy);
-		t[id << 1 | 1].add(lazy);
-		lazy = 0;
+		t[id << 1].up(t[id].lazy[0], t[id].lazy[1], t[id].lazy[2]);
+		t[id << 1 | 1].up(t[id].lazy[0], t[id].lazy[1], t[id].lazy[2]);
+		t[id].lazy[0] = t[id].lazy[1] = t[id].lazy[2] = 0;
 	}
-	void update(int id, int l, int r, int ql, int qr, ll x) {
+	void update(int id, int l, int r, int ql, int qr, ll F, ll Fy0, ll Fy1) {
 		if (l >= ql && r <= qr) {
-			t[id].add(x);
+			t[id].up(F, Fy0, Fy1);
 			return;
 		}
 		int mid = (l + r) >> 1;
 		pushdown(id);
-		if (ql <= mid) update(id << 1, l, mid, ql, qr, x);
-		if (qr > mid) update(id << 1 | 1, mid + 1, r, ql, qr, x);
-		t[id] = t[id << 1] + t[id << 1 | 1];
+		if (ql <= mid) update(id << 1, l, mid, ql, qr, F, Fy0, Fy1);
+		if (qr > mid) update(id << 1 | 1, mid + 1, r, ql, qr, F, Fy0, Fy1);
 	}
 	node query(int id, int l, int r, int pos) {
 		if (l == r) return t[id];
@@ -131,7 +111,7 @@ int main() {
 	int T; scanf("%d", &T);
 	while (T--) {
 		scanf("%d", &n); init(); 
-		for (int i = 1; i <= n; ++i) scanf("%d", f + i);
+		for (int i = 1; i <= n; ++i) scanf("%d", f + i), f[i] %= p;
 		for (int i = 1; i <= n; ++i) scanf("%d", y + i);
 		for (int i = 1, u, v; i < n; ++i) {
 			scanf("%d%d", &u, &v);
@@ -139,12 +119,11 @@ int main() {
 			G[v].push_back(u);
 		}
 		Y[1] = y[1]; 
-		Y2[1] = y[1];
 		DFS(1); 
 		gettop(1, 1);
 		seg.build(1, 1, n);
 		for (int i = 1; i <= n; ++i) {
-			seg.update(1, 1, n, in[i], out[i], f[i]);
+			seg.update(1, 1, n, in[i], out[i], f[i], Y[i] * f[i] % p, (Y[i] - y[i] + p) % p * f[i] % p);
 		}
 		scanf("%d", &q);
 		int op, s, t, x, c, v;
@@ -159,30 +138,28 @@ int main() {
 				seg.lca = seg.query(1, 1, n, in[lca]); 
 				//右边下去的贡献
 				F = (seg.T.F - seg.lca.F + f[lca] + p) % p;   
-				Fy = (seg.T.Fy[1] - seg.lca.Fy[1] + 1ll * f[lca] * (Y[lca] - y[lca] + p) % p + p) % p;
-				cout << F << " " << Fy << endl;
-				Ly = Y[s] - Y[lca]; 
+				Fy = (seg.T.Fy[1] + p - seg.lca.Fy[1] + 1ll * f[lca] * (Y[lca] + p - y[lca]) % p) % p;
+				Ly = (Y[s] + p - Y[lca]) % p; 
 				add(res, F * x % p);
-				add(res, (p - F * Ly % p) % p);
-				add(res, (p - Fy) % p);
-				add(res, F * (Y[lca] - y[lca] + p) % p);
+				add(res, p - F * Ly % p);
+				add(res, p - Fy);
+				add(res, F * (Y[lca] + p - y[lca]) % p);
 				
-				cout << res << endl;
 				//左边上去的贡献
-				Ry = Y[t] - Y[lca] + y[lca];
-				F = (seg.S.F - seg.lca.F + p) % p;
-				Fy = (seg.S.Fy[0] - seg.lca.Fy[0] + p) % p;
+				Ry = (Y[t] + p - Y[lca] + y[lca]) % p;
+				F = (seg.S.F + p - seg.lca.F) % p;
+				Fy = (seg.S.Fy[0] + p - seg.lca.Fy[0]) % p;
 				add(res, F * Ry % p);
 				add(res, Fy);
-				add(res, (p - (F * (Y[lca] - y[lca] + p) % p)) % p);
-				ll remindx = (x - Y[s] - Y[t] + 2ll * Y[lca] - 2ll * y[lca] + p) % p;
+				add(res, p - (F * Y[lca] % p));
+				ll remindx = (x + p - Y[s] + p - Y[t] + 2ll * Y[lca] + p - y[lca]) % p;
 				add(res, F * remindx % p);
 				printf("%lld\n", res);
 			} else {
 				scanf("%d%d", &c, &v);
-				seg.update(1, 1, n, in[c], out[c], p - f[c]);
-				f[c] = v;
-				seg.update(1, 1, n, in[c], out[c], f[c]);
+				seg.update(1, 1, n, in[c], out[c], p - f[c], Y[c] * (p - f[c]) % p, (Y[c] + p - y[c]) % p * (p - f[c]) % p);
+				f[c] = v % p;
+				seg.update(1, 1, n, in[c], out[c], f[c], Y[c] * f[c] % p, (Y[c] + p - y[c]) % p * f[c] % p);
 			}
 		}
 	}
