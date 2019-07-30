@@ -77,18 +77,20 @@ struct BFS {
 				deep[i] = 0; 
 				vis[i] = 1;
 				Dfs(i);
-				int tot = (int)vec.size();
-				int odd = 0;
+				sort(vec.begin(), vec.end(), [&](int x, int y) {
+					return deep[x] > deep[y];		
+				});
+				for (auto it : vec) vis[it] = 0;
 				for (auto it : vec) {
-					odd += (deep[it] % 2);
-				}
-				if (odd > tot - odd) odd = 1;
-				else odd = 0;
-				for (auto it : vec) {
-					if (deep[it] % 2 == odd) {
+					if (!vis[it]) {
 						res.push_back(it);
+						vis[it] = 1;
+						for (auto it2 : G[it]) {
+							vis[it2.fi] = 1; 
+						}
 					}
 				}
+				for (auto it : vec) vis[it] = 1;
 			}
 		}
 		if ((int)res.size() >= need) {
