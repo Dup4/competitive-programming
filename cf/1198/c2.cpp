@@ -23,7 +23,7 @@ struct DFS {
 		}
 	}
 	bool work() {
-		memset(vis, 0, sizeof vis);
+		for (int i = 0; i <= n; ++i) vis[i] = 0;
 		for (int i = 1; i <= n; ++i) {
 			if (!vis[i]) {
 				vis[i] = 1;
@@ -32,7 +32,7 @@ struct DFS {
 				Dfs(i);
 			}
 		}
-		memset(vis, 0, sizeof vis);
+		for (int i = 0; i <= n; ++i) vis[i] = 0;
 		vector <int> vec, res;
 		for (int i = 1; i <= n; ++i) vec.push_back(i);
 		sort(vec.begin(), vec.end(), [&](int x, int y){
@@ -70,7 +70,7 @@ struct BFS {
 	}
 	bool work() {
 		res.clear();
-		memset(vis, 0, sizeof vis);
+		for (int i = 0; i <= n; ++i) vis[i] = 0;
 		for (int i = 1; i <= n; ++i) {
 			if (!vis[i]) {
 				vec.clear();
