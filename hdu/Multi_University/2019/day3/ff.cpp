@@ -9,9 +9,19 @@ mt19937_64 rd(time(0));
 ll gcd(ll a, ll b) {
 	return b ? gcd(b, a % b) : a;
 }
-ll mul(ll a, ll b, ll p) {
-	return (a * b - (ll)(a / (long double)p * b + 1e-3) * p + p) % p;
+inline ll mul(ll x,ll y,ll mod)
+{
+	ll tmp=(x*y-(ll)((long double)x/mod*y+1.0e-8)*mod);
+	return tmp<0 ? tmp+mod : tmp;
 }
+
+//ll mul(ll u,ll v, ll p)
+//{
+// return(u * v-(ll)((long double)u * v / p) * p + p ) % p;
+//}
+//ll mul(ll a, ll b, ll p) {
+//	return (a * b - (ll)(a / (long double)p * b + 1e-3) * p + p) % p;
+//}
 ll qmod(ll base, ll n, ll p) {
 	ll res = 1;
 	base %= p;
