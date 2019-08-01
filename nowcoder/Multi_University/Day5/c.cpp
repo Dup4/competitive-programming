@@ -51,6 +51,7 @@ struct BSGS {
 	}
 }bsgs;
 
+//a^n = (a - 1)v + b / ((a - 1)x0 + b)
 void solve() {
 	scanf("%lld%lld%lld%lld%lld", &n, &x0, &a, &b, &p);
 	scanf("%d", &q);
