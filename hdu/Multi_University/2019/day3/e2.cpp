@@ -134,7 +134,7 @@ struct DLS {
 	}	
 	inline ll sum_3 (ll n) {
 		n %= p;
-		return n * (n + 1) % p * (n + 1) % p * inv2 % p;
+		return n * n % p * inv2 % p * (n + 1) % p * (n + 1) % p * inv2 % p;
 	}
 	inline ll sum_2 (ll n) {
 		n %= p;
