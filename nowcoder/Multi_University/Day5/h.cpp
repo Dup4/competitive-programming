@@ -47,7 +47,7 @@ int main() {
 			scanf(" %s %d ", s, &len);
 			x = s[0], y = s[1];
 			if (len) {
-				gets(s + 1);
+				scanf("%s", s + 1);
 			}
 			cntx = cnty = 0;
 			for (int i = 1; i <= len; ++i) {

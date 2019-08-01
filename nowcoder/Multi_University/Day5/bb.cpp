@@ -27,6 +27,9 @@ struct node {
     node() {
         memset(a, 0, sizeof a);
     }
+	void set() {
+		a[0][0] = a[1][1] = 1;
+	}
     node operator * (const node &other) const {
         node res = node();
         for (int i = 0; i < 2; ++i)
@@ -35,31 +38,14 @@ struct node {
                     res.a[i][j] = (res.a[i][j] + a[i][k] * other.a[k][j] % mod) % mod;
         return res;
     }
-}base;
+}base, res;
  
-node qmod(node base, ll n) {
-    node res = node();
-    res.a[0][0] = x[1], res.a[0][1] = x[0];
+void qmod(node base, ll n) {
     while (n) {
         if (n & 1) res = res * base;
         base = base * base;
         n >>= 1; 
     }
-    return res;
-}
- 
-int gcd() {
-    ll x = 0;
-    for (int i = 1; i <= len; ++i) {
-        x = x * 10 + s[i] - '0';
-        x %= mod;
-    }
-    for (int i = 2; 1ll * i * i <= mod; ++i) {
-        if (mod % i == 0 && x % i == 0) {
-            return 0;
-        }
-    }
-    return 1;
 }
  
 int main() {
@@ -70,23 +56,33 @@ int main() {
         base.a[0][0] = a;
         base.a[1][0] = b;
         base.a[0][1] = 1;
-        if (len <= 10) {
+        if (len <= 8) {
             ll n = 0;
             for (int i = 1; i <= len; ++i) {
-                n = n * 10 + s[i] - '0';
+                n = n * 10 + s[i] - '0'; 
             }
 			--n;
-            printf("%lld\n", qmod(base, n).a[0][0]);
+			res = node(); 
+			res.a[0][0] = x[1], res.a[0][1] = x[0];
+			qmod(base, n);
+            printf("%lld\n", res.a[0][0]);
         } else {
             ll n = 0;
             ll Phi = eular(mod);
+			cout << "# " << Phi << endl;
             for (int i = 1; i <= len; ++i) {
-                n = n * 10 + s[i] - '0';
+                n = (__int128)n * 10 + s[i] - '0'; 
                 n %= Phi;
             }
-            n = (n + Phi - 1) % Phi;
-			cout << n << endl;
-			printf("%lld\n", qmod(base, n).a[0][0]);
+			cout << "# " << n << endl;
+			res = node();
+			res.set();  
+			qmod(base, n); 
+		    base = res;	
+			res = node();  
+			res.a[0][0] = x[1]; res.a[0][0] = x[0];
+			res = res * base;
+			printf("%lld\n", res.a[0][0]);
         }
     }
     return 0;
