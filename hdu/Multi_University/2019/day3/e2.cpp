@@ -50,7 +50,7 @@ void init() {
 			}
 		}
 	}
-	for (int i = 1; i < ptot; ++i) {
+	for (int i = 1; i <= ptot; ++i) {
 		add(sp[i], sp[i - 1]);
 	}
 	for (int i = 1; i < N; ++i) {
@@ -76,9 +76,9 @@ struct Lagrange {
 	}
 	ll cal(ll x) {
 		if (x <= n) return f[x];
-		pre[0] = x;
+		pre[0] = x % p;
 		for (int i = 1; i <= n; ++i) pre[i] = pre[i - 1] * ((x - i) % p) % p;
-		suf[n] = x - n;
+		suf[n] = (x - n) % p;
 		for (int i = n - 1; i >= 0; --i) suf[i] = suf[i + 1] * ((x - i) % p) % p;
 		ll res = 0;
 		for (int i = 0; i <= n; ++i) {
@@ -94,9 +94,9 @@ struct Lagrange {
 
 //Min25筛
 struct Min25 {
-	static const int SIZE = 3e5 + 10;
+	static const int SIZE = 4e5 + 10;
 	ll w[SIZE], g[SIZE], n;
-	int id1[SIZE], id2[SIZE], m, blk;
+	ll id1[SIZE], id2[SIZE], m, blk;
 	void go(ll n) {
 		this->n = n;
 		m = 0;
@@ -144,7 +144,7 @@ struct DLS {
 		if (n < N) return phi[n];
 		if (mp.count(n)) return mp[n];
 		ll res = sum_3(n);
-		for (ll i = 1, j; i <= n; i = j + 1) {
+		for (ll i = 2, j; i <= n; i = j + 1) {
 			j = n / (n / i);
 			add(res, p - (sum_2(j) - sum_2(i - 1)) % p * go(n / i) % p);
 			res = (res + p) % p;
