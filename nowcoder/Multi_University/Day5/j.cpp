@@ -186,6 +186,7 @@ int main() {
 			sort(vec.begin(), vec.end(), [](pii x, pii y) {
 				return x.fi > y.fi;			
 			});
+			vec.erase(unique(vec.begin(), vec.end()), vec.end());
 			if ((int)vec.size() >= 3) {
 			//	printf("%d %d %d %d\n", i, vec[0].se, vec[1].se, vec[2].se);
 				qrr[++m] = node(vec[0], vec[1], vec[2], 0, i);
