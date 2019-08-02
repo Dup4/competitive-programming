@@ -101,6 +101,7 @@ int main() {
 				}
 			}
 		}
+		//最大独立集点数 = N - 最大匹配数
 		int num = n - dicnic.solve();
 		vector <int> res;
 		for (int i = 1; i <= n; ++i) {

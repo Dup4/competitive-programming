@@ -24,6 +24,7 @@ int main() {
 		int ans = 0;
 		int it = 0;
 		for (int i = 1; i < 1 << n; ++i) {
+			if ((i >> (it + 1)) & 1) ++it;
 			for (int j = 0; j < n; ++j)
 				if ((i >> j) & 1) {
 					it = j;
