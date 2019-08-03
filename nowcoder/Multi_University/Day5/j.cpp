@@ -134,7 +134,7 @@ int find(int O, int x, int dis) {
 		return querykth(x, deep[x] - deep[O] - dis);
 	} else { //子树外
 		int lca = querylca(O, x);
-		if (deep[O] - deep[lca] <= dis) {
+		if (deep[O] - deep[lca] >= dis) {
 			return querykth(O, dis);
 		} else {
 			return querykth(x, deep[x] - deep[lca] - (dis - deep[O] + deep[lca]));
@@ -168,8 +168,8 @@ int main() {
 			scanf("%d%d%d", &a, &b, &c);
 			int Max = max(a, max(b, c));
 			int Sum = a + b + c;
-			if (Sum - Max < Max || (Sum) % 2) {
-				ans[i].x[0].fi = -1; 
+			if (Sum - Max < Max || Sum % 2) {
+				ans[i].x[0].fi = -1;
 			} else { 
 				qrr[++m] = node(pii((a + b - c) / 2, 0), pii((a + c - b) / 2, 1), pii((b + c - a) / 2, 2), 1, i);
 			}
