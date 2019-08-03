@@ -37,14 +37,16 @@ int main() {
 	for (int kase = 1; kase <= T; ++kase) {
 		printf("Case #%d: ", kase);
 		scanf("%d%d", &n, &k);
-		for (int i = 1; i <= n; ++i) scanf("%d", a + i); 
-		for (int i = 1; ; ) {
+		int sum = 0;
+		for (int i = 1; i <= n; ++i) scanf("%d", a + i), sum += a[i]; 
+		for (int i = sum / k; ; ) {
 			int x = check(i);
 			if (x == -INF) {
 				printf("%d\n", i);
 				break;
 			} else {
-				i += max(1, x / k + (x % k != 0));
+				++i;
+			//	i += max(1, x / k + (x % k != 0));
 			}
 		}
 	}
