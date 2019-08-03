@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define dbg(...) { puts("# "); printf(__VA_ARGS__); puts(""); }
+#define dbg(...) { printf("# "); printf(__VA_ARGS__); puts(""); }
 #define N 200010
 #define M 20
 #define pii pair <int, int>
@@ -157,6 +157,7 @@ void work(int x, int y) {
 }
 
 int main() {
+	int x = 2, y = 3;
 	while (scanf("%d", &n) != EOF) {
 		G.clear(); G.resize(n + 1); cnt = 0;
 		for (int i = 1, u, v; i < n; ++i) {
