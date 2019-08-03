@@ -100,6 +100,10 @@ int querylca(int u, int v) {
 	return u;
 }
 
+int dis(int u, int v) {
+	return deep[u] + deep[v] - 2 * deep[querylca(u, v)];
+}
+
 int querykth(int u, int k) {
 	for (int i = M - 1; i >= 0; --i) {
 		if ((k >> i) & 1) {
@@ -120,7 +124,7 @@ struct BIT {
 		}
 	}
 	pii query(int x) {
-		pii res = pii(0, 0);
+		pii res = pii(-1, -1);
 		for (; x < N; x += x & -x) {
 			res = max(res, a[x]);
 		}
@@ -128,16 +132,16 @@ struct BIT {
 	}
 }bit;
 
-int find(int O, int x, int dis) {
+int find(int O, int x, int Dis) {
 	//在子树内
 	if (in[x] >= in[O] && in[x] <= out[O]) {
-		return querykth(x, deep[x] - deep[O] - dis);
+		return querykth(x, deep[x] - deep[O] - Dis);
 	} else { //子树外
 		int lca = querylca(O, x);
-		if (deep[O] - deep[lca] >= dis) {
-			return querykth(O, dis);
+		if (deep[O] - deep[lca] >= Dis) {
+			return querykth(O, Dis);
 		} else {
-			return querykth(x, deep[x] - deep[lca] - (dis - deep[O] + deep[lca]));
+			return querykth(x, deep[x] - deep[lca] - (Dis - deep[O] + deep[lca]));
 		}
 	}
 }
@@ -145,6 +149,9 @@ int find(int O, int x, int dis) {
 void work(int x, int y) {
 	int O = qrr[x].id;
 	for (int i = 0; i < 3; ++i) {
+	    //assert(qrr[x].x[i].fi >= qrr[y].x[i].fi);
+		assert(qrr[y].x[i].se != -1);
+		//	assert(dis(O, qrr[x].x[i].se) >= qrr[y].x[i].fi);	
 		ans[qrr[y].id].x[i] = pii(find(O, qrr[x].x[i].se, qrr[y].x[i].fi), qrr[y].x[i].se);
 	}
 }
@@ -186,7 +193,7 @@ int main() {
 			sort(vec.begin(), vec.end(), [](pii x, pii y) {
 				return x.fi > y.fi;			
 			});
-			vec.erase(unique(vec.begin(), vec.end()), vec.end());
+	//		vec.erase(unique(vec.begin(), vec.end()), vec.end());
 			if ((int)vec.size() >= 3) {
 			//	printf("%d %d %d %d\n", i, vec[0].se, vec[1].se, vec[2].se);
 				qrr[++m] = node(vec[0], vec[1], vec[2], 0, i);
