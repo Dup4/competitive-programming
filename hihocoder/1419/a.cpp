@@ -95,8 +95,9 @@ struct RMQ {
 	}
 }rmq;
 
-bool check(int x) {
-		
+int querylcp(int x, int y) {
+	if (da.Rank[x] > da.Rank[y]) swap(x, y);	
+	return rmq.queryMin(da.Rank[x] + 1, da.Rank[y]);
 }
 
 int main() {
@@ -105,14 +106,17 @@ int main() {
 		da.init(s, 128, len);
 		da.work();
 		rmq.init(len, da.height);
-		int l = 1, r = len, res = -1;
-		while (r - l >= 0) {
-			int mid = (l + r) >> 1;
-			if (check(mid)) {
-				l = mid + 1;
-				res = mid;
-			} else {
-				r = mid - 1;
+		int res = 0;
+		for (int l = 1; l <= len; ++l) {
+			for (int j = 0; j < len - l; j += l) {
+				int lcp = querylcp(j, j + l);
+		//		cout << lcp << endl;
+				res = max(res, lcp / l + 1);
+				int pre = j - l + lcp % l;
+			cout << l << " " << j << " " << pre << endl;
+				if (pre >= 1) {
+					res = max(res, querylcp(pre, pre + l) / l + 1);
+				}
 			}
 		}
 		printf("%d\n", res);
