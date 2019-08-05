@@ -1,114 +1,77 @@
 #include <bits/stdc++.h>
 using namespace std;
-
+#define ll long long
 #define INF 0x3f3f3f3f
-//点数
-#define N 4010
-
-struct edge {
-    int to, capacity, cost, rev;
-    edge() {}
-    edge(int to, int _capacity, int _cost, int _rev) : to(to), capacity(_capacity), cost(_cost), rev(_rev) {}
-};
-
-//时间复杂度O(F*ElogV)(F是流量, E是边数, V是顶点数)
-struct Min_Cost_Max_Flow {
-    int V, H[N + 5], dis[N + 5], PreV[N + 5], PreE[N + 5];
-    vector<edge> G[N + 5];
-
-    //调用前初始化
-    void Init(int n) {
-        V = n;
-        for (int i = 0; i <= V; ++i)G[i].clear();
+#define INFLL 0x3f3f3f3f3f3f3f3f
+const int N = 1e5 + 10;
+struct Dicnic {
+	static const int M = 2e6 + 10;
+	static const int N = 1e5 + 10;
+    struct Edge {
+        int to, nxt;
+        ll flow;
+        Edge() {}
+        Edge(int to, int nxt, ll flow) : to(to), nxt(nxt), flow(flow) {}
+    } edge[M];
+	int S, T;
+    int head[N], tot;
+    int dep[N];
+    void init() {
+        memset(head, -1, sizeof head);
+        tot = 0;
     }
-
-    //加边
-    void addedge(int from, int to, int cap, int cost) {
-        G[from].push_back(edge(to, cap, cost, G[to].size()));
-        G[to].push_back(edge(from, 0, -cost, G[from].size() - 1));
+	void set(int S, int T) {
+		this->S = S;
+		this->T = T;
+	}
+    void addedge(int u, int v, int w, int rw = 0) {
+        edge[tot] = Edge(v, head[u], w);
+        head[u] = tot++;
+        edge[tot] = Edge(u, head[v], rw);
+        head[v] = tot++;
     }
-
-    //flow是自己传进去的变量，就是最后的最大流，返回的是最小费用
-    int Min_cost_max_flow(int s, int t, int f, int &flow) {
-        int res = 0;
-        fill(H, H + 1 + V, 0);
-        while (f) {
-            priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> q;
-            fill(dis, dis + 1 + V, INF);
-            dis[s] = 0;
-            q.push(pair<int, int>(0, s));
-            while (!q.empty()) {
-                pair<int, int> now = q.top();
-                q.pop();
-                int v = now.second;
-                if (dis[v] < now.first)continue;
-                for (int i = 0, sze = (int)G[v].size(); i < sze; ++i) {
-                    edge &e = G[v][i];
-                    if (e.capacity > 0 && dis[e.to] > dis[v] + e.cost + H[v] - H[e.to]) {
-                        dis[e.to] = dis[v] + e.cost + H[v] - H[e.to];
-                        PreV[e.to] = v;
-                        PreE[e.to] = i;
-                        q.push(pair<int, int>(dis[e.to], e.to));
-                    }
+    bool BFS() {
+        memset(dep, -1, sizeof dep);
+        queue<int> q;
+        q.push(S);
+        dep[S] = 1;
+        while (!q.empty()) {
+            int u = q.front();
+            q.pop();
+            for (int i = head[u]; ~i; i = edge[i].nxt) {
+                if (edge[i].flow && dep[edge[i].to] == -1) {
+                    dep[edge[i].to] = dep[u] + 1;
+                    q.push(edge[i].to);
                 }
             }
-            if (dis[t] == INF)break;
-            for (int i = 0; i <= V; ++i)H[i] += dis[i];
-            int d = f;
-            for (int v = t; v != s; v = PreV[v])d = min(d, G[PreV[v]][PreE[v]].capacity);
-            f -= d;
-            flow += d;
-            res += d * H[t];
-            for (int v = t; v != s; v = PreV[v]) {
-                edge &e = G[PreV[v]][PreE[v]];
-                e.capacity -= d;
-                G[v][e.rev].capacity += d;
+        }
+        return dep[T] >= 0;
+    }
+    ll DFS(int u, ll f) {
+        if (u == T || f == 0) return f;
+        ll w, used = 0;
+        for (int i = head[u]; ~i; i = edge[i].nxt) {
+            if (edge[i].flow && dep[edge[i].to] == dep[u] + 1) {
+                w = DFS(edge[i].to, min(f - used, edge[i].flow));
+                edge[i].flow -= w;
+                edge[i ^ 1].flow += w;
+                used += w;
+                if (used == f) return f;
             }
         }
-        return res;
+        if (!used) dep[u] = -1;
+        return used;
     }
-
-    int Max_cost_max_flow(int s, int t, int f, int &flow) {
-        int res = 0;
-        fill(H, H + 1 + V, 0);
-        while (f) {
-            priority_queue<pair<int, int>> q;
-            fill(dis, dis + 1 + V, -INF);
-            dis[s] = 0;
-            q.push(pair<int, int>(0, s));
-            while (!q.empty()) {
-                pair<int, int> now = q.top();
-                q.pop();
-                int v = now.second;
-                if (dis[v] > now.first)continue;
-                for (int i = 0, sze = (int)G[v].size(); i < sze; ++i) {
-                    edge &e = G[v][i];
-                    if (e.capacity > 0 && dis[e.to] < dis[v] + e.cost + H[v] - H[e.to]) {
-                        dis[e.to] = dis[v] + e.cost + H[v] - H[e.to];
-                        PreV[e.to] = v;
-                        PreE[e.to] = i;
-                        q.push(pair<int, int>(dis[e.to], e.to));
-                    }
-                }
-            }
-            if (dis[t] == -INF)break;
-            for (int i = 0; i <= V; ++i)H[i] += dis[i];
-            int d = f;
-            for (int v = t; v != s; v = PreV[v])d = min(d, G[PreV[v]][PreE[v]].capacity);
-            f -= d;
-            flow += d;
-            res += d * H[t];
-            for (int v = t; v != s; v = PreV[v]) {
-                edge &e = G[PreV[v]][PreE[v]];
-                e.capacity -= d;
-                G[v][e.rev].capacity += d;
-            }
+    ll solve() {
+        ll ans = 0;
+        while (BFS()) {
+            ans += DFS(S, INFLL);
         }
-        return res;
+        return ans;
     }
-} MCMF;
+}dicnic;
 
-
+int S, T, n, m;
 struct Hash {
 	int a[N], cnt;
 	void init() {
@@ -123,13 +86,48 @@ struct Hash {
 	}
 	int get(int x) {
 		return lower_bound(a + 1, a + 1 + cnt, x) - a;
-	}
+	} 
 }hx, hy;
-int n, m, x[N], y[N];
+
+struct node {
+	int x[2], y[2];
+	node() {}
+	void scan() {
+		scanf("%d%d%d%d", x, y, x + 1, y + 1);
+	//	--x[0]; --y[0];
+		++x[1]; ++y[1];
+		hx.add(x[0]); hx.add(x[1]);
+		hy.add(y[0]); hy.add(y[1]);
+	}
+}a[N];
 
 int main() {
 	while (scanf("%d%d", &n, &m) != EOF) {
-		
+		hx.init(); hy.init();
+		hx.add(1); hx.add(n + 1);
+		hy.add(1); hy.add(n + 1);
+		for (int i = 1; i <= m; ++i) a[i].scan();
+		hx.work(); hy.work();
+		S = 0; T = 1;
+		dicnic.init();
+		for (int i = 2; i <= hx.cnt; ++i) {
+			dicnic.addedge(S, i, hx.a[i] - hx.a[i - 1]);
+		}				
+		for (int i = 2; i <= hy.cnt; ++i) {
+			dicnic.addedge(i + hx.cnt, T, hy.a[i] - hy.a[i - 1]);
+		}
+		for (int i = 2; i <= hx.cnt; ++i) {
+			for (int j = 2; j <= hy.cnt; ++j) {
+				for (int k = 1; k <= m; ++k) {
+					if (a[k].x[0] <= hx.a[i - 1] && a[k].x[1] >= hx.a[i] && a[k].y[0] <= hy.a[j - 1] && a[k].y[1] >= hy.a[j]) {
+						dicnic.addedge(i, hx.cnt + j, INF);
+						break;
+					}
+				}
+			}
+		}
+		dicnic.set(S, T);
+		printf("%lld\n", dicnic.solve());
 	}
 	return 0;
 }
