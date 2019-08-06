@@ -5,13 +5,13 @@ typedef long long ll;
 const int N = 1e6 + 10;
 const int ALP = 26;
 char s[N];
+int f[N];
 
 struct SAM {
 	//空间开两倍
 	int maxlen[N << 1], trans[N << 1][ALP], link[N << 1], sze, lst;
 	int in[N << 1], endpos[N << 1]; 
 	vector <vector<int>> G;
-	int que[N << 1], ql, qr;
 	//minlen[i] = maxlen[link[i]] + 1
 	SAM() { sze = 0; lst = ++sze; }
 	inline void init() {
@@ -59,19 +59,19 @@ struct SAM {
 			G[i].push_back(link[i]);
 			++in[link[i]];
 		}
-		ql = 1, qr = 0;
+		queue <int> q; 
 		for (int i = 1; i <= sze; ++i)
 			if (in[i] == 0)
-				que[++qr] = i;
-		while (ql <= qr) {
-			int u = que[ql++]; 
+				q.push(i);
+		while (!q.empty()) {
+			int u = q.front(); q.pop();
 			for (auto v : G[u]) {
 				endpos[v] += endpos[u];
 				if (--in[v] == 0)
-					que[++qr] = v;
+					q.push(v);
 			}
 		}
-		ll res = 0;
+		for (int i = 1; i <= n; ++i) f[i] = 0;
 		for (int i = 1; i <= sze; ++i)
 			f[maxlen[i]] = max(f[maxlen[i]], endpos[i]);
 		for (int i = n - 1; i >= 1; --i) {
