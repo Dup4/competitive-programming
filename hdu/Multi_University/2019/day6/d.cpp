@@ -79,12 +79,12 @@ struct frac{
     }
 };
 struct node {
-	ll a, b; 
+	int a, b; 
 	frac x;
 	int pre, nx, id; 
 	node() {}
 	void scan(int _id) {
-		scanf("%lld%lld", &a, &b);  
+		scanf("%d%d", &a, &b);  
 		nx = pre = -1;
 		id = _id;
 		x = frac(a, a + b);

@@ -57,6 +57,9 @@ struct frac{
 	bool operator < (const frac &other) const {
 		return x * other.y < y * other.x;
 	}
+	bool operator > (const frac &other) const {
+		return x * other.y > y * other.x;
+	}
 	bool operator != (const frac &other) const {
 		return x * other.y != y * other.x;
 	}
@@ -74,92 +77,87 @@ struct frac{
 	}
     void print(){
 		sim();
-		if (x * y < 0) putchar('-');
 		printf("%lld/%lld\n", abs(x), abs(y));
     }
 };
 struct node {
 	ll a, b; 
 	frac x;
-	int id; 
 	node() {}
-	void scan(int _id) {
+	void scan() {
 		scanf("%lld%lld", &a, &b);  
-		id = _id;
 		x = frac(a, b);
 	}
 	bool operator < (const node &other) const {
 		return x < other.x;
 	}
+	bool operator > (const node &other) const {
+		return x > other.x;
+	}
 }a[N];
-int n, p[N], fp[N]; 
-frac res[N];
-
-struct BIT {
-	ll a[N << 1];
-	void init(int n) {
-		for (int i = 0; i <= n; ++i)
-			a[i] = 0;
-	}
-	void update(int x, int v) {
-		for (; x < N; x += x & -x) {
-			a[x] += v;
-		}
-	}
-	int query(int x) {
-		int res = 0;
-		for (; x > 0; x -= x & -x) {
-			res += a[x];
-		}
-		return res;
-	}
-	ll query(int l, int r) {
-		if (l > r) return 0;
-		return query(r) - query(l - 1);
-	}
-}A, B;
+int n;
+frac x, res;
+ll sum[2];
 
 int main() {
+	frac one = frac(1, 1), zero = frac(0, 1);  
 	int T; scanf("%d", &T);
 	while (T--) {
-		scanf("%d", &n); A.init(2 * n); B.init(2 * n);
-		for (int i = 1; i <= n; ++i) a[i].scan(i);
-		sort(a + 1, a + 1 + n);
+		scanf("%d", &n);
+		for (int i = 1; i <= n; ++i) a[i].scan(); 
+		priority_queue <node, vector <node>, less <node>> A;
+		priority_queue <node, vector <node>, greater <node>> B;
+		sum[0] = sum[1] = 0; 
 		for (int i = 1; i <= n; ++i) {
-			p[a[i].id] = i;
-		}
-		for (int i = 1; i <= n; ++i) {
-			A.update(p[i], a[p[i]].a);
-			B.update(p[i], a[p[i]].b);
+			A.push(a[i]);
+			sum[0] += a[i].a;  
 			if (i == 1) {
-				res[i] = frac(a[p[1]].b, a[p[1]].a + a[p[1]].b);
+				res = frac(a[i].a * a[i].b, a[i].a + a[i].b);
 			} else {
-				int l = 1, r = n, pos = -1;
-				while (r - l >= 0) {
-					int mid = (l + r) >> 1;
-			//		cout << "# " << mid << " " << A.query(1, mid) << " " << B.query(mid + 1, n) << endl; 
-					if (A.query(1, mid - 1) <= B.query(mid + 1, n)) {
-						pos = mid;
-						l = mid + 1;
+				while (1) {
+					if (sum[0] == sum[1]) {
+						res = frac(sum[0], 1);
+						break; 
+					} else if (sum[0] < sum[1]) {
+						node tmp = B.top(); 
+						sum[1] -= tmp.b;
+						if (sum[1] == sum[0] + tmp.a) {
+							B.pop();
+							sum[0] += tmp.a; A.push(tmp);
+							res = frac(sum[0], 1);
+							break;
+						}
+						frac x = frac(sum[1] - sum[0] + tmp.b, tmp.a + tmp.b);
+						if (x >= zero && x <= one) {
+							res = x * frac(tmp.a, 1) + frac(sum[0], 1);
+							sum[1] += tmp.b;
+							break;
+						} else {
+							B.pop(); 
+							A.push(tmp); sum[0] += tmp.a;
+						}
 					} else {
-						r = mid - 1;
+						node tmp = A.top();
+						sum[0] -= tmp.a;
+						if (sum[0] == sum[1] + tmp.b) {
+							A.pop();
+							B.push(tmp); sum[1] += tmp.b;
+							res = frac(sum[0], 1);
+							break;
+						}
+						frac x = frac(sum[1] - sum[0] + tmp.b, tmp.a + tmp.b);
+						if (x >= zero && x <= one) {
+							res = x * frac(tmp.a, 1) + frac(sum[0], 1);
+							sum[0] += tmp.a; 
+							break;
+						} else {
+							A.pop();
+							B.push(tmp); sum[1] += tmp.b;
+						}
 					}
 				}
-				int Sa = A.query(1, pos - 1), Sb = B.query(pos + 1, n);
-			//	cout << i << " " << Sa << " " << Sb << " " << pos << endl;
-				int p = a[pos].a;
-				if (a[pos].id > i) {
-					p = 0;
-				}
-				if (Sa + p == Sb) {
-					res[i] = frac(Sa + p, 1);
-				} else {
-					assert(a[pos].id <= i);
-					frac x = frac(Sb - Sa + a[pos].b, a[pos].a + a[pos].b);
-					res[i] = x * frac(a[pos].a, 1) + frac(Sa, 1);
-				}
 			}
-			res[i].print();
+			res.print();
 		}
 	}
 	return 0;

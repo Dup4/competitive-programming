@@ -4,17 +4,27 @@ using namespace std;
 #define ll long long
 #define N 220010
 const int p = 1e9 + 7;
-ll f[N][1 << 9][1 << 9]; 
+int f[240010];
 int n, a[N];
+
+void add(int &x, int y) {
+	x += y;
+	if (x >= p) x -= p;
+}
 
 int main() {
 	while (scanf("%d", &n) != EOF) {
 		memset(f, 0, sizeof f);
-		for (int i = 1; i <= n; ++i) scanf("%d", a + i);
-		f[0][0][0] = 1;
-		for (int i = 1; i <= n; ++i) {
-			for (int j = 0; 
-		}
+		int res = 0;
+		for (int i = 1; i <= n; ++i) {   
+			scanf("%d", a + i);
+			for (int j = a[i]; j < 233334; j = (j + 1) | a[i]) {  
+				add(f[a[i]], f[j]); 
+			}
+			add(res, f[a[i]]);
+			add(f[a[i]], 1);
+		} 
+		printf("%d\n", res);
 	}
 	return 0;
 }
