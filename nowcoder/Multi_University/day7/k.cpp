@@ -11,13 +11,19 @@ int id1[N], id2[N], m;
 void add(ll &x, ll y) {
 	x += y;
 }
+
+ll f(int p, int e) {
+	if (p % 4 == 1) return 3 * e + 1;
+	else return 1;
+}
+
 void init(int n) {
 	memset(check, 0, sizeof check);
 	tot = 0;
 	for (int i = 2; i <= n; ++i) {
 		if (!check[i]) {
 			pri[++tot] = i;
-			sum[tot] = (sum[tot - 1] + (i % 4 == 1 ? 4 : 1));
+			sum[tot] = sum[tot - 1] + f(i, 1);
 		}
 		for (int j = 1; j <= tot; ++j) {    
 			if (1ll * i * pri[j] > n) {     
@@ -31,11 +37,6 @@ void init(int n) {
 	}
 }
 
-ll f(int p, int e) {
-	if (p % 4 == 1) return 3 * e + 1;
-	else return 1;
-}
-
 ll S(ll x, int y) {
 	if (x <= 1 || pri[y] > x) {
 		return 0;
@@ -45,7 +46,7 @@ ll S(ll x, int y) {
 	for (int i = y; i <= tot && 1ll * pri[i] * pri[i] <= x; ++i) {
 		ll t1 = pri[i], t2 = 1ll * pri[i] * pri[i];
 		for (int e = 1; t2 <= x; ++e, t1 = t2, t2 *= pri[i]) {
-			add(ret, (1ll * f(pri[i], e) * S(x / t1, i + 1) + f(pri[i], e + 1)));
+			add(ret, 1ll * f(pri[i], e) * S(x / t1, i + 1) + f(pri[i], e + 1));
 		}
 	}
 	return ret;
@@ -74,7 +75,7 @@ int main() {
 		for (int j = 1; j <= tot; ++j) {
 			for (int i = 1; i <= m && 1ll * pri[j] * pri[j] <= w[i]; ++i) {
 				int k = (w[i] / pri[j] <= blk) ? id1[w[i] / pri[j]] : id2[n / (w[i] / pri[j])];
-				add(h[i], -f(pri[j], 1) * (h[k] - sum[j - 1])); 
+				add(h[i], 1ll * -f(pri[j], 1) * (h[k] - sum[j - 1])); 
 			}
 		}
 		//注意把特殊的1的贡献加上
