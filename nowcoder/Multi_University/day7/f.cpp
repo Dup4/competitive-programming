@@ -41,6 +41,7 @@ struct SEG {
 		build(id << 1 | 1, mid + 1, r);
 	}
 	void update(int id, int l, int r, int pos, int x) {
+		if (pos == 0) return;
 		if (l == r) {
 			t[id].add(x);
 			return;
@@ -85,12 +86,12 @@ int main() {
 			for (auto it : add[i]) {
 				if (se.empty()) {
 					se.insert(it);
-					Fi = it; 
+					Fi = it;  
 				} else {
 					auto pos = se.lower_bound(it);
 					if (pos == se.begin()) {
 						Fi = it;
-						seg.update(1, 1, m, *se.begin() - it, 1);
+						seg.update(1, 1, m, *pos - it, 1);
 						se.insert(it);
 					} else if (pos == se.end()) {
 						--pos;
@@ -122,16 +123,17 @@ int main() {
 					seg.update(1, 1, m, *pos - *pre, -1);
 					se.erase(pos);
 				} else {
-					auto pre = pos; --pos;
+					auto pre = pos; --pre;
 					seg.update(1, 1, m, *pos - *pre, -1);
 					seg.update(1, 1, m, *nx - *pos, -1);
-					seg.update(1, 1, m, *nx - *pre, 1);
+					seg.update(1, 1, m, *nx - *pre, 1); 
 					se.erase(pos);
 				}
 			}
+		//	if (Fi == 0) continue;
 			res += min(1ll * a[i].e + 1ll * a[i].l * Fi, 1ll * a[i].c);
 			if (a[i].l == 0) continue;
-			int t = ((a[i].c + a[i].l - 1) / a[i].l);
+			int t = ((a[i].c + a[i].l - 1) / a[i].l);    
 			seg.res = SEG::node();
 			//大于等于t的
 			seg.query(1, 1, m, t, m);
