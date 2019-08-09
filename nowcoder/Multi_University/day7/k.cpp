@@ -75,7 +75,7 @@ int main() {
 		for (int j = 1; j <= tot; ++j) {
 			for (int i = 1; i <= m && 1ll * pri[j] * pri[j] <= w[i]; ++i) {
 				int k = (w[i] / pri[j] <= blk) ? id1[w[i] / pri[j]] : id2[n / (w[i] / pri[j])];
-				add(h[i], 1ll * -f(pri[j], 1) * (h[k] - sum[j - 1])); 
+				add(h[i], 1ll * -f(pri[j], 1) * (h[k] - sum[j - 1]));  
 			}
 		}
 		//注意把特殊的1的贡献加上
