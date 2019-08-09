@@ -1,22 +1,23 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
-#define N 100010 
+const int N = 5e3 + 10;
 #define ALP 26
 int n;
 char s[N];
-int f[N]; 
 struct PAM{   
 	//每个节点代表一个本质不同的回文串
 	struct node {
 		int Next[ALP];
 		int fail;
-		int half;
-		int len, num, cnt;
+		//以节点i最后一个字符结尾的回文串个数
+		//节点i表示的回文串的长度
+		//节点i表示的回文串在整串中的出现次数
+		//以节点i最后一个字符结尾的回文串的长度和
+		int num, len, cnt, sum;
 		node(int _len = 0) {
 			memset(Next, 0, sizeof Next);
-			fail = 0; half = 0; 
-			num = 0; cnt = 0;
+			fail = 0;
+			num = cnt = sum = 0;
 			len = _len;
 		}
 	}t[N];	
@@ -62,15 +63,8 @@ struct PAM{
 			//如果这个回文串没有出现过，说明出现了一个新的本质不同的回文串
             t[now].fail = t[get_fail(t[cur].fail)].Next[c];
             t[cur].Next[c] = now;
-			if (t[now].len == 1) {
-				t[now].half = 0;
-			} else {
-				int pos = t[cur].half;
-				while (s[n - t[pos].len - 1] != s[n] || t[t[pos].Next[c]].len > t[now].len / 2)
-					pos = t[pos].fail;
-				t[now].half = t[pos].Next[c]; 
-			}
-			t[now].num = 1 + (t[now].len / 2 == t[t[now].half].len ? t[t[now].half].num : 0);
+            t[now].num = t[t[now].fail].num + 1;
+            t[now].sum = t[t[now].fail].sum + t[now].len;
 			F = 1;
 		}
         last = t[cur].Next[c];
@@ -88,25 +82,3 @@ struct PAM{
 		}
     }
 }pam;
-
-int main() {
-	f[1] = 1;
-	for (int i = 2; i <= 100000; ++i)
-		f[i] = 1 + f[i / 2];
-	int T; scanf("%d", &T);
-	while (T--) {
-		scanf("%s", s + 1);
-		n = strlen(s + 1);
-		pam.init();
-		for (int i = 1; i <= n; ++i) {
-			pam.add(s[i]);
-		}
-		pam.count();
-		ll res = 0;
-		for (int i = 0; i <= pam.p - 1; ++i) {
-			res += 1ll * pam.t[i].num * pam.t[i].cnt;
-		}
-		printf("%lld\n", res);
-	}
-	return 0;
-}
