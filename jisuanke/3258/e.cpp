@@ -2,38 +2,45 @@
 using namespace std;
 
 #define ll long long
+const ll D = 1e18; 
 const int p = 1e6 + 7; 
 const int N = 3e4 + 10;
 int n, q;
 struct Num {
-	string s;
-	int v;
+	ll a[3], v; 
 	Num() {
-		s = "";
+		a[0] = a[1] = a[2] = 0;
 		v = 0;
 	}
 	void scan() {
+		string s; 
 		cin >> s;
 		v = 0;
-		for (auto it : s) {
-			v = v * 10 + it - '0';
-			v %= p; 	
+	    reverse(s.begin(), s.end());	
+		while (s.size() < 54) s += "0";
+		reverse(s.begin(), s.end());
+		cout << s << endl;
+		for (int i = 0; i < 54; ++i) {
+			a[i / 18] = a[i / 18] * 10 + s[i] - '0';
+			a[i / 18] %= p;
+		}
+		for (int i = 0; i < 3; ++i) {
+			v = v * (D % p) % p + (a[i] % p);
+			v %= p;	
 		}
 	}
 	void rev() {
-		while (!s.empty() && s.back() == '0') s.pop_back();
-		reverse(s.begin(), s.end());
+		reverse(a, a + 3);
 		v = 0;
-		for (auto it : s) {
-			v = v * 10 + it - '0';
+		for (int i = 0; i < 3; ++i) {
+			v = v * (D % p) % p + (a[i] % p);
 			v %= p;
 		}
 	}
 	bool operator < (const Num &other) const {
-		if (s.size() != other.s.size()) return s.size() < other.s.size();
-		for (int i = 0, len = s.size(); i < len; ++i) {
-			if (s[i] != other.s[i])
-				return s[i] < other.s[i];
+		for (int i = 0; i < 3; ++i) {
+			if (a[i] != other.a[i])
+				return a[i] < other.a[i];
 		}
 		return 1;
 	}
