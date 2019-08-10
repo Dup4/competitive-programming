@@ -2,7 +2,7 @@
 using namespace std;
 
 #define ll long long
-const int N = 1e3 + 10;
+const int N = 2e3 + 10;
 const ll p = 1e9 + 7;
 int n, m;
 ll fac[N], inv[N];
@@ -29,12 +29,12 @@ int main() {
 	int T; scanf("%d", &T);
 	while (T--) {
 		scanf("%d%d", &n, &m);
-		ll res = 0;
-		for (int i = 1; i <= m; ++i) {
-			if (i > n) break;
-			res += C(m - 1, i - 1) * C(n - 1, i - 1) % p;
-			res %= p;
-		}
+		ll res = C(n + m - 2, m - 1);
+	//	for (int i = 1; i <= m; ++i) {
+	//		if (i > n) break;
+	//		res += C(m - 1, i - 1) * C(n - 1, i - 1) % p;
+	//		res %= p;
+	//	}
 		printf("%lld\n", res);
 	}
 	return 0;
