@@ -11,7 +11,8 @@ int Gx[N][N];
 int add[N], del[N];
 int get(int i, int l, int r) {
 	if (l > r) return 0;
-	return Gx[i][r] - Gx[i][l - 1];
+	l = max(0, l - 1);
+	return Gx[i][r] - Gx[i][l];
 }
 void run() {
 	for (int i = 1; i <= n; ++i) {
@@ -83,10 +84,11 @@ void run() {
 		}
 		int l = j, r = j + k - 1;
 		for (int i = 1; i <= n; ++i) {
-			int up = i, down = i + k - 1;
+			int up = i, down = min(n, i + k - 1);
 			dy += add[i] - del[i];
 			res = max(res, y[l - 1] + y[n] - y[r] + x[up - 1] + x[n] - x[down] + dy + dx[down] - dx[up - 1]);
 		}
+		dy += del[n + 1]; 
 		Max = 0, Min = 1e9; 
 		for (int i = 1; i <= n; ++i) {
 			if (s[i][j] == 'B') {
