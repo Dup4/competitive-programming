@@ -2,8 +2,8 @@
 using namespace std;
 
 #define ll long long
-const ll D = 1e18; 
-const int p = 1e6 + 7; 
+const ll p = 1e6 + 7; 
+const ll D = 1000000000000000000ll % p; 
 const int N = 3e4 + 10;
 int n, q;
 string w[N];
@@ -22,7 +22,7 @@ struct Num {
 		a[0] = a[1] = a[2] = 0;
 		for (int i = 0; i < 54; ++i) {
 			a[i / 18] = a[i / 18] * 10 + s[i] - '0';
-			a[i / 18] %= p;
+			//a[i / 18] %= p; 
 		}
 		for (int i = 0; i < 3; ++i) {
 			v = v * (D % p) % p + (a[i] % p);  
@@ -34,7 +34,7 @@ struct Num {
 			if (a[i] != other.a[i])
 				return a[i] < other.a[i];
 		}
-		return 1;
+		return 0;
 	}
 };
 vector <vector<int>> G;
@@ -87,7 +87,7 @@ struct SEG {
 			node res = node();
 			for (int i = 0; i < 3; ++i)
 				res.x[i] = max(x[i], other.x[i]);
-			res.add = add and other.add;  
+			res.add = add && other.add;  
 			return res; 
 		}
 	}t[N << 2], res;
@@ -107,6 +107,7 @@ struct SEG {
 		int mid = (l + r) >> 1;
 		build(id << 1, l, mid);
 		build(id << 1 | 1, mid + 1, r);
+		t[id] = t[id << 1] + t[id << 1 | 1];
 	}
 	void pushdown(int id) {
 		int &lazy = t[id].lazy;
@@ -199,8 +200,8 @@ int main() {
 			} else {
 				cin >> v;
 				seg.res = SEG::node();
-				query(u, v);
-				cout << seg.res.x[0].v << "\n";
+				query(u, v);  
+				cout << seg.res.x[0].v << "\n";  
 			}
 		}
 	}	
