@@ -3,57 +3,19 @@ using namespace std;
 
 #define ll long long
 const int N = 1e6 + 10;
-int n;
-ll a[N][2]; 
+int n, a[N], b[N];
 
 int main() {
 	int T; scanf("%d", &T);
 	while (T--) {
 		scanf("%d", &n);
+		for (int i = 1; i <= n; ++i) scanf("%d%d", a + i, b + i);
+		ll Sa = accumulate(a + 1, a + 1 + n, 0ll);
+		ll Sb = accumulate(b + 1, b + 1 + n, 0ll);
+		ll res = min(Sa, Sb);
 		for (int i = 1; i <= n; ++i) {
-			scanf("%lld%lld", a[i], a[i] + 1);
+			res = min(res, Sa + Sb - a[i] - b[i]);
 		}
-		ll res = 0;
-		for (int i = 2; i <= n; ++i) {
-			if (a[i][1] > a[1][0]) {
-				res += a[1][0];
-				a[i][1] -= a[1][0];
-				a[1][0] = 0;
-				break;
-			} else {
-				res += a[i][1];
-				a[1][0] -= a[i][1];
-				a[i][1] = 0;
-			}
-		}
-		ll milk = a[i][2]; 
-		for (int i = 2; i <= n; ++i) {
-			if (milk > a[i][0]) {
-				res += a[i][0];
-				milk -= a[i][0];
-				cnt += a[i][0];
-				a[i][0] = 0;
-			} else {
-				res += milk;
-				a[i][0] -= milk;
-				cnt += milk;
-				milk = 0;
-			}
-			if (peo > a[i][1]) {
-				res += a[i][1];
-				peo -= a[i][1];
-				a[i][1] = 0;
-			} else {
-				res += peo;
-				a[i][1] -= peo;
-				peo = 0;
-			}
-			milk += a[i][1];
-			peo += a[i][0];
-		}
-		if (cnt < a[1][1]) milk -= a[1][1] - cnt;
-		milk = max(0ll, milk);
-		res += min(a[1][0], milk);
 		printf("%lld\n", res);
 	}
 	return 0;

@@ -9,13 +9,29 @@ const int N = 2e5 + 10;
 const ll INF = 0x3f3f3f3f3f3f3f3f;
 ll ans, a[N], b[N];  
 int n;
-vector <vector<int>> G;
+struct Graph {
+	struct node {
+		int to, nx;
+		node() {}
+		node(int to, int nx) : to(to), nx(nx) {}
+	}a[N << 1];
+	int head[N], pos;
+	void init(int n) {
+		for (int i = 0; i <= n; ++i) head[i] = 0;
+		pos = 0;
+	}
+	void add(int u, int v) {
+		a[++pos] = node(v, head[u]); head[u] = pos;
+		a[++pos] = node(u, head[v]); head[v] = pos;
+	}
+}G;
+#define erp(u) for (int it = G.head[u], v = G.a[it].to; it; it = G.a[it].nx, v = G.a[it].to)
 //f表示最大值、次大值　g表示最小值、次小值
 pli f[N][2], g[N][2]; 
 int fa[N], d[N], in[N], cnt, ord[N];  
 void DFS(int u) {
 	in[u] = ++cnt;
-	for (auto v : G[u])  if (v != fa[u]) {
+	erp(u)  if (v != fa[u]) {
 		fa[v] = u;
 		DFS(v); 
 	}
@@ -34,7 +50,7 @@ void gao() {
 			f[u][0] = f[u][1] = pli(INF, -1);
 			g[u][0] = g[u][1] = pli(-INF, -1);  
 		}
-		for (auto v : G[u]) if (v != fa[u]) {
+		erp(u) if (v != fa[u]) {
 			//最大值的转移
 			if (g[v][0].fi < f[u][0].fi) { 
 				f[u][1] = f[u][0];
@@ -59,12 +75,12 @@ void gao() {
 			if (f[u][i].fi != INF) {
 				f[u][i].fi += a[u] - b[u];
 			} else {
-				f[u][i].fi = -INF;  
+				f[u][i].fi = INF;  
 			} 
 			if (g[u][i].fi != -INF) {
 				g[u][i].fi += a[u] - b[u]; 
 			} else {
-				g[u][i].fi = INF;
+				g[u][i].fi = -INF;
 			}
 		}
 	}
@@ -72,24 +88,24 @@ void gao() {
 
 //0先手状态
 //0最大值， 1最小值
-ll h[N]; 
+ll h[N][2]; 
 void gao2() {
 	for (int o = 1; o <= n; ++o) {
 		int u = ord[o];
-		for (auto v : G[u]) if (v != fa[u]) {
-			h[v][0] = h[u][0];
-			h[v][1] = h[u][1];  
-			if (f[u][0].se == v) {
-				h[v][0] = max(h[v][0], f[u][1].fi);
+		erp(u) if (v != fa[u]) {
+			h[v][0] = h[u][1];
+			h[v][1] = h[u][0];  
+			if (g[u][0].se == v) {
+				h[v][0] = max(h[v][0], g[u][1].fi);
 			} else {
-				h[v][0] = max(h[v][0], f[u][0].fi);
+				h[v][0] = max(h[v][0], g[u][0].fi);
 			}
-			if (g[u][0].se == v) { 
-				h[v][1] = min(h[v][1], g[u][1].fi);
+			if (f[u][0].se == v) { 
+				h[v][1] = min(h[v][1], f[u][1].fi);
 			} else {
-				h[v][1] = min(h[v][1], g[u][0].fi);
+				h[v][1] = min(h[v][1], f[u][0].fi);
 			}
-			printf("%d %lld %lld\n", v, h[v][0], h[v][1]);
+	//		printf("%d %lld %lld\n", v, h[v][0], h[v][1]);
 			h[v][0] += a[v] - b[v];
 			h[v][1] += a[v] - b[v]; 
 			if (d[v] == 1) {
@@ -105,14 +121,14 @@ int main() {
 	int T; scanf("%d", &T);
 	while (T--) {
 		scanf("%d", &n);
-		G.clear(); G.resize(n + 1); cnt = 0;
+		G.init(n + 5);
+		cnt = 0;
 		for (int i = 1; i <= n; ++i) d[i] = 0;
 		for (int i = 1; i <= n; ++i) scanf("%lld", a + i);
 		for (int i = 1; i <= n; ++i) scanf("%lld", b + i);
 		for (int i = 1, u, v; i < n; ++i) {
 			scanf("%d%d", &u, &v);
-			G[u].push_back(v);
-			G[v].push_back(u);
+			G.add(u, v);
 			++d[u]; ++d[v];
 		}
 		if (n == 1) {
@@ -134,11 +150,13 @@ int main() {
 		if (d[1] == 1) {
 			h[1][0] = h[1][1] = a[1] - b[1]; 
 		} else {
-			h[1][0] = -INF;
-			h[1][1] = INF;  
+			h[1][0] = INF;
+			h[1][1] = -INF;  
 		}
 		gao2();
 		printf("%lld\n", ans); 
 	}
 	return 0;
 }
+
+//
