@@ -1,3 +1,4 @@
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -80,14 +81,17 @@ struct frac{
 };
 struct node {
 	ll a, b; 
+	frac x;
 	int id; 
 	node() {}
 	void scan(int _id) {
 		scanf("%lld%lld", &a, &b);  
 		id = _id;
+		x = frac(b, a);
 	}
 	bool operator < (const node &other) const {
-		return a * other.b < b * other.a;
+		return b * other.a < other.b * a;
+		return x < other.x;
 	}
 }a[N];
 int n, p[N], fp[N]; 
@@ -132,23 +136,27 @@ int main() {
 			A.update(p[i], a[p[i]].a);
 			B.update(p[i], a[p[i]].b);
 			if (i == 1) {
-				res[i] = frac(a[p[1]].a * a[p[1]].b, a[p[1]].a + a[p[1]].b);
+				res[i] = frac(a[p[1]].b, a[p[1]].a + a[p[1]].b);
+				res[i].print();
 			} else {
 				int l = 1, r = n, pos = -1;
 				while (r - l >= 0) {
 					int mid = (l + r) >> 1;
-					if (A.query(1, mid) >= B.query(mid + 1, n)) {
+					if (B.query(1, mid) >= A.query(mid + 1, n)) { 
 						r = mid - 1;
 						pos = mid;
 					} else {
 						l = mid + 1;
 					}
 				}
-				int Sa = A.query(1, pos - 1), Sb = B.query(pos + 1, n);
-				frac x = frac(Sb - Sa + a[pos].b, a[pos].a + a[pos].b);
-				res[i] = x * frac(a[pos].a, 1) + frac(Sa, 1);
+				int Sa = A.query(pos + 1, n), Sb = B.query(1, pos - 1);
+				ll p = 1ll * a[pos].a * (Sb - Sa + a[pos].b), q = a[pos].a + a[pos].b;
+				ll t = gcd(p, q); p /= t; q /= t;
+				printf("%lld/%lld\n", q * Sa + p, q);
+			//	res[i] = frac(1ll * a[pos].a * (Sb - Sa + a[pos].b), a[pos].a + a[pos].b);
+			//	res[i] = frac(Sa, 1) * res[i] + frac(res[i].y, 1);
 			}
-			res[i].print();
+			//res[i].print();
 		}
 	}
 	return 0;
