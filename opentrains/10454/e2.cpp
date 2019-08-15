@@ -5,8 +5,8 @@ using namespace std;
 const int N = 50;
 int n, m, a[N][N];
 //第i行第j个数字
-int f[22][1 << 21];
-int vis[22][1 << 20];
+int f[1 << 20][21];
+int vis[1 << 20][21];
 //大于1 小于0
 int g[N][N]; 
 int ord[N], vec[N];
@@ -76,16 +76,16 @@ int main() {
 			for (int j = 1; j < i; ++j) {
 				pre = vec[j]; 
 				S = g[pre][now] & mask;
-				if (vis[pre][S] != mask) {
-					vis[pre][S] = mask;
-					f[pre][S] = 0;
+				if (vis[S][pre] != mask) {
+					vis[S][pre] = mask;
+					f[S][pre] = 0;
 				} 
-				if (vis[now][S] != mask) {
-					vis[now][S] = mask;
-					f[now][S] = 0;
+				if (vis[S][now] != mask) {
+					vis[S][now] = mask;
+					f[S][now] = 0;
 				}
-				res += f[pre][S] + 1;
-				f[now][S] += f[pre][S] + 1;
+				res += f[S][pre] + 1;
+				f[S][now] += f[S][pre] + 1;
 			}		
 		}
 	//	for (int i = 1; i <= sze; ++i) {

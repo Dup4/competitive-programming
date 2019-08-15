@@ -5,7 +5,7 @@ using namespace std;
 const int N = 50;
 int n, m, a[N][N];
 //第i行第j个数字
-int f[22][1 << 21];
+int f[1 << 20][25];
 //大于1 小于0
 int g[N][N]; 
 int ord[N], vec[N];
@@ -76,8 +76,8 @@ int main() {
 			for (register int j = 1; j < i; ++j) {
 				pre = vec[j]; 
 				S = g[pre][now] & mask;
-				res += f[pre][S] + 1;
-				f[now][S] += f[pre][S] + 1;
+				res += f[S][pre] + 1;
+				f[S][now] += f[S][pre] + 1;
 			}		
 		}
 		for (register int i = 1; i <= sze; ++i) {
@@ -85,7 +85,7 @@ int main() {
 			for (int j = 1; j < i; ++j) {
 				pre = vec[j]; 
 				S = g[pre][now] & mask;
-				f[now][S] = f[pre][S] = 0;
+				f[S][now] = f[S][pre] = 0;
 			}		
 		}
 	}
