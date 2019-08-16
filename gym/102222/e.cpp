@@ -56,7 +56,7 @@ void insert(int u, int x, int fa) {
 					break;
 				}
 			}
-			for (int i = t[fa].tp - 2; i >= id; --i) {
+			for (int i = t[fa].tp - 1; i >= id; --i) {
 				t[fa].v[i + 1] = t[fa].v[i]; 
 				t[fa].son[i + 1] = t[fa].son[i];
 			}
@@ -87,7 +87,7 @@ void out(int u) {
 	for (int i = 0; i < t[u].tp - 1; ++i)
 		printf("%d%c", t[u].v[i], " \n"[i == t[u].tp - 2]); 
 	for (int i = 0; i < t[u].tp; ++i)
-		out(t[u].son[i]); 
+		out(t[u].son[i]);   
 }
 
 int main() {
@@ -105,6 +105,8 @@ int main() {
 			} else {
 				insert(rt, x, -1);
 			}
+		//	out(rt);
+		//	puts("#######");
 		//	cout << rt << endl;
 		}
 		out(rt);

@@ -27,8 +27,9 @@ ll f[N][110];
 void DFS(int u, int pre) {
 	for (int i = 0; i <= k; ++i) f[u][i] = INF;
     f[u][0] = 0; 	
-	sze[u] = 1;
+	sze[u] = 0;
 	if (d[u] == 1) {
+		sze[u] = 1;
 		f[u][1] = 0;
 		return;
 	}
@@ -36,9 +37,9 @@ void DFS(int u, int pre) {
 		DFS(v, u);
 		sze[u] += sze[v];
 		int limit = min(k, sze[u]);
-		for (int i = k; i >= 1; --i) {
+		for (int i = limit; i >= 1; --i) {
 			for (int j = 1; j <= i; ++j) {
-			//	if (f[v][j] == INF) break;
+				if (f[v][j] == INF) break;
 				f[u][i] = min(f[u][i], f[u][i - j] + f[v][j] + 1ll * w * j * (k - j));
 			}
 		}	
