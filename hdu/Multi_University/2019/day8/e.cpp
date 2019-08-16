@@ -1,10 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define ll long long
-#define N 30010
-#define M 20
-char s[N], t[N]; 
+#define N 300010
+int n, k;
+char s[N], t[N];
 struct DA {
 	//求SA数组需要用到的中间变量，不需要赋值
 	int t1[N], t2[N], c[N];
@@ -85,57 +84,30 @@ struct DA {
 			int k = mm[y - x + 1];
 			return min(Min[x][k], Min[y - (1 << k) + 1][k]);  
 		}
-	}rmq; 
-	void prermq() {
-		rmq.init(n, height);  
-	}
-	int lcp(int l, int r) {
-		int x = Rank[l], y = Rank[r];
-		if (x > y) swap(x, y); ++x;
+	}rmq;
+	int lcp(int x, int y) {
+		x = Rank[x], y = Rank[y];
+		if (x > y) swap(x, y);
+		++x;
 		return rmq.queryMin(x, y);
 	}
-}A, B;
+}da;
 
-int n; ll f[N], g[N];
-void add(ll *f, int l, int r) {
-	if (l <= r) {
-		++f[l];
-		--f[r + 1];
-	}
-}
+ll f[N];
 
 int main() {
 	int T; scanf("%d", &T);
 	while (T--) {
-		scanf("%s", s);
-		t[0] = 0; strcat(t, s);
+		scanf("%d%s", &k, s);
 		n = strlen(s);
-		reverse(t, t + n);
-		A.init(s, 128, n); A.work(); A.prermq();
-		B.init(t, 128, n); B.work(); B.prermq();
-		memset(f, 0, sizeof f);
-		memset(g, 0, sizeof g);
-		for (int o = 1; o <= n / 2 + 1; ++o) { 
-			for (int i = 0, j = o, x, y, l, r; j < n; i += o, j += o) {
-				y = A.lcp(i, j);
-				x = B.lcp(n - i - 1, n - j - 1);
-				l = max(j, j + o - x);
-				r = min(j + o - 1, j + y - 1);
-				add(f, l, r);
-
-				y = B.lcp(i, j);
-				x = A.lcp(n - i - 1, n - j - 1);
-				l = max(j, j + o - x);
-				r = min(j + o - 1, j + y - 1);
-				add(g, l, r);
+		for (int i = 0; i <= n; ++i) f[i] = 0;
+		da.init(s, 220, n); da.work(); da.rmq.init(n, da.height);
+		for (int o = 1; o <= n / 2 + 1; ++o) {
+			for (int i = 0, j = o; j < n; i += o, j += o) {
+				
 			}
 		}
-		for (int i = 1; i < n; ++i) f[i] += f[i - 1], g[i] += g[i - 1];
-		ll res = 0;
-		for (int i = 0; i < n - 1; ++i) {
-			res += 1ll * f[i] * g[n - i - 2];
-		}
-		printf("%lld\n", res);
+	    	
 	}
 	return 0;
 }
