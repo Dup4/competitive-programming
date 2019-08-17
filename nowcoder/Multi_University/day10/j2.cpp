@@ -17,7 +17,7 @@ struct node {
 		return h > other.h;
 	}
 }a[N];
-ll sum[N], f[2010];
+ll sum[N], f[N]; 
 
 struct Line {
 	struct node {
