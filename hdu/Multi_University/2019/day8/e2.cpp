@@ -1,10 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define pii pair <int, int>
+#define fi first
+#define se second
 #define ll long long
-#define N 30010
-#define M 20
-char s[N], t[N]; 
+#define N 300010
+#define M 22
+int n, k;
+char s[N];
 struct DA {
 	//求SA数组需要用到的中间变量，不需要赋值
 	int t1[N], t2[N], c[N];
@@ -85,68 +89,43 @@ struct DA {
 			int k = mm[y - x + 1];
 			return min(Min[x][k], Min[y - (1 << k) + 1][k]);  
 		}
-	}rmq; 
-	void prermq() {
-		rmq.init(n, height);  
-	}
-	int lcp(int l, int r) {
-		int x = Rank[l], y = Rank[r];
-		if (x > y) swap(x, y); ++x;
+	}rmq;
+	int lcp(int x, int y) {
+		x = Rank[x], y = Rank[y];
+		if (x > y) swap(x, y);
+		++x;
 		return rmq.queryMin(x, y);
 	}
-	int lcs(int l, int r) {
-		return lcp(n - l - 1, n - r - 1);
+	int lcs(int x, int y) {
+		return lcp(n - x - 1, n - y - 1);
 	}
-}A, B;
-
-int n; ll f[N], g[N];
-void add(ll *f, int l, int r) {
-	if (l <= r) {
-		++f[l];
-		--f[r + 1];
-	}
-}
+}S, T;  
 
 int main() {
-	int T; scanf("%d", &T);
-	while (T--) {
-		scanf("%s", s);
-		t[0] = 0; strcat(t, s);
-		n = strlen(s);
-		reverse(t, t + n);
-		A.init(s, 128, n); A.work(); A.prermq();
-		B.init(t, 128, n); B.work(); B.prermq();
-		memset(f, 0, sizeof f);
-		memset(g, 0, sizeof g);
-		for (int o = 1, last; o <= n / 2 + 1; ++o) { 
-			last = -1;
-			for (int i = 0, j = o, l, r; j < n; i += o, j += o) {
-				r = j + A.lcp(i, j) - 1;
-				l = i - B.lcs(i, j) + 1;
-				if (r - l + 1 >= 2 * o) {
-					l = l + 2 * o - 1;
-					l = max(l, last + 1);
-					add(f, l, r);
-					last = max(last, r);
-				}
-
-			}
-			last = -1;
-			for (int i = 0, j = o, l, r; j < n; i += o, j += o) {
-				r = j + B.lcp(i, j) - 1;
-				l = i - A.lcs(i, j) + 1;
-				if (r - l + 1 >= 2 * o) {
-					l = l + 2 * o - 1;
-					l = max(l, last + 1);
-					add(g, l, r);
-					last = max(last, r);
-				}
-			}
+	int _T; scanf("%d", &_T);
+	while (_T--) {
+		scanf("%d%s", &k, s);
+		n = strlen(s); 
+		if (k == 1) {
+			printf("%lld\n", 1ll * n * (n + 1) / 2);
+			continue;
 		}
-		for (int i = 1; i < n; ++i) f[i] += f[i - 1], g[i] += g[i - 1];
+		S.init(s, 220, n); S.work(); S.rmq.init(n, S.height);
+		reverse(s, s + n);
+		T.init(s, 220, n); T.work(); T.rmq.init(n, T.height);
 		ll res = 0;
-		for (int i = 0; i < n - 1; ++i) {
-			res += 1ll * f[i] * g[n - i - 2];
+		for (int o = 1; 1ll * k * o <= n; ++o) {
+			int last = -1;
+			for (int i = 0, j = o, l, r; j < n; i += o, j += o) { 
+				r = j + S.lcp(i, j) - 1;
+				l = i - T.lcs(i, j) + 1;
+				if (r - l + 1 >= 1ll * k * o) { 
+					l = max(l, last + 1);
+					r = r - k * o + 1;
+					last = max(last, r);
+					res += max(0, r - l + 1);
+				}
+			}
 		}
 		printf("%lld\n", res);
 	}

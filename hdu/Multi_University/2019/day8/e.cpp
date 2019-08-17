@@ -96,6 +96,9 @@ struct DA {
 		++x;
 		return rmq.queryMin(x, y);
 	}
+	int lcs(int x, int y) {
+		return lcp(n - x - 1, n - y - 1);
+	}
 }S, T;  
 
 ll f[N]; 
@@ -121,18 +124,15 @@ int main() {
 		for (int i = 0; i <= n; ++i) f[i] = 0; 
 		S.init(s, 220, n); S.work(); S.rmq.init(n, S.height);
 		T.init(t, 220, n); T.work(); T.rmq.init(n, T.height);
-	//	cout << S.lcp(0, 4) << endl;
 		for (int o = 1; o <= n; ++o) {
 			vec.clear(); 
-			for (int i = 0, j = o, l, r, len; j < n; i += o, j += o) {
-				len = o + S.lcp(i, j);
-				l = i;
-				r = min(n - 1, l + len - k * o); 
-				if (l <= r) vec.push_back(pii(l, r));
-				len = o + T.lcp(n - i - 1, n - j - 1);
-				l = max(0, j - len + 1);  
-				r = j - len + 1 + len - k * o;
-				if (l <= r) vec.push_back(pii(l, r)); 
+			for (int i = 0, j = o, l, r; j < n; i += o, j += o) { 
+				r = j + S.lcp(i, j) - 1;
+				l = i - T.lcs(i, j) + 1;
+				if (r - l + 1 >= 1ll * k * o) {
+					r = r - k * o + 1;
+					vec.push_back(pii(l, r));
+				}
 			}
 			sort(vec.begin(), vec.end(), [](pii x, pii y){
 				if (x.fi != y.fi) return x.fi < y.fi;
