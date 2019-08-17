@@ -4,7 +4,6 @@ using namespace std;
 #define ll long long
 const int N = 5e3 + 10;
 const int INF = 0x3f3f3f3f;
-const ll INFLL = 0x3f3f3f3f3f3f3f3f;
 int n, k;
 struct node {
 	int w, h;
@@ -24,9 +23,10 @@ struct Line {
 		ll a, b, x;
 		node() {}
 		node(ll a, ll b, ll x) : a(a), b(b), x(x) {}
-	}t[N * 3]; int l, r;
+	}t[N * 3]; int l, r, pos;
 	void init() {
-		l = 2 * N + 1000, r = l - 1;
+		l = N * 3 - 10, r = l - 1;
+		pos = r; 
 	}
 	void insert(ll a, ll b) {
 		if (r < l) {
@@ -49,20 +49,10 @@ struct Line {
 		t[--l] = node(a, b, x);
 	}
 	ll query(ll x) {
-		if (r < l) return -INFLL * 2;
-		int ql = l, qr = r, pos = -1;
-		while (qr - ql >= 0) {
-			int mid = (ql + qr) >> 1;
-			if (t[mid].x >= x) {
-				pos = mid;
-				qr = mid - 1;
-			} else {
-				ql = mid + 1;
-			}
-		}
+		while (l < pos && t[pos - 1].x >= x) --pos;
 		return 1ll * t[pos].a * x + t[pos].b;
 	}
-}L[2010];
+}L;
 
 int main() {
 	while (scanf("%d%d", &n, &k) != EOF) {
@@ -74,23 +64,22 @@ int main() {
 			sum[i] = sum[i - 1] + a[i].w;
 			tot += 1ll * a[i].w * a[i].h; 
 		}
-		for (int i = 0; i <= k; ++i) {
-			L[i].init();
-		}
+		L.init();
 		for (int i = 1; i <= n; ++i) {
-			memset(f, -0x3f, sizeof f); 
-			f[1] = 1ll * a[i].h * sum[i];
-			ll base = 1ll * a[i].h * sum[i]; 
-			for (int j = k; j >= 2; --j) {
-				f[j] = max(f[j], base + L[j - 1].query(a[i].h));  
-				if (f[j] <= -INFLL) break; 
-			}
-			for (int j = 1; j <= k; ++j) {
-				if (f[j] <= -INFLL) break; 
-				L[j].insert(-sum[i], f[j]);
-			}	
+			f[i] = 1ll * a[i].h * sum[i];
+			L.insert(-sum[i], f[i]);
 		}
-		printf("%lld\n", tot - f[k]);  
+		for (int o = 2; o <= k; ++o) {
+			for (int i = 1; i <= n; ++i) {
+				ll base = a[i].h * sum[i];
+			    f[i] = base + L.query(a[i].h);	
+			}
+			L.init();
+			for (int i = 1; i <= n; ++i) {
+				L.insert(-sum[i], f[i]);
+			}
+		}
+		printf("%lld\n", tot - f[n]);  
 	}
 	return 0;
 }

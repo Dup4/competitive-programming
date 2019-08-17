@@ -14,10 +14,10 @@ struct node {
 		scanf("%d%d", &w, &h);
 	}
 	bool operator < (const node &other) const {
-		return h > other.h;
+		return h > other.h; 
 	}
 }a[N];
-ll sum[N], f[2010];
+ll sum[N], f[2010]; 
 
 struct Line {
 	struct node {

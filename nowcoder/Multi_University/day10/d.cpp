@@ -77,17 +77,16 @@ void gao() {
 		LL r = exgcd(M, LL(arr[i].A), k, y);
 		c = LL(arr[i].C) - A; MOD = LL(arr[i].A) / r;
 		if (c % r) {
-			assert(0);
 			puts("he was definitely lying");
 			return;
 		}
 		k = (k * (c / r) % MOD + MOD) % MOD;
 		A += k * M; M = M * LL(arr[i].A) / r;
 		A = (A + M) % M; 
-		if (A > Mlimit) {
-			puts("he was probably lying");
-			return;
-		}
+	}
+	if (A > Mlimit || A < 0) {
+		puts("he was probably lying");
+		return;
 	}
 	out(A); puts("");
 }
@@ -122,12 +121,6 @@ int main() {
             puts("he was definitely lying");
 			continue;
 		} 
-		sort(arr + 1, arr + 1 + cnt);
-		int tmp = 1;
-		for (int i = 2; i <= cnt; ++i) {
-			if (arr[i].A != arr[tmp].A) arr[++tmp] = arr[i];
-		}
-		cnt = tmp;
 		for (int i = 1; i <= cnt; ++i) {
 			arr[i].A = qmod(arr[i].A, arr[i].B);
 		}
