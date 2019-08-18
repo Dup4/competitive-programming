@@ -3,13 +3,13 @@ using namespace std;
 
 #define ll long long
 mt19937 rd(time(0));
-ll gcd(ll a, ll b) {
+inline ll gcd(ll a, ll b) {
 	return b ? gcd(b, a % b) : a;
 }
-ll mul(ll a, ll b, ll p) {
+inline ll mul(ll a, ll b, ll p) {
 	return (a * b - (ll)(a / (long double)p * b + 1e-3) * p + p) % p;
 }
-ll qmod(ll base, ll n, ll p) {
+inline ll qmod(ll base, ll n, ll p) {
 	ll res = 1;
 	base %= p;
 	while (n) {
@@ -22,10 +22,10 @@ ll qmod(ll base, ll n, ll p) {
 	return res;
 }
 struct Mill {
-	ll n, fac[520]; int tot; 
+	ll n, fac[220]; int tot; 
 	const int C = 2307;
 	const int S = 10;
-	bool check(ll a, ll n) {
+	inline bool check(ll a, ll n) {
 		ll m = n - 1, x, y;
 		int j = 0;
 		while (!(m & 1)) {
@@ -41,7 +41,7 @@ struct Mill {
 		}
 		return y != 1;
 	}
-	bool miller_rabin(ll n) {
+	inline bool miller_rabin(ll n) {
 		if (n < 2) {
 			return 0;
 		} else if (n == 2) {
@@ -57,7 +57,7 @@ struct Mill {
 		}
 		return 1;
 	}
-	ll pollard_rho(ll n, int c) {
+	inline ll pollard_rho(ll n, int c) {
 		ll i = 1, k = 2, x = rd() % n, y = x, d;
 		while (1) {
 			++i; x = (mul(x, x, n) + c) % n;
@@ -74,7 +74,7 @@ struct Mill {
 			}
 		}
 	}
-	void findfac(ll n, int c) {
+	inline void findfac(ll n, int c) {
 		if (n == 1) {
 			return;
 		}
@@ -89,7 +89,7 @@ struct Mill {
 		findfac(m, c);
 		findfac(n / m, c);
 	}
-	void gao(ll _n, vector <ll> &vec) {
+	inline void gao(ll _n, vector <ll> &vec) {
 		vec.clear();
 		n = _n;
 		tot = 0;
@@ -110,30 +110,22 @@ struct Mill {
 		sort(vec.begin(), vec.end());
 	}
 }mill;
-
-ll n, res; 
-inline ll calc(ll n, ll y) {
-	if (y == n) return 0;
-	ll x = n - y; 
-  	ll res = 0;
-	vector <ll> fac;
-	mill.gao(x, fac);
-	for (ll &it : fac) {
-		res += (n % it == y && it % y == 0);
-	}
-	return res;
-}
-inline ll gao(ll n) {
-	res = 0;
-    vector <ll> fac; mill.gao(n, fac);
-	res = fac.size();
-	for (ll &it : fac) res += calc(n, it);	
-	return res;
-}
+ll n;
+vector <ll> fac;
 
 int main() {
-	freopen("job.in", "r", stdin);
-	freopen("job.out", "w", stdout);
-	while (scanf("%lld", &n) != EOF) printf("%lld\n", gao(n));
+	int _T; scanf("%d", &_T);
+	while (_T--) {
+		scanf("%lld", &n); 
+		mill.gao(n, fac);
+		ll res = 0;
+		for (ll &it : fac) {
+			if (it <= res + 1) {
+				res += it;
+			} else break;
+		}
+		printf("%lld\n", res + 1);
+	}
 	return 0;
 }
+
