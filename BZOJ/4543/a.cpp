@@ -17,8 +17,7 @@ void pre(int u) {
 		pre(v);
 		if (!hson[u] || md[v] > md[hson[u]]) hson[u] = v;
 	}
-	md[u] = md[hson[u]] + 1;
-	if (hson[u]) md[u] = md[hson[u]];
+	md[u] = md[hson[u]] + 1;    
 }
 //f[u][i] 表示u的子树中和u的距离为i的点数
 //g[u][i] 表示u的子树中到lca的距离为d 并且lca到u的距离为d - i的点对数
@@ -36,26 +35,15 @@ void DFS(int u) {
 		if (v == fa[u] || v == hson[u]) continue;
 		f[v] = id; id += md[v] * 2; g[v] = id; id += md[v] * 2;
 		DFS(v);
-        for(int j=0;j<md[v];++j)
-        {
-            if(j)ans+=f[u][j-1]*g[v][j];
-            ans+=g[u][j+1]*f[v][j];
-        }
-        for(int j=0;j<md[v];++j)
-        {
-            g[u][j+1]+=f[u][j+1]*f[v][j];
-            if(j)g[u][j-1]+=g[v][j];
-            f[u][j+1]+=f[v][j];
-        }
-	//	for (int i = 1; i <= md[v]; ++i) {
-	//		ans += g[u][i] * f[v][i - 1];
-	//		ans += g[v][i] * f[u][i - 1];
-	//	}
-	//	for (int i = 0; i < md[v]; ++i) {
-	//		g[u][i + 1] += f[u][i + 1] * f[v][i];
-	//		if (i) g[u][i - 1] += g[v][i];
-	//		f[u][i + 1] += f[v][i];
-	//	}
+		for (int i = 1; i <= md[v]; ++i) {
+			ans += g[u][i] * f[v][i - 1];
+			ans += g[v][i] * f[u][i - 1];
+		}
+		for (int i = 0; i < md[v]; ++i) {
+			g[u][i + 1] += f[u][i + 1] * f[v][i];
+			if (i) g[u][i - 1] += g[v][i];
+			f[u][i + 1] += f[v][i];
+		}
 	}
 }
 
