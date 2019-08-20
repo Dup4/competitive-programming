@@ -37,6 +37,7 @@ void init() {
     
     sumf[n] = sumf[n - 1] + f[n];
   }
+  for (int i = 1; i < N; ++i) f[i] = sqrt(i); 
 }
 
 int main() {
