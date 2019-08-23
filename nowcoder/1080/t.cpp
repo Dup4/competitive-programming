@@ -5,7 +5,7 @@ using namespace std;
 #define endl "\n" 
 constexpr int N = 1e5 + 10;
 constexpr int mod = 1e9 + 7;
-template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; if (x >= mod) x -= mod; else if (x < 0) x += mod; } 
+template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; if (x >= mod) x -= mod; else if (x < mod) x += mod; } 
 template <class T1, class T2> inline void chmax(T1 &x, T2 y) { if (x < y) x = y; }
 template <class T1, class T2> inline void chmin(T1 &x, T2 y) { if (x > y) x = y; }
 inline int rd() { int x; cin >> x; return x; }
