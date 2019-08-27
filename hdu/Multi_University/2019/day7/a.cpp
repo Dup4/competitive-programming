@@ -2,9 +2,10 @@
 #include <cstring>
 #include <algorithm>
 #include <cassert>
+#include <iostream>
 using namespace std;
 
-const int N = 5e5 + 10;
+const int N = 2e5 + 10;
 const int DLEN = 1;
 const int MAXN = 9;
 class BigNum {
@@ -76,8 +77,15 @@ int BigNum::operator== (const BigNum &T) const {
 	}
 	return cnt;
 }
+bool equals(BigNum &A, BigNum &B) {
+	if (A.len != B.len) return 0;
+	for (int i = 0; i < A.len; ++i)
+		if (A.a[i] != B.a[i])
+			return 0;
+	return 1;
+}
 BigNum A, B, C;
-int x, y, z;
+int x, y, z, sta;
 char a[N], b[N], c[N];
 
 inline void out(int x, int y, int z) {
@@ -87,7 +95,7 @@ inline void out(int x, int y, int z) {
 
 inline void run() {
 	scanf("%s%s%s", a, b, c);
-	x = y = z = 0;
+	x = y = z = 0; 
 	for (int i = strlen(a) - 1; i >= 0; --i) {
 		if (a[i] == '0') ++x;
 		else {
@@ -112,10 +120,9 @@ inline void run() {
 	int num = max(x, max(y, z));
 	//a + b
 	A = BigNum(a); B = BigNum(b); C = BigNum(c);
-	int sta = (A + B == C);
+	sta = (A + B == C);
 	if (sta != -1) {
 		out(num - x, num - y, num - z + sta);
-	//	printf("%d %d %d\n", num - x, num - y, num - z + sta);
 		return;
 	}
 	
@@ -125,7 +132,11 @@ inline void run() {
 		++cnt;
 		--i; --j;
 	} 
-	tmp = strlen(b);
+	while (i == -1 && j >= 0 && c[j] == '0') {
+		++cnt;
+		--j;
+	}
+	tmp = strlen(b); 
 	for (i = 0; i < cnt; ++i) {
 		b[tmp + i] = '0';
 	}
@@ -134,16 +145,19 @@ inline void run() {
 	sta = (A + B == C);
 	if (sta != -1) {
 		out(num - x, num - y + cnt, num - z + sta);
-	//	printf("%d %d %d\n", num - x, num - y + cnt, num - z + sta);
 		return;	
 	}
 
 	//b后缀
-	b[tmp] = 0;
+	b[tmp] = 0; 
 	cnt = 0, i = strlen(b) - 1, j = strlen(c) - 1;
 	while (b[i] == c[j] && i >= 0 && j >= 0) {
 		++cnt;
 		--i; --j;
+	}
+	while (i == -1 && j >= 0 && c[j] == '0') {
+		++cnt;
+		--j;
 	}
 	tmp = strlen(a);
 	for (i = 0; i < cnt; ++i) {
@@ -154,7 +168,6 @@ inline void run() {
 	sta = (A + B == C);
 	if (sta != -1) {
 		out(num - x + cnt, num - y, num - z + sta);
-//		printf("%d %d %d\n", num - x + cnt, num - y, num - z + sta);
 		return;
 	}
 	puts("-1");
