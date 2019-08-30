@@ -3,21 +3,24 @@ using namespace std;
 
 typedef long long ll;
 const int N = 1e7 + 10;
-int pri[N], check[N], pri_fac[N], fac[N]; 
+int pri[N], check[N], mu[N], pri_fac[N], fac[N]; 
 ll n, m;
 void sieve() {
 	memset(check, 0, sizeof check);
 	*pri = 0;
+	mu[1] = 1;
 	for (int i = 2; i < N; ++i) {
 		if (!check[i]) {
 			pri[++*pri] = i;
+			mu[i] = -1;
 		}
 		for (int j = 1; j <= *pri; ++j) {
 			if (1ll * i * pri[j] >= N) break;
 			check[i * pri[j]] = 1;
 			if (i % pri[j] == 0) {
+				mu[i * pri[j]] = 0;
 				break;
-			}
+			} else mu[i * pri[j]] = -mu[i]; 
 		}
 	}
 }
@@ -47,11 +50,14 @@ void getfac(ll x) {
 
 ll S(ll n, ll m) {
 	if (m == 1) {
-		
+		ll res = n;
+		for (int i = 2; 1ll * i * i <= n; ++i) 
+			res += 1ll * mu[i] * (n / (i * i));
+		return res;
 	}
 	getfac(m);
 	ll res = 0;
-	for (int i = 1; i <= *fac; ++i) {
+	for (int i = 1; i <= *fac; ++i) if (abs(fac[i]) <= n) {
 		res += 1ll * (fac[i] < 0 ? - 1 : 1) * S(n / abs(fac[i]), abs(fac[i]));
 	}
 	return res;
