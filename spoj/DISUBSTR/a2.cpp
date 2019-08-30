@@ -2,9 +2,10 @@
 using namespace std;
 
 typedef long long ll;
-const int N = 1e6 + 10;
+const int N = 1e4 + 10;
 const int ALP = 26;
 char s[N];
+ll res;
 
 struct SAM {
 	//空间开两倍
@@ -32,10 +33,11 @@ struct SAM {
 				memcpy(trans[clone], trans[q], sizeof trans[q]);
 				link[clone] = link[q];
 				for (; p && trans[p][id] == q; p = link[p]) trans[p][id] = clone;
-				link[cur] = link[q] = clone;  
+				link[cur] = link[q] = clone; 
 			}
 		}
-		lst = cur; 	
+		lst = cur; 
+		res += maxlen[lst] - maxlen[link[lst]];	
 	}
 	//字符串从0开始
 	void build(char *s) {
@@ -44,20 +46,15 @@ struct SAM {
 			extend(s[i] - 'A');
 		}
 	}
-	void solve() {
-		ll res = 0;
-		for (int i = 1; i <= sze; ++i) {
-			res += maxlen[i] - maxlen[link[i]];
-		}
-		printf("%lld\n", res);
-	}
 }sam;
 
 int main() {
 	int _T; scanf("%d", &_T);
 	while (_T--) {
 		scanf("%s", s);
-		sam.build(s); sam.solve();
+		res = 0;
+		sam.build(s); 
+		printf("%lld\n", res);
 	}
 	return 0;
 }
