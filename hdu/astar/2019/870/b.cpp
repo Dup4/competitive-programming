@@ -20,42 +20,56 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 2e5 + 10; 
-int n, k, p[N], q[N], f[N], g[N];   
+constexpr int N = 1e5 + 10;
+ll a, b, c, d, p, q, bit[110];  
+bool ok(ll x) {
+	for (int i = 0; i <= 62; ++i) 
+		if (x == bit[i])
+			return 1;
+	return 0;
+}
 void run() {
-	for (int i = 1; i <= n; ++i) cin >> p[i];
-	for (int i = 1; i <= n; ++i) cin >> q[i];
-	for (int i = 1; i <= n; ++i) f[i] = i;
-	int Min = 1e9;
-	for (int i = n; i >= 1; --i) {
-		f[p[i]] = min(Min, f[p[i]]);
-		Min = min(Min, p[i]);
+	cin >> a >> b >> c >> d;
+	if (a == b) {
+		if (c == a && d == b) {
+			out("Yes");
+			out("");
+			return;
+		} else return out("No"); 
 	}
-	Min = 1e9;
-	for (int i = n; i >= 1; --i) {
-		f[q[i]] = min(Min, f[q[i]]);
-		Min = min(Min, q[i]);
-	}
-	for (int i = n - 1; i >= 1; --i) f[i] = min(f[i + 1], f[i]); 
-	int cnt = 1;
-	for (int i = 2; i <= n; ++i) if (f[i] == i) ++cnt;
-	if (cnt < k) return out("NO");
-	out("YES");
-	string res = "a"; 
-	for (int i = 2; i <= n; ++i) { 
-		if (f[i] == i && res.end()[-1] < 'z') {
-			res += res.end()[-1] + 1; 
+	if ((c - a) % (a - b) || (d - b) % (b - a)) return out("No");
+	p = (c - a) / (a - b);
+	q = (d - b) / (b - a);
+	if (p < 0 || q < 0 || !ok(p + q)) return out("No");
+	string res = "";
+	while (p + q) {
+		if (p == q) break;
+		if (p > q) {
+			p -= q + 1;
+			if (p % 2) break;
+			p /= 2;
+			res += "B";
 		} else {
-			res += res.end()[-1];
+			q -= p + 1;
+			if (q % 2) break;
+			q /= 2;
+			res += "A";
 		}
-	}	
+	}
+	if (p + q) return out("No");
+	out("Yes");
+	reverse(res.begin(), res.end());
 	cout << res << endl;
 }
 
 int main() {
+	bit[0] = 1;
+	for (int i = 1; i <= 62; ++i) bit[i] = bit[i - 1] * 2;
+	for (int i = 0; i <= 62; ++i) bit[i] -= 1;
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> k) run();
+	int _T; cin >> _T;
+	while (_T--) run();
 	return 0;
 }

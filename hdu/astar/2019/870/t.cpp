@@ -20,42 +20,16 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 2e5 + 10; 
-int n, k, p[N], q[N], f[N], g[N];   
+constexpr int N = 1e5 + 10;
+int n; 
 void run() {
-	for (int i = 1; i <= n; ++i) cin >> p[i];
-	for (int i = 1; i <= n; ++i) cin >> q[i];
-	for (int i = 1; i <= n; ++i) f[i] = i;
-	int Min = 1e9;
-	for (int i = n; i >= 1; --i) {
-		f[p[i]] = min(Min, f[p[i]]);
-		Min = min(Min, p[i]);
-	}
-	Min = 1e9;
-	for (int i = n; i >= 1; --i) {
-		f[q[i]] = min(Min, f[q[i]]);
-		Min = min(Min, q[i]);
-	}
-	for (int i = n - 1; i >= 1; --i) f[i] = min(f[i + 1], f[i]); 
-	int cnt = 1;
-	for (int i = 2; i <= n; ++i) if (f[i] == i) ++cnt;
-	if (cnt < k) return out("NO");
-	out("YES");
-	string res = "a"; 
-	for (int i = 2; i <= n; ++i) { 
-		if (f[i] == i && res.end()[-1] < 'z') {
-			res += res.end()[-1] + 1; 
-		} else {
-			res += res.end()[-1];
-		}
-	}	
-	cout << res << endl;
+
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> k) run();
+	while (cin >> n) run();
 	return 0;
 }

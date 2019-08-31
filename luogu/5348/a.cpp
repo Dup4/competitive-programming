@@ -48,10 +48,17 @@ void getfac(ll x) {
 	}
 }
 
+ll Mu(ll n) {
+	getfac(n);
+	for (int i = 1; i <= *fac; ++i)
+		if (n == abs(fac[i])) return fac[i] < 0 ? -1 : 1;
+	return 0;
+}
+
 ll S(ll n, ll m) {
 	if (m == 1) {
-		ll res = n;
-		for (int i = 2; 1ll * i * i <= n; ++i) 
+		ll res = 0;
+		for (int i = 1; 1ll * i * i <= n; ++i) 
 			res += 1ll * mu[i] * (n / (i * i));
 		return res;
 	}
@@ -67,8 +74,8 @@ int main() {
 	sieve();
 	int _T; cin >> _T;
 	while (_T--) {
-		scanf("%lld%lld", &n, &m);
-		printf("%lld\n", S(n, m));
+		scanf("%lld%lld", &n, &m); 
+		printf("%lld\n", Mu(m) * S(n / m, m));
 	}
 	return 0;
 }
