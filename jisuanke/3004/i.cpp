@@ -57,10 +57,11 @@ int main() {
 		sort(t + 1, t + 1 + n, [&](int x, int y){
 			return x > y;			
 		});
-		for (int i = 1; i <= y; ++i) ans[i] = INF;
+		for (int i = 1; i <= y; ++i) ans[i] = INF; 
 		x = y; L.init(); t[n + 1] = 0;
 		for (int i = 1; i <= n; ++i) {
 			ll handt = t[i] + y; 
+			cout << i << " " << x << endl;
 			while (x >= 1) {
 				ll nowt = L.query(x); 
 				if (nowt >= handt) {
