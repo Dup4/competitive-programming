@@ -35,14 +35,13 @@ void DFS(int u, int pre) {
 	}
 	erp(u) if (v != pre) {
 		DFS(v, u);
-		sze[u] += sze[v];
-		int limit = min(k, sze[u]);
-		for (int i = limit; i >= 1; --i) {
-			for (int j = 1; j <= i; ++j) {
-				if (f[v][j] == INF) break;
-				f[u][i] = min(f[u][i], f[u][i - j] + f[v][j] + 1ll * w * j * (k - j));
+		int limit = min(k, sze[u] + sze[v]);
+	    for (int i = sze[u]; i >= 0; --i) {
+			for (int j = min(sze[v], limit - i); j >= 0; --j) {
+				f[u][i + j] = min(f[u][i + j], f[u][i] + f[v][j] + 1ll * w * j * (k - j));
 			}
 		}	
+		sze[u] = limit; 	
 	}
 }
 

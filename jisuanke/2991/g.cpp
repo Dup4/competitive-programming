@@ -79,7 +79,7 @@ struct Graph {
 }G;
 #define erp(u) for (int it = G.head[u], v = G.a[it].to, w = G.a[it].w; it; it = G.a[it].nx, v = G.a[it].to, w = G.a[it].w)
  
-ll f[N][110], tmp[N]; 
+ll f[N][110];  
 void DFS(int u, int pre) {
 	for (int i = 0; i <= k; ++i) f[u][i] = INF;
     f[u][0] = 0; 	
@@ -92,14 +92,14 @@ void DFS(int u, int pre) {
 	erp(u) if (v != pre) {
 		DFS(v, u);
 		int limit = min(k, sze[u] + sze[v]);
-		for (int i = 0; i <= limit; ++i) tmp[i] = INF;
+		for (int i = 0; i <= limit; ++i) f[u][i] = INF; 
 		for (int i = 0; i <= sze[u]; ++i) {
 			for (int j = 0; j <= sze[v] && i + j <= limit; ++j) {
-				tmp[i + j] = min(tmp[i + j], f[u][i] + f[v][j] + 1ll * j * (k - j) * w);
+				f[u][i + j] = min(f[u][i + j], f[u][i] + f[v][j] + 1ll * j * (k - j) * w);
 			}
 		}
 		sze[u] = limit;
-		for (int i = 0; i <= limit; ++i) f[u][i] = tmp[i];
+	//	for (int i = 0; i <= limit; ++i) f[u][i] = tmp[i];
 	}
 }
  
