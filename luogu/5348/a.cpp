@@ -23,6 +23,7 @@ void sieve() {
 			} else mu[i * pri[j]] = -mu[i]; 
 		}
 	}
+	for (int i = 2; i < N; ++i) mu[i] += mu[i - 1];
 }
 void getfac(ll x) {
 	*pri_fac = 0;
@@ -32,7 +33,7 @@ void getfac(ll x) {
 	} 
 	if (x != 1) pri_fac[++*pri_fac] = x; 
 	int sze = *pri_fac;
-	int S = 1 << sze;
+	int S = 1 << sze; 
 	*fac = 0;
 	for (int mask = 0; mask < S; ++mask) {
 		int cnt = 0;
@@ -46,6 +47,9 @@ void getfac(ll x) {
 		if (cnt & 1) fac[++*fac] = -num;
 		else fac[++*fac] = num; 
 	}
+	sort(fac + 1, fac + 1 + *fac, [&](int x, int y) {
+		return abs(x) < abs(y);
+	});
 }
 
 ll Mu(ll n) {
@@ -58,14 +62,20 @@ ll Mu(ll n) {
 ll S(ll n, ll m) {
 	if (m == 1) {
 		ll res = 0;
-		for (int i = 1; 1ll * i * i <= n; ++i) 
-			res += 1ll * mu[i] * (n / (i * i));
+		for (int i = 1, j; 1ll * i * i <= n; i = j + 1) {
+			ll t = n / i / i;
+			j = sqrt(n / t);
+			res += t * (mu[j] - mu[i - 1]);
+		}	
 		return res;
 	}
 	getfac(m);
+	vector <int> vec;
+	for (int i = 1; i <= *fac; ++i) vec.push_back(fac[i]);
 	ll res = 0;
-	for (int i = 1; i <= *fac; ++i) if (abs(fac[i]) <= n) {
-		res += 1ll * (fac[i] < 0 ? - 1 : 1) * S(n / abs(fac[i]), abs(fac[i]));
+	for (auto &it : vec) {
+		if (abs(it) > n) break; 
+		res += 1ll * (it < 0 ? -1 : 1) * S(n / abs(it), abs(it));
 	}
 	return res;
 }
