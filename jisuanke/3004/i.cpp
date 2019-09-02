@@ -20,15 +20,15 @@ struct Line {
 			return;
 		}
 		ll x = INF; 
-		while (top) {
+		while (top) { 
 			node tmp = t[top];
 			ll cross = (tmp.b - b) / (a - tmp.a); 
 			if (cross >= x) break;
 			if (cross <= t[top].x) {
+				x = t[top].x; 
 				--top;
 			} else {
-				t[top].x = cross; 
-				x = cross + 1;
+				x = cross + 1;  
 				break;
 			}
 		}
@@ -36,14 +36,14 @@ struct Line {
 	}
 	ll query(ll x) {
 		if (!top) return 0; 
-		int l = 1, r = top, pos = 1;
+		int l = 1, r = top, pos = 1; 
 		while (r - l >= 0) {
 			int mid = (l + r) >> 1;
 			if (x >= t[mid].x) { 
 				pos = mid;
-				r = mid - 1;
-			} else {
 				l = mid + 1;
+			} else {
+				r = mid - 1; 
 			}
 		}
 		return 1ll * t[pos].a * x + t[pos].b;
@@ -58,10 +58,9 @@ int main() {
 			return x > y;			
 		});
 		for (int i = 1; i <= y; ++i) ans[i] = INF; 
-		x = y; L.init(); t[n + 1] = 0;
-		for (int i = 1; i <= n; ++i) {
+		x = y; L.init(); t[n + 1] = -y;
+		for (int i = 1; i <= n + 1; ++i) {
 			ll handt = t[i] + y; 
-			cout << i << " " << x << endl;
 			while (x >= 1) {
 				ll nowt = L.query(x); 
 				if (nowt >= handt) {
@@ -74,8 +73,9 @@ int main() {
 			}
 			L.insert(i, t[i]);
 		}
+		for (int i = y - 1; i >= 1; --i) ans[i] = min(ans[i], ans[i + 1]);
 		for (int i = 1; i <= y; ++i) 
-			printf("%lld%c", ans[i], " \n"[i == n]);		
+			printf("%lld%c", ans[i], " \n"[i == y]);		
 	}
 	return 0;
 }
