@@ -34,7 +34,7 @@ int main() {
 		G.clear(); G.resize(n + 1);
 		memset(d, 0, sizeof d);
 		for (int i = 1, m, x; i <= n; ++i) {
-			scanf("%d%d", e + i, &m);
+			scanf("%d%d", e + i, &m); 
 			for (int j = 1; j <= m; ++j) {
 				scanf("%d", &x);
 				G[x].push_back(i);
@@ -46,7 +46,7 @@ int main() {
 			for (auto &v : G[i]) ++d[v];
 		for (int i = *ord; i >= 1; --i) {
 			f[i] = -e[i];
-			for (auto &v : G[i]) f[i] = max(f[i], f[v] + 1);
+			for (auto &v : G[i]) f[i] = min(f[i], f[v]); 
 		}
 		printf("%d\n", Toposort());
 	}
