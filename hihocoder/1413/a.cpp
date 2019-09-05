@@ -53,7 +53,7 @@ struct SAM {
 		cnt += t[lst].maxlen - t[t[lst].fa].maxlen;
 	}
 	//字符串从0开始 
-	void build(char *s) { 
+	void build() { 
 		memset(c, 0, sizeof c); 
 		for (int i = 1; i <= tot; ++i) c[t[i].maxlen]++;
 		for (int i = 1; i <= tot; ++i) c[i] += c[i - 1];
@@ -68,7 +68,7 @@ struct SAM {
 			}		
 			int l = t[u].st, r = t[u].ed;
 			int len = min(r - l, t[u].maxlen);
-			if (len <= t[fa].maxlen) continue;
+			if (len <= t[fa].maxlen) continue; 
 			c1[l + 1] += len - t[fa].maxlen;
 			c2[r - t[fa].maxlen + 1] += 1;
 			c2[r - len + 1] -= 1; 
@@ -83,11 +83,18 @@ int main() {
 	memset(c2, 0, sizeof c2);
 	sam.init();
 	for (int i = 1; i <= n; ++i) {
-		sam.extend(s[i] - 'a');
+		sam.extend(s[i] - 'a', i);
 		ans[i + 1] += sam.cnt;
 	}
 	for (int i = 1; i <= n; ++i) ans[i] += 1ll * i * (n - i + 1);
 	sam.build();
-	
+	for (int i = 1; i <= n; ++i) c2[i] += c2[i - 1];
+	for (int i = 1; i <= n; ++i) c1[i] += c1[i - 1] + c2[i], ans[i] -= c1[i];
+	sam.init();
+	for (int i = n; i >= 1; --i) {
+		sam.extend(s[i] - 'a', i);
+		ans[i - 1] += sam.cnt;
+	}
+	for (int i = 1; i <= n; ++i) printf("%lld%c", ans[i], " \n"[i == n]);
 	return 0;
 }
