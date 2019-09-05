@@ -2,10 +2,10 @@
 using namespace std;
 
 typedef long long ll;
-const int N = 2e5 + 10;
-const int ALP = 26;
-int n, q, l, r;
-char s[N], t[N], ans[N]; 
+const int N = 1e5 + 10;
+const int ALP = 10;
+int n, q;
+char s[N], t[N];
 
 struct SEG {
 	struct node {
@@ -115,47 +115,44 @@ struct SAM {
 	void build(char *s) { 
 		init();
 		for (int i = 0; s[i]; ++i) {
-			extend(s[i] - 'a', i + 1);
+			extend(s[i] - '0', i + 1);
 			seg.update(t[lst].rt, 1, n, i + 1); 
 		}
 		memset(h, 0, sizeof h);
 		for (int i = 1; i <= tot; ++i) if (t[i].fa) addedge(t[i].fa, i);
 		DFS(1);
 	}
-	void gao(char *s, int l, int r, int m) {
-		int u = 1, v, x = 0;
-		for (int i = 1; 1; ++i) { 
-			ans[i] = -1; 
-			for (int j = max(s[i] - 'a' + 1, 0); j < 26; ++j) {
-				int v = t[u].nx[j];
-				if (v && seg.query(t[v].rt, 1, n, l + i - 1, r)) {
-					ans[i] = j; 
-					break;
-				}
-			}
-			v = t[u].nx[max(s[i] - 'a', 0)];
-			x = i;
-			if (i == m + 1 || !v || !seg.query(t[v].rt, 1, n, l + i - 1, r)) break;
-			u = v; 
+	int get(char *s) {
+		int u = 1;
+		for (int i = 1; s[i]; ++i) {
+			if (!t[u].nx[s[i] - '0']) return -1;
+			u = t[u].nx[s[i] - '0'];
 		}
-		while (x && ans[x] == -1) --x;
-		if (!x) puts("-1");
-		else {
-			s[x] = 0; 
-			printf("%s%c\n", s + 1, ans[x] + 'a');
+		return t[u].pos;
+	}
+	void gao(char *s) {
+		int len = strlen(s + 1);
+		ll ans = 0;
+		int f = get(s);
+		if (f == -1) ans += n;
+		else ans += f - len + 1;
+		for (int i = 1, u = 1; i < len; ++i) {
+			if (!t[u].nx[s[i] - '0']) break;
+			u = t[u].nx[s[i] - '0'];
+			if (f == -1) ans += seg.query(t[u].rt, 1, n, 1, n);
+			else ans += seg.query(t[u].rt, 1, n, 1, f - len + i);
 		}
+		printf("%lld\n", ans);
 	}
 }sam;
 
 int main() {
-	while (scanf("%s%d", s, &q) != EOF) {
-		n = strlen(s);
-		sam.init(); sam.build(s);
-		for (int i = 1; i <= q; ++i) {
-			scanf("%d%d%s", &l, &r, t + 1);
-			sam.gao(t, l, r, strlen(t + 1));
+	while (scanf("%d%s%d", &n, s, &q) != EOF) {
+		sam.build(s);
+		for (int _q = 1; _q <= q; ++_q) {
+			scanf("%s", t + 1);
+			sam.gao(t); 
 		}
 	}
 	return 0;
 }
-
