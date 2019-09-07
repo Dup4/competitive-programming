@@ -27,7 +27,9 @@ ll ex_gcd(ll a, ll b, ll &x, ll &y) {
 	if (!a && !b) return -1;
 	if (!b) {x = 1, y = 0; return a; }
 	ll d = ex_gcd(b, a % b, y, x);
+	y = -y;
 	y -= a / b * x;
+	x = -x;
 	return d;
 }
 inline ll mul(ll a, ll b, ll p) {
@@ -156,9 +158,6 @@ void run() {
 				b = b * fac[j];
 		}
 		ex_gcd(a, b, x, y);
-		if (!x || !y) {
-			
-		}
 		cout << a << " " << b << " " << x << " " << y << endl;
 		res = min(res, y * b);
 	}

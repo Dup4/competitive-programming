@@ -1,0 +1,89 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+typedef long long ll;
+const int N = 1e6 + 10;
+const int ALP = 26;
+int n, m;
+char s[N], t[N];
+
+struct SAM {
+	//空间开两倍，节点个数是两倍字符串长度
+	//maxlen 表示节点i表示的最大后缀长度, nx[j]表示节点i加一个字符j所表示的字符串对应的节点
+	//minlen 表示节点i表示的最小后缀长度，其等于t[t[i].fa].maxlen + 1 
+	//fa 表示节点i的后缀链接 cnt 表示节点i的enspos集合大小 
+	//c[]表示拓扑排序辅助数组,　rk[]表示拓扑序，rk[i],i小的节点所表示的后缀长度也小
+	//pos表示那个结点在字符串的endpos的最小值，即firstpos
+	struct node {
+		int maxlen, cnt, fa, nx[ALP];
+		node() { maxlen = cnt = fa = 0; memset(nx, 0, sizeof nx); }
+	}t[N << 1];
+	int tot, lst;   
+	inline int newnode() { 
+		++tot;
+		t[tot] = node();
+		return tot;
+	}
+	inline void init() {
+		tot = 0;
+		lst = newnode();
+	}
+	inline void extend(int id) { 
+		int cur = newnode(), p; 
+		t[cur].cnt = 1;
+		t[cur].maxlen = t[lst].maxlen + 1; 
+		for (p = lst; p && !t[p].nx[id]; p = t[p].fa) t[p].nx[id] = cur;
+		if (!p) {
+			t[cur].fa = 1;
+		} else {
+			int q = t[p].nx[id];
+			if (t[q].maxlen == t[p].maxlen + 1) {
+				t[cur].fa = q;
+			} else {
+				int clone = newnode();
+			  	t[clone] = t[q]; t[clone].cnt = 0;
+				t[clone].maxlen = t[p].maxlen + 1; 
+				for (; p && t[p].nx[id] == q; p = t[p].fa) t[p].nx[id] = clone;
+				t[cur].fa = t[q].fa = clone;
+			}
+		}
+		lst = cur; 	
+	}
+	//字符串从0开始 
+	void build(char *s) { 
+		init();
+		for (int i = 0; s[i]; ++i) {
+			extend(s[i] - 'a'); 
+		}
+	} 
+	int gao(char *s) { 
+		int res = 0;
+		for (int i = 0, now = 1; s[i]; ) { 
+			int c = s[i] - 'a';
+			int p = -1; 
+			for (int j = c + 1; j < 26; ++j) {
+				if (t[now].nx[j]) {
+					p = j;
+					break;  
+				}
+			}			
+			if (p != -1) {
+				return res + 1;
+			}
+			if (!t[now].nx[c]) { 
+				return -1;
+			}
+			++res;
+			now = t[now].nx[c]; 
+		}	
+	}
+}sam;
+
+int main() {
+	while (scanf("%d%d", &n, &m) != EOF) {
+		scanf("%s%s", s, t);
+		sam.build(s); 
+		printf("%d\n", sam.gao(t));
+	}
+	return 0;
+}
