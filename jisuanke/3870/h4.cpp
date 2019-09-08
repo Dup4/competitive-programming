@@ -42,30 +42,25 @@ inline int get(ll n) {
 	for (int j = 0; ; ++j) {
 		if (!n) break;
 		int num = n % 10; n /= 10;
-	    if (num) res = res * base2[j][num];
+	    if (num) res = res * base2[j][num]; 
 	}
 	return res.a[0][1]; 
 }
+unordered_map <int, int> mp;
 
 void gao() {
+	mp.clear(); 
 	gn[1] = n;
-	int l = -1, r = -1; 
 	ans = 0;
 	for (int i = 1; i <= q; ++i) {
-		A[i] = get(gn[i]);
+		if (mp.count(gn[i] % (mod - 1))) {
+			A[i] = mp[gn[i] % (mod - 1)];
+		} else {
+			A[i] = get(gn[i] % (mod - 1));
+		    mp[gn[i] % (mod - 1)] = A[i];	
+		}
 		gn[i + 1] = gn[i] ^ (A[i] * A[i]);
-	}
-	if (l == -1) {
-		for (int i = 1; i <= q; ++i)
-			ans ^= A[i];
-	} else {
-		for (int i = 1; i < l; ++i) ans ^= A[i];
-		int loop = r - l;
-		q -= l - 1;
-		int cnt = q / loop;
-		if (cnt & 1) for (int i = l; i < r; ++i) ans ^= A[i];
-		q %= loop;
-		for (int i = l; i <= l + q; ++i) ans ^= A[i];
+		ans ^= A[i];
 	}
 	printf("%lld\n", ans);
 }
