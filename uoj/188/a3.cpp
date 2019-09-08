@@ -38,14 +38,14 @@ ll S(ll x, int y) {
 }
 
 ll solve(ll _n) {
-	n = _n; m = 0; sieve(blk = sqrt(n));
+	n = _n; m = 0; blk = sqrt(n); 
 	for (ll i = 1, j; i <= n; i = j + 1) {
 		j = n / (n / i);
 		w[++m] = n / i; g[m] = w[m] - 1;
 		if (w[m] <= blk) id1[w[m]] = m;
 		else id2[n / w[m]] = m;  
 	}
-	for (int j = 1; j <= tot; ++j) {
+	for (int j = 1; j <= tot && 1ll * pri[j] * pri[j] <= w[1]; ++j) {
 		for (int i = 1; 1ll * pri[j] * pri[j] <= w[i] && i <= m; ++i) {
 			int k = id(w[i] / pri[j]);
 			g[i] -= g[k] - j + 1;
@@ -56,6 +56,7 @@ ll solve(ll _n) {
 
 
 int main() {
+	sieve(N - 1);
 	while (scanf("%lld%lld", &L, &R) != EOF) {
 		printf("%lld\n", solve(R) - solve(L - 1));
 	}
