@@ -1,45 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-const int N = 5e5 + 10;
-const int INF = 0x3f3f3f3f;
-int n, m;
-struct Edge {
-	int u, v, a, b;
-	void scan() { scanf("%d%d%d%d", &u, &v, &a, &b);}
-	bool operator < (const Edge &other) const {
-		return a < other.a;
-	}
-}e[N];
-
-struct LCT { 
+#define pII pair <int, int>
+#define fi first
+#define se second
+const int N = 1e5 + 10;
+int n, m, q, C, v[N], d[N][10];
+map <pII, int> mp; 
+struct LCT {
 	#define ls t[x].son[0]
 	#define rs t[x].son[1]
 	struct node {
 		int fa, son[2];
-		int v, id;
+		int v, Max;
 		//翻转标记
 		bool r;
 		node() {
 			fa = son[0] = son[1] = 0;
+			v = Max = 0;
 			r = 0;
-			v = id = 0;
 		}
 	}t[N];
 	int sta[N], top;
-	void init(int n) {
-		for (int i = 0; i <= n + m; ++i)
-			t[i] = node();
-	}
 	//如果x是所在链的根返回1
 	inline bool isroot(int x) {
 		return t[t[x].fa].son[0] != x && t[t[x].fa].son[1] != x;
 	}
 	//上传信息
 	inline void pushup(int x) {
-		t[x].id = x;
-		if (ls && t[t[ls].id].v > t[t[x].id].v) t[x].id = t[ls].id;
-		if (rs && t[t[rs].id].v > t[t[x].id].v) t[x].id = t[rs].id;
+		t[x].Max = t[x].v;
+		if (ls) t[x].Max = max(t[x].Max, t[ls].Max);
+		if (rs) t[x].Max = max(t[x].Max, t[rs].Max);
 	}
 	//翻转操作
 	inline void pushr(int x) {
@@ -126,36 +116,66 @@ struct LCT {
 			pushup(x);
 		}
 	}
-	int query(int u, int v) {
-		split(u, v);
-		return t[v].id; 
-	}
-}lct;
+}lct[10];
 
+void init() {
+	mp.clear();
+	memset(d, 0, sizeof d);
+	for (int i = 0; i < C; ++i) 
+		for (int j = 0; j <= n; ++j) {
+			lct[i].t[j] = LCT::node();
+			lct[i].t[j].v = lct[i].t[j].Max = v[j]; 
+		}
+}
 int main() {
-	scanf("%d%d", &n, &m);
-	for (int i = 1; i <= m; ++i) e[i].scan();
-	sort(e + 1, e + 1 + m);
-	lct.init(n + m);
-	for (int i = 1; i <= n; ++i) lct.t[i].id = i;
-	for (int i = 1; i <= m; ++i) lct.t[n + i].id = n + i, lct.t[n + i].v = e[i].b; 
-	int ans = INF;
-	for (int i = 1; i <= m; ++i) {
-		int u = e[i].u, v = e[i].v, a = e[i].a, b = e[i].b;
-		if (u == v) continue; 
-		if (lct.findroot(u) == lct.findroot(v)) {
-			int id = lct.query(u, v);
-			if (e[id - n].b <= b) continue;
-			lct.cut(id, e[id - n].u);
-			lct.cut(id, e[id - n].v);
-		} 
-		lct.link(i + n, u);
-		lct.link(i + n, v);
-		if (lct.findroot(1) == lct.findroot(n)) {
-			int id = lct.query(1, n);
-			ans = min(ans, a + lct.t[id].v);
+	while (scanf("%d%d%d%d", &n, &m, &C, &q) != EOF) {
+		for (int i = 1; i <= n; ++i) scanf("%d", v + i);
+		init();
+		for (int i = 1, u, v, w; i <= m; ++i) {
+			scanf("%d%d%d", &u, &v, &w);
+			if (u > v) swap(u, v);
+			++d[u][w]; ++d[v][w];
+			lct[w].link(u, v);
+			mp[pII(u, v)] = w;
+		}
+		int op, u, v, w, x, y, c;
+		while (q--) {
+			scanf("%d", &op);
+			if (op == 0) {
+				scanf("%d%d", &x, &y);
+				for (int i = 0; i < C; ++i) {
+					lct[i].access(x);
+					lct[i].splay(x);
+					lct[i].t[x].v = y;
+				}
+			} else if (op == 1) {
+				scanf("%d%d%d", &u, &v, &w);
+				if (u > v) swap(u, v);
+				if (mp.count(pII(u, v)) && mp[pII(u, v)] == w) {
+					puts("Success.");
+					continue;	
+				}
+				if (!mp.count(pII(u, v))) puts("No such edge.");
+				else if (d[u][w] == 2 || d[v][w] == 2) puts("Error 1.");
+				else if (lct[w].findroot(u) == lct[w].findroot(v)) puts("Error 2.");
+				else {
+					int pw = mp[pII(u, v)];
+					--d[u][pw]; --d[v][pw];
+					lct[pw].cut(u, v);
+					mp[pII(u, v)] = w;
+					++d[u][w]; ++d[v][w];
+					lct[w].link(u, v);
+					puts("Success.");
+				}		
+			} else {
+				scanf("%d%d%d", &c, &u, &v);
+				if (lct[c].findroot(u) != lct[c].findroot(v)) puts("-1");
+				else {
+					lct[c].split(u, v);
+					printf("%d\n", lct[c].t[v].Max);
+				}
+			}
 		}
 	}
-	printf("%d\n", ans == INF ? -1 : ans);
 	return 0;
 }
