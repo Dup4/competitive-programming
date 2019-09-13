@@ -1,43 +1,48 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-using ll = long long;
-const int N = 1e7 + 10;
-const int M = 1e7;
-int pri[N], check[N];
-ll mu[N], f[N], g[N];
-void sieve() {
-	memset(check, 0, sizeof check);
-	*pri = 0;
-	mu[1] = 1;
-	for (int i = 2; i < N; ++i) {
-		if (!check[i]) {
-			pri[++*pri] = i;
-			mu[i] = -1;
-		}
-		for (int j = 1; j <= *pri; ++j) {
-			if (1ll * i * pri[j] >= N) break;
-			check[i * pri[j]] = 1;
-			if (i % pri[j] == 0) {
-				mu[i * pri[j]] = 0;
-				break;
-			} else mu[i * pri[j]] = -mu[i];
-		}
-	}
-	for (int i = 1; i < N; ++i) f[i] = mu[i];
-}
-
-void get_g(int N, const ll *f, ll *g) {
-  for (int i = 1; i <= N; i++) g[i] = 0;
-  for (int i = 1; i <= N; i++)
-    for (int j = 1; i * j <= N; j++)
-      g[i * j] = (g[i * j] + mu[i] * f[j]);
-} // 依照定义，O(nlogn)
+typedef long long ll;
+const int N = 1e5 + 10;
+struct BIT {
+    ll a[N];
+	inline void init() { memset(a, 0, sizeof a); }
+    inline int lowbit(int x) { return x & -x; }
+    void add(int x, ll v) {
+        for (int i = x; i < N; i += lowbit(i))
+            a[i] += v;
+    }
+    ll query(int x) {
+        ll ret = 0;
+        for (int i = x; i > 0; i -= lowbit(i))
+            ret += a[i];
+        return ret;
+    }
+	//a[i]表示i这个数有a[i]个，相当于权值BIT，查询第k大。
+    int kth(ll k) {
+        int p = 0;
+        for (int lim = 1 << 20; lim; lim /= 2)
+            if (p + lim < N && a[p + lim] < k) {
+                p += lim;
+                k -= a[p];
+            }
+        return p + 1;
+    }
+    ll query(int l, int r) { if (l > r) return 0; return query(r) - query(l - 1); }
+    void add(int l, int r, ll v) { if (l > r) return; add(l, v); add(r + 1, -v); }
+}bit;
 
 int main() {
-	sieve();
-	get_g(M, f, g);
-//	for (int i = 1; i <= M; ++i)
-//		printf("%lld\n", g[i]);
+	int n, q; cin >> n >> q;
+	bit.init();
+	int op, l, r, v, k, x;
+	while (q--) {
+		cin >> op;
+		if (op == 1) {
+			cin >> x >> v;
+			bit.add(x, v);
+		} else {
+			cin >> k;
+			cout << bit.kth(k) << endl;
+		}
+	}
 	return 0;
 }
