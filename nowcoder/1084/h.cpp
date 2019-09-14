@@ -10,7 +10,7 @@ using pLL = pair <ll, ll>;
 using VI = vector <int>;
 using VL = vector <ll>;
 constexpr int mod = 1e9 + 7;
-template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; while (x >= mod) x -= mod; while (x < 0) x += mod; } 
+template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; if (x >= mod) x -= mod; else if (x < 0) x += mod; } 
 template <class T1, class T2> inline void chmax(T1 &x, T2 y) { if (x < y) x = y; }
 template <class T1, class T2> inline void chmin(T1 &x, T2 y) { if (x > y) x = y; }
 inline int rd() { int x; cin >> x; return x; }

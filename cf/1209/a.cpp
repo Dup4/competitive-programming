@@ -21,9 +21,19 @@ template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-int n; 
+int n, a[N], b[N]; 
 void run() {
-
+	for (int i = 1; i <= n; ++i) cin >> a[i];
+	memset(b, 0, sizeof b);
+	int res = 0;
+	sort(a + 1, a + 1 + n);
+	for (int i = 1; i <= n; ++i) {
+		if (b[a[i]]) continue;
+	    ++res;
+		for (int j = a[i]; j <= 100; j += a[i])
+			b[j] = 1;	
+	}
+	cout << res << endl;
 }
 
 int main() {
