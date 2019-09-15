@@ -21,15 +21,30 @@ template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-int n, m, a[N];   
+int n, m;   
 void run() {
-	
+	priority_queue <int> pq;
+	for (int i = 1, x; i <= n; ++i) {
+		cin >> x;
+		pq.push(x);
+	}
+	while (m-- && !pq.empty()) {
+		int t = pq.top();
+		pq.pop();
+		if (t / 2) pq.push(t / 2);
+	}
+	ll res = 0;
+	while (!pq.empty()) {
+		res += pq.top();
+		pq.pop();
+	}
+	cout << res << endl;
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> m) run();
 	return 0;
 }
