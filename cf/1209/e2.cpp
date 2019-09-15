@@ -32,7 +32,7 @@ void Sort() {
 			Max = max(Max, a[i][j]);
 		vec.push_back(pII(Max, i));
 	}
-	sort(vec.begin(), vec.end());
+	sort(vec.begin(), vec.end()); reverse(vec.begin(), vec.end());
 }
 inline void shift() {
 	int t = b[n];
@@ -49,25 +49,22 @@ void run() {
 	memset(f, 0, sizeof f);
 	m = min(n, m);
 	for (int i = 1; i <= m; ++i) {
-		int id = vec[i - 1].se;  
-		for (int j = 1; j <= n; ++j) b[j] = a[id][j]; 
-		for (int mask = 0; mask < (1 << n); ++mask) bf[mask] = f[mask]; 
+		int id = vec[i - 1].se;   
+		for (int j = 1; j <= n; ++j) b[j] = a[id][j];  
+		memset(g, 0, sizeof g);
 		for (int j = 1; j <= n; ++j) {
 			shift();
-			memset(g, 0, sizeof g);
 			for (int mask = 0; mask < (1 << n); ++mask) {
-				g[mask] = 0;
-				for (int k = 0; k < n; ++k) {
-					if ((mask >> k) & 1) {
-						g[mask] += b[k + 1];
-					}
-				}
+				int sum = 0;
+				for (int k = 0; k < n; ++k) if ((mask >> k) & 1) sum += b[k + 1]; 
+				chmax(g[mask], sum);	
 			}
-			for (int mask = 0; mask < (1 << n); ++mask) {
-				int fmask = ((1 << n) - 1) ^ mask;
-				for (int o = fmask; o > 0; o = (o - 1) & fmask) {
-					f[j ^ o] = max(f[j ^ o], f[j] + g[o]);
-				}
+		}
+		for (int mask = 0; mask < (1 << n); ++mask) bf[mask] = f[mask]; 
+		for (int mask = 0; mask < (1 << n); ++mask) {
+			int fmask = ((1 << n) - 1) ^ mask;
+			for (int o = fmask; o > 0; o = (o - 1) & fmask) {
+				f[mask ^ o] = max(f[mask ^ o], bf[mask] + g[o]);
 			}
 		}
 		for (int mask = 0; mask < (1 << n); ++mask) f[mask] = max(f[mask], bf[mask]);	
