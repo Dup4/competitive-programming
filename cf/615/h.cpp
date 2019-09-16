@@ -20,33 +20,10 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 4e5 + 10;
-int n, a[N]; ll f[1 << 21], b[30], cnt[30][30]; 
+constexpr int N = 1e5 + 10;
+int n; 
 void run() {
-	for (int i = 1; i <= n; ++i) cin >> a[i], --a[i];
-	//cnt[i][j]　表示将所有i都移动到j的后面的代价
-	memset(cnt, 0, sizeof cnt);
-	memset(b, 0, sizeof b);
-	memset(f, 0x3f, sizeof f);  
-	for (int i = n; i >= 1; --i) {
-		for (int j = 0; j < 20; ++j)
-			cnt[a[i]][j] += b[j];
-		++b[a[i]];
-	}
-	f[0] = 0;
-	for (int i = 0; i < 1 << 20; ++i) {
-		for (int j = 0; j < 20; ++j) {
-			if (((i >> j) & 1) == 0) {
-				ll w = 0;
-				for (int k = 0; k < 20; ++k) {
-					if ((i >> k) & 1) 
-						w += cnt[j][k];
-				}
-				f[i | (1 << j)] = min(f[i | (1 << j)], f[i] + w);
-			}
-		}
-	}
-	out(f[(1 << 20) - 1]);
+
 }
 
 int main() {
