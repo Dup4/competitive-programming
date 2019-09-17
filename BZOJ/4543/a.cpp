@@ -29,7 +29,9 @@ void DFS(int u) {
 		g[v] = g[u] - 1;
 		DFS(v);
 	}
-	f[u][0] = 1; ans += g[u][0];
+	f[u][0] = 1; 
+	//这里统计一个点对的点到他们的lca的距离为d，并且u到他们lca距离也为d的方案
+	ans += g[u][0];
 	erp(u) {
 		int v = G[u][o];
 		if (v == fa[u] || v == hson[u]) continue;
@@ -40,6 +42,7 @@ void DFS(int u) {
 			ans += g[v][i] * f[u][i - 1];
 		}
 		for (int i = 0; i < md[v]; ++i) {
+			//之前的儿子中选择一个点和当前遍历的儿子中选择一个点组成一个点对
 			g[u][i + 1] += f[u][i + 1] * f[v][i];
 			if (i) g[u][i - 1] += g[v][i];
 			f[u][i + 1] += f[v][i];
