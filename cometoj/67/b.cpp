@@ -20,31 +20,28 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 1e3 + 10;
-int n, m, k, a[N], b[N]; ll f[N], w[N];   
+constexpr int N = 1e5 + 10;
+int n, m, k, a[N], b[N]; ll w[N], f[110][3110];  
 void run() {
+	memset(w, 0, sizeof w);
 	for (int i = 0; i <= k; ++i) cin >> w[i];
-	for (int i = 1; i <= m; ++i) cin >> a[i] >> b[i];
-	memset(f, -1, sizeof f);
-	f[0] = 0;
-	for (int i = 1; i <= m; ++i) {
-		for (int j = a[i]; j <= k; ++j) {
-			if (f[j - a[i]] > -1)
-				f[j] = max(f[j], f[j - a[i]] + b[i]); 
+	for (int i = 1; i <= m; ++i) cin >> a[i] >> b[i];  
+	memset(f, -0x3f, sizeof f);
+	f[1][0] = 0;
+	for (int i = 2; i <= n; ++i) {
+		for (int j = 0; j <= k; ++j) {
+			f[i][j + w[j]] = max(f[i][j + w[j]], f[i - 1][j]);
 		}
-	}
-	ll tot = 0, now = 0; 
-	for (int i = 1; i <= n; ++i) {
-		for (int j = now; j >= 0; --j) {
-			if (f[j] > -1) {
-				tot += f[j];  
-				now -= j;
-				break;
+		for (int j = 1; j <= m; ++j) {
+			for (int o = 3000 - a[j]; o >= 0; --o) {
+				f[i][o] = max(f[i][o], f[i][o + a[j]] + b[j]);
 			}
 		}
-		if (now <= k) now += w[now];
 	}
-	cout << res + now << endl;
+	ll ans = 0;
+	for (int i = 0; i <= 3100; ++i)
+		ans = max(ans, f[n][i] + i + w[i]);
+	cout << ans << endl;
 }
 
 int main() {
