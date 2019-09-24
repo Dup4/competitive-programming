@@ -21,7 +21,7 @@ template <class T> inline void rd(vector <T> &vec) { for (auto &it : vec) cin >>
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 2e5 + 10;
-constexpr int S = 350;
+constexpr int S = 2;
 int n, m, q, d[N], in[N], out[N], w[N], e[N][2];  
 inline ll get(int x) { return 1ll * in[x] * out[x]; }
 vector <vector<int>> G;
@@ -34,8 +34,8 @@ struct SEG {
 		inline ll getf(int x) {
 			return 1ll * x * x;
 		}
-		void up(ll x) {
-			a += b * x - getf(lazy) * num;
+		void up(ll x) {	
+			a += b * x - getf(x) * num;
 			b += x * num * -2;
 			lazy += x;
 		}
@@ -65,7 +65,7 @@ struct SEG {
 	void Set(int &now, int l, int r, int pos, int In, int Out, int num) {
 		if (!now) now = ++tot, t[now] = node();
 		if (l == r) {
-			t[now].a = 1ll * In * Out;
+			t[now].a = 1ll * In * Out;  
 			t[now].b = Out - In;
 			t[now].num = num;
 			return;
@@ -111,11 +111,13 @@ void run() {
 		++d[e[i][0]]; ++d[e[i][1]];
 	}
 	for (int i = 1; i <= m; ++i) {
-		int u = e[i][0], v = e[i][1];
-		if (d[u] <= S || (d[u] > S && d[v] > S)) {
+		int &u = e[i][0], &v = e[i][1];
+		if (d[u] > S && d[v] > S) {
 			G[u].push_back(v);
 			G[v].push_back(u);
-		} 
+		}
+		if (d[u] <= S) G[u].push_back(v);
+		if (d[v] <= S) G[v].push_back(u);
 	}	
 	seg.init(); 
 	ll res = 0;
@@ -124,6 +126,7 @@ void run() {
 		if (u > v) ++out[u], ++in[v];
 		else ++in[u], ++out[v];
 	}
+	//for (int i = 1; i <= n; ++i) cout << i << " " << in[i] << " " << out[i] << endl;
 	for (int i = 1; i <= n; ++i) res += get(i);
 	for (int u = 1; u <= n; ++u) if (d[u] <= S) {
 		for (auto &v : G[u]) if (d[v] > S) {
@@ -166,9 +169,11 @@ void run() {
 					res += get(v);
 				}
 			}
-			res -= seg.query(seg.rt[u], 1, n + m, 1, n + m);
+			res -= seg.query(seg.rt[u], 1, n + m, w[u] + 1, n + m);
+			if (_q == 2) cout << "# " << seg.query(seg.rt[u], 1, n + m, w[u] + 1, n + m) << endl;
 			seg.update(seg.rt[u], 1, n + m, w[u] + 1, n + m, 1);
-			res += seg.query(seg.rt[u], 1, n + m, 1, n + m);
+			if (_q == 2) cout << "# " << seg.query(seg.rt[u], 1, n + m, w[u] + 1, n + m) << endl;;
+			res += seg.query(seg.rt[u], 1, n + m, w[u] + 1, n + m);
 			w[u] = n + _q;
 		}
 		cout << res << endl;
