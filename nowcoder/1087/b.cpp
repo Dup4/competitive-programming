@@ -5,7 +5,7 @@ using namespace std;
 #define fi first
 #define se second
 #define endl "\n" 
-using ll = long long;
+using ll = unsigned long long;
 using pII = pair <int, int>;
 using pLL = pair <ll, ll>;
 using VI = vector <int>;
@@ -25,8 +25,8 @@ constexpr int N = 1e5 + 10;
 int n;
 map <int, int> mp;
 void run() {
-	mp.clear();
-	for (int i = 1, x; i <= n; ++i) {
+	mp.clear(); ll x;
+	for (int i = 1; i <= n; ++i) {
 		cin >> x;
 		++mp[x];
 	}

@@ -20,10 +20,16 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 1e5 + 10;
-int n; 
+constexpr int N = 2e5 + 10;
+int n, a[N]; 
 void run() {
-
+	int Max = 0; 
+	for (int i = 1; i <= n; ++i) cin >> a[i], chmax(Max, a[i]);
+	int G = 0;
+	for (int i = 1; i <= n; ++i) a[i] = Max - a[i], G = gcd(G, a[i]);
+	ll res = 0;
+	for (int i = 1; i <= n; ++i) res += a[i] / G;
+	cout << res << " " << G << endl;
 }
 
 int main() {
