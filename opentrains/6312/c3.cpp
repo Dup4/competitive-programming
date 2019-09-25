@@ -47,7 +47,7 @@ void work() {
 				tar = c;
 			}
 		}
-		assert(tar != -1);
+		assert(tar != -1);  
 		s[i] = tar + '0';
 		hs.add(s[i], i);
 		use[hs.get(i - n + 1, i)] = 1;
@@ -88,18 +88,25 @@ int main() {
 		hs.gao(); 
 		ch.clear(); ch.resize(m);
 		for (auto &it : ch) cin >> it; 
-		if (n == 1 || m == 1) { 
+		if (n == 1) { 
 			for (int i = 0; i < k; ++i) s[i] = ch[i] + '0'; 
 			s[k] = 0;
 			printf("%s\n", s);
 			continue; 
 		}
-		ll tot = 1;
-		for (int i = 1; i <= n; ++i) {
-			tot *= m;
-			if (tot > k * 4) break;
+		if (m == 1) {
+			assert(k == 1);
+			for (int i = 1; i <= n; ++i) s[i] = ch[0] + '0';
+			s[n + 1] = 0; 
+			printf("%s\n", s + 1);
+			continue;
 		}
-		if (tot > k * 4) work();
+		ll tot = 1;
+		for (int i = 1; i < n; ++i) {
+			tot *= m;
+			if (tot > k * 2) break;
+		}
+		if (tot > k * 2) work();
 		else {
 			id.clear(); fid.clear(); cnt_id = 0;
 			fid.push_back("");
@@ -116,6 +123,7 @@ int main() {
 			}
 			cnt_ans = 0;
 			DFS2(1);
+			assert(cnt_ans >= (n + k - (n - 1) - 1));
 			reverse(ans + 1, ans + 1 + cnt_ans);
 			ans[n + k - (n - 1)] = 0;
 			cout << fid[1];
