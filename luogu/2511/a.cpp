@@ -3,7 +3,7 @@ using namespace std;
 
 const int N = 5e4 + 10;
 const int mod = 1e4 + 7;
-int n, m, a[N], b[N], len, f[1010][N];  
+int n, m, a[N], b[N], len, f[2][N];  
 inline void add(int &x, int y) {
 	x += y;
 	while (x >= mod) x -= mod;
@@ -35,7 +35,8 @@ int main() {
 				l = mid + 1;
 		}
 		memset(f, 0, sizeof f);
-		f[0][0] = 1; f[0][1] = 2; f[1][1] = 1; 
+		f[0][0] = 1; 
+		for (int i = 1; i <= n; ++i) f[0][i] = 1; 
 		for (int i = 2; i < n; ++i) {
 			int l = 0, r = i - 1, pos = i - 1;
 			while (r - l >= 0) {
