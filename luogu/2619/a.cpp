@@ -46,7 +46,7 @@ int calc(int K) {
 	int cnt_e = 0; ll tot = 0; 
 	for (int i = 1; i <= m; ++i) {
 		int u = e[i].u, v = e[i].v, w = e[i].w;
-		if (find(u) == find(v)) continue;
+		if (find(u) == find(v) || (e[i].vis && cnt_e >= C)) continue;
 		cnt_e += e[i].vis;
 		merge(u, v);
 		tot += w;
@@ -62,17 +62,16 @@ int main() {
 			++u, ++v;
 			e[i] = Edge(u, v, w, vis ^ 1);
 		}
-		int l = -200, r = 100, res = -200;
-		while (r - l >= 0) { 
-			int mid = (l + r) >> 1;
+		int l = -200, r = 100;
+		while (l < r) { 
+			int mid = (l + r + 1) >> 1;
 			if (check(mid) < C) { 
 				r = mid - 1;
 			} else {
-				res = mid;
-				l = mid + 1;
+				l = mid;
 			}
 		}
-		printf("%d\n", calc(res));
+		printf("%d\n", calc(l));
 	}
 	return 0;
 }
