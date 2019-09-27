@@ -26,13 +26,12 @@ int check(int K) {
 	}
 	sort(e + 1, e + 1 + m);
 	memset(fa, 0, sizeof fa);
-	int cnt_e = 0; ll tot = 0; 
+	int cnt_e = 0;  
 	for (int i = 1; i <= m; ++i) {
-		int u = e[i].u, v = e[i].v, w = e[i].w;
+		int u = e[i].u, v = e[i].v;
 		if (find(u) == find(v)) continue;
 		cnt_e += e[i].vis; 
 		merge(u, v);
-		tot += w;
 	} 
 	return cnt_e;
 }
@@ -46,13 +45,12 @@ int calc(int K) {
 	int cnt_e = 0; ll tot = 0; 
 	for (int i = 1; i <= m; ++i) {
 		int u = e[i].u, v = e[i].v, w = e[i].w;
-		if (find(u) == find(v) || (e[i].vis && cnt_e >= C)) continue;
+		if (find(u) == find(v)) continue;
 		cnt_e += e[i].vis;
 		merge(u, v);
-		tot += w;
+		tot += w + e[i].k;
 	}
-	assert(cnt_e == C);
-	return tot;
+	return tot - C * K;
 }
 
 int main() {
@@ -62,16 +60,17 @@ int main() {
 			++u, ++v;
 			e[i] = Edge(u, v, w, vis ^ 1);
 		}
-		int l = -200, r = 100;
-		while (l < r) { 
-			int mid = (l + r + 1) >> 1;
-			if (check(mid) < C) { 
-				r = mid - 1;
+		int l = -200, r = 100, res = -200;  
+		while (r - l >= 0) {
+		    int mid = (l + r) >> 1;	
+			if (check(mid) >= C) {
+				l = mid + 1;
+				res = mid;
 			} else {
-				l = mid;
+				r = mid - 1;
 			}
 		}
-		printf("%d\n", calc(l));
+		printf("%d\n", calc(res));
 	}
 	return 0;
 }
