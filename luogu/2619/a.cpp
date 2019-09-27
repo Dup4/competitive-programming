@@ -48,11 +48,11 @@ int calc(db K) {
 	int cnt_e = 0; ll tot = 0; 
 	for (int i = 1; i <= m; ++i) {
 		int u = e[i].u, v = e[i].v, w = e[i].w;
-		if (find(u) == find(v)) continue;
+		if (find(u) == find(v) || (e[i].vis && cnt_e >= C)) continue;
 		cnt_e += e[i].vis;
 		merge(u, v);
 		tot += w;
-	} 
+	}
 	return tot;
 }
 
