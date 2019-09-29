@@ -29,7 +29,7 @@ void gettop(int u, int tp) {
 }
 
 void gettree() {
-	G.clear(); G.resize(_n / 2 + 10);
+	G.clear(); G.resize(_n + 10);
 	m = 0;
 	int rt = 0; *in = 0; 
 	deep[0] = 0; 
@@ -98,15 +98,17 @@ using pII = pair <int, int>;
 struct RMQ_F {
 	pII Max[N][M];
 	int mm[N];
-	pII max(pII x, pII y) {
-		if (x.fi != y.fi) {
-			if (x.fi > y.fi) return x;
-			return y;
-		}
-		if (x.se > y.se) return x;
-		return y;
-	}
-	void init(int n, int *b) {
+	pII function: max(pII x, pII y); 
+//	pII max(pII x, pII y) {
+//		if (x.fi != y.fi) {
+//			if (x.fi > y.fi) return x;
+//			return y;
+//		}
+//		if (x.se < y.se) return x;
+//		return y;
+//	}
+	void init(int n, int *b, function _max) {
+		max = _max; 
 		mm[0] = -1;
 		for (int i = 1; i <= n; ++i) {
 			mm[i] = ((i & (i - 1)) == 0) ? mm[i - 1] + 1 : mm[i - 1];
@@ -132,7 +134,7 @@ struct RMQ_G {
 			if (x.fi > y.fi) return x;
 			return y;
 		} 
-		if (x.se < y.se) return x;
+		if (x.se > y.se) return x;
 		return y;
 	}
 	void init(int n, int *b) {
@@ -157,7 +159,7 @@ int getin(int l, int r) {
 	int pr = preg[r + 1], pl = rmq_g.queryMax(l, r);
 //	cout << pl << " " << pr << endl;
 	if (pr < l) return 0;
-	int u = in[_a[pl]], v = in[_a[pr]];
+	int u = _a[pl], v = _a[pr];
 	return query(u, v, seg[0]);
 }
 
@@ -165,7 +167,7 @@ int getout(int l, int r) {
 	int pl = nxf[l - 1], pr = rmq_f.queryMax(l, r);
 //	cout << pl << " " << pr << " " << l << " " << r << endl;
 	if (pl > r) return 0;
-	int u = in[_a[pl]], v = in[_a[pr]];
+	int u = _a[pl], v = _a[pr];
 	return query(u, v, seg[1]); 
 }
 
@@ -246,7 +248,12 @@ int main() {
 	//	for (int i = 1; i <= _n; ++i) printf("%d%c", nxf[i], " \n"[i == _n]);
 	//	for (int i = 1; i <= _n; ++i) printf("%d%c", g[i], " \n"[i == _n]);
 	//	for (int i = 1; i <= _n; ++i) printf("%d%c", preg[i], " \n"[i == _n]);
-		rmq_f.init(_n, f); rmq_g.init(_n, g);
+		rmq_f.init(_n, f, [&](pII x, pII y) {
+			if (x.fi != y.fi) return max(x, y);
+			if (x.se < y.se) return x;
+			return y;			
+		}); 
+		rmq_g.init(_n, g);
 		int op, x, y;
 		while (q--) {
 			scanf("%d%d%d", &op, &x, &y);
