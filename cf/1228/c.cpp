@@ -21,28 +21,43 @@ template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-constexpr int INF = 0x3f3f3f3f;
-int n, m, f[1 << 12]; 
+ll x, n, bit[110];
+inline ll ceil(ll x, ll y) {
+	return (x + y - 1) / y;
+}
 void run() {
-	memset(f, 0x3f, sizeof f);
-	f[0] = 0;
-	for (int i = 1; i <= m; ++i) {
-		int a, b; cin >> a >> b;
-		int mask = 0;
-		for (int j = 1, x; j <= b; ++j) {
-			cin >> x;
-			mask |= (1 << (x - 1));
-		}
-		for (int j = (1 << n) - 1; j >= 0; --j) 
-			f[j | mask] = min(f[j | mask], f[j] + a);
+	vector <int> fac;
+	for (ll i = 2; i * i <= x; ++i) {
+		if (x % i == 0) fac.push_back(i);
+		while (x % i == 0) x /= i;
 	}
-	cout << (f[(1 << n) - 1] == INF ? -1 : f[(1 << n) - 1]) << endl;
+	if (x != 1) fac.push_back(x);
+	ll res = 1;
+	for (auto &it : fac) {
+		if (it > n) continue;
+		int k = 1; bit[1] = it;
+		for (int i = 2; ; ++i) {
+			if (bit[i - 1] > ceil(n, it)) { 
+				k = i - 1;
+				break; 
+			}		
+			bit[i] = bit[i - 1] * it;
+		}
+		ll tot = 0;
+		for (int i = k; i >= 1; --i) {
+			ll p = n / bit[i];
+			p -= tot;
+			res = res * qpow(bit[i] % mod, p % (mod - 1)) % mod;
+			tot += p;
+		}
+	}
+	out(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> m) run();
+	while (cin >> x >> n) run();
 	return 0;
 }

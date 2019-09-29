@@ -95,18 +95,12 @@ int query(int u, int v, SEG &seg) {
 using pII = pair <int, int>;
 #define fi first
 #define se second
-struct RMQ_F {
+struct RMQ {
 	pII Max[N][M];
 	int mm[N];
-	pII max(pII x, pII y) {
-		if (x.fi != y.fi) {
-			if (x.fi > y.fi) return x;
-			return y;
-		}
-		if (x.se < y.se) return x;
-		return y;
-	}
-	void init(int n, int *b) {
+	function<pII(pII, pII)> max;
+	void init(int n, int *b, const function<pII(pII, pII)> &_max) {
+		max = _max;
 		mm[0] = -1;
 		for (int i = 1; i <= n; ++i) {
 			mm[i] = ((i & (i - 1)) == 0) ? mm[i - 1] + 1 : mm[i - 1];
@@ -122,36 +116,7 @@ struct RMQ_F {
 		int k = mm[y - x + 1];
 		return max(Max[x][k], Max[y - (1 << k) + 1][k]).se; 
 	}
-}rmq_f;
-
-struct RMQ_G {
-	pII Max[N][M];
-	int mm[N];
-	pII max(pII x, pII y) {
-		if (x.fi != y.fi) {
-			if (x.fi > y.fi) return x;
-			return y;
-		} 
-		if (x.se > y.se) return x;
-		return y;
-	}
-	void init(int n, int *b) {
-		mm[0] = -1;
-		for (int i = 1; i <= n; ++i) {
-			mm[i] = ((i & (i - 1)) == 0) ? mm[i - 1] + 1 : mm[i - 1];
-			Max[i][0] = pII(b[i], i);
-		}
-		for (int j = 1; j <= mm[n]; ++j) {
-			for (int i = 1; i + (1 << j) - 1 <= n; ++i) {
-				Max[i][j] = max(Max[i][j - 1], Max[i + (1 << (j - 1))][j - 1]);
-			}
-		}
-	}
-	int queryMax(int x, int y) {
-		int k = mm[y - x + 1];
-		return max(Max[x][k], Max[y - (1 << k) + 1][k]).se; 
-	}
-}rmq_g; 
+}rmq_f, rmq_g;
 
 int getin(int l, int r) {
 	int pr = preg[r + 1], pl = rmq_g.queryMax(l, r);
@@ -200,9 +165,6 @@ int main() {
 		for (int i = 1; i <= _n; ++i) f[i] = f[i - 1] + (a[i] == 1 ? 1 : -1);
 		for (int i = _n; i >= 1; --i) g[i] = g[i + 1] + (a[i] == 1 ? -1 : 1);
 		gettree();
-	//	cout << pre << " " << n << " " << suf << endl;
-	//	for (int i = 1; i <= _n; ++i) 
-	//		printf("%d %d %d\n", a[i], _a[i], b[i]);
 		seg[0].build(1, 1, m); seg[1].build(1, 1, m);
 		for (int i = 1; i <= _n; ++i) {
 			seg[a[i]].update(1, 1, m, in[_a[i]], b[i]);
@@ -242,11 +204,22 @@ int main() {
 			while (*sta && g[i] > g[sta[*sta]]) --*sta;
 			sta[++*sta] = i;
 		}
-	//	for (int i = 1; i <= _n; ++i) printf("%d%c", f[i], " \n"[i == _n]);
-	//	for (int i = 1; i <= _n; ++i) printf("%d%c", nxf[i], " \n"[i == _n]);
-	//	for (int i = 1; i <= _n; ++i) printf("%d%c", g[i], " \n"[i == _n]);
-	//	for (int i = 1; i <= _n; ++i) printf("%d%c", preg[i], " \n"[i == _n]);
-		rmq_f.init(_n, f); rmq_g.init(_n, g);
+		rmq_f.init(_n, f, [&](pII x, pII y){
+			if (x.fi != y.fi) {
+				if (x.fi > y.fi) return x;
+				return y;
+			}
+			if (x.se < y.se) return x;
+			return y;
+		}); 
+		rmq_g.init(_n, g, [&](pII x, pII y){
+			if (x.fi != y.fi) {
+				if (x.fi > y.fi) return x;
+				return y;
+			}
+			if (x.se > y.se) return x;
+			return y;
+		});
 		int op, x, y;
 		while (q--) {
 			scanf("%d%d%d", &op, &x, &y);

@@ -5,6 +5,7 @@ using namespace std;
 #define se second
 #define endl "\n" 
 using ll = long long;
+using ull = unsigned long long;
 using pII = pair <int, int>;
 using pLL = pair <ll, ll>;
 using VI = vector <int>;
@@ -20,23 +21,34 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 1e5 + 10;
-constexpr int INF = 0x3f3f3f3f;
-int n, m, f[1 << 12]; 
+constexpr int N = 3e5 + 10;
+int n, m, ans[N]; 
+mt19937 rnd(time(0)); 
+ull f[N], g[N];
+map <ull, vector<int>> mp;
 void run() {
-	memset(f, 0x3f, sizeof f);
-	f[0] = 0;
-	for (int i = 1; i <= m; ++i) {
-		int a, b; cin >> a >> b;
-		int mask = 0;
-		for (int j = 1, x; j <= b; ++j) {
-			cin >> x;
-			mask |= (1 << (x - 1));
-		}
-		for (int j = (1 << n) - 1; j >= 0; --j) 
-			f[j | mask] = min(f[j | mask], f[j] + a);
+	for (int i = 1; i <= n; ++i) f[i] = rnd();
+	memset(g, 0, sizeof g);
+	mp.clear();
+	for (int i = 1, u, v; i <= m; ++i) {
+		cin >> u >> v;
+		g[u] ^= f[v];
+		g[v] ^= f[u];
+	}	
+	for (int i = 1; i <= n; ++i) {
+		mp[g[i]].push_back(i);
+		if (mp.size() > 3) return out(-1);
 	}
-	cout << (f[(1 << n) - 1] == INF ? -1 : f[(1 << n) - 1]) << endl;
+	if (mp.size() != 3) return out(-1);
+	int cnt = 0;
+	for (auto &it : mp) {
+		++cnt;
+		for (auto &u : it.second) {
+			ans[u] = cnt;
+		}
+	}
+	for (int i = 1; i <= n; ++i)
+		cout << ans[i] << " \n"[i == n];
 }
 
 int main() {

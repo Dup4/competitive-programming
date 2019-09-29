@@ -20,29 +20,37 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 1e5 + 10;
-constexpr int INF = 0x3f3f3f3f;
-int n, m, f[1 << 12]; 
+constexpr int N = 300 + 10;
+int n, K; ll f[N][N], C[N][N];
 void run() {
-	memset(f, 0x3f, sizeof f);
-	f[0] = 0;
-	for (int i = 1; i <= m; ++i) {
-		int a, b; cin >> a >> b;
-		int mask = 0;
-		for (int j = 1, x; j <= b; ++j) {
-			cin >> x;
-			mask |= (1 << (x - 1));
-		}
-		for (int j = (1 << n) - 1; j >= 0; --j) 
-			f[j | mask] = min(f[j | mask], f[j] + a);
+	if (n == 1 || K == 1) return out(1);
+	memset(f, 0, sizeof f);
+	for (int i = 1; i <= n; ++i) {
+		f[1][i] = C[n][i] * qpow(K - 1, n - i) % mod;
 	}
-	cout << (f[(1 << n) - 1] == INF ? -1 : f[(1 << n) - 1]) << endl;
+	for (int i = 2; i <= n; ++i) {
+		for (int j = 1; j <= n; ++j) { 
+			ll p = qpow(K, j);
+			for (int k = j; k <= n; ++k) {
+				if (k == j) chadd(f[i][k], f[i - 1][j] * (p + mod - qpow(K - 1, j)) % mod * qpow(K - 1, n - k) % mod);
+				else chadd(f[i][k], f[i - 1][j] * p % mod * C[n - j][k - j] % mod * qpow(K - 1, n - k) % mod); 
+			}
+		}
+	}
+	out(f[n][n]); 
 }
 
 int main() {
+	memset(C, 0, sizeof C);
+	C[0][0] = 1;
+	for (int i = 1; i < N; ++i) {
+		C[i][0] = C[i][i] = 1;
+		for (int j = 1; j < i; ++j)
+			C[i][j] = (C[i - 1][j] + C[i - 1][j - 1]) % mod;
+	}
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> m) run();
+	while (cin >> n >> K) run();
 	return 0;
 }

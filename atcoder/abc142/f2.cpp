@@ -17,26 +17,65 @@ inline int rd() { int x; cin >> x; return x; }
 template <class T> inline void rd(T &x) { cin >> x; }
 template <class T> inline void rd(vector <T> &vec) { for (auto &it : vec) cin >> it; }
 template <class T> inline void out(T s) { cout << s << "\n"; }
-template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
+template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-constexpr int INF = 0x3f3f3f3f;
-int n, m, f[1 << 12]; 
-void run() {
-	memset(f, 0x3f, sizeof f);
-	f[0] = 0;
-	for (int i = 1; i <= m; ++i) {
-		int a, b; cin >> a >> b;
-		int mask = 0;
-		for (int j = 1, x; j <= b; ++j) {
-			cin >> x;
-			mask |= (1 << (x - 1));
+int n, m;
+vector <vector<int>> G;
+int sta[N], vis[N], use[N], d_in[N], d_out[N];
+bool Insta[N];
+void check(vector <int> &vec) {
+	for (auto &it : vec) d_in[it] = d_out[it] = 0, use[it] = 1;
+	for (auto &u : vec) {
+		for (auto &v : G[u]) {
+			if (use[v]) 
+				++d_out[u], ++d_in[v];
 		}
-		for (int j = (1 << n) - 1; j >= 0; --j) 
-			f[j | mask] = min(f[j | mask], f[j] + a);
 	}
-	cout << (f[(1 << n) - 1] == INF ? -1 : f[(1 << n) - 1]) << endl;
+	for (auto &u : vec) if (d_in[u] != 1 || d_out[u] != 1) {
+		for (auto &it : vec) use[it] = 0;
+		return;
+	}
+	out(vec.size()); out(vec);
+	exit(0);
+}
+void Tarjan(int u) {
+	vis[u] = 1;
+	sta[++*sta] = u;
+	Insta[u] = true;
+	for (auto &v : G[u]) { 
+		if (!Insta[v]) {
+			Tarjan(v);
+		} else {
+			vector <int> vec;
+			for (int i = *sta; i >= 1; --i) {
+				vec.push_back(sta[i]);
+				if (sta[i] == v) break;
+			}
+			check(vec);
+		}
+	}
+	(*sta)--;
+	Insta[u] = false; 
+}
+
+
+void run() {
+	G.clear(); G.resize(n + 1);
+	for (int i = 1, u, v; i <= m; ++i) {
+		cin >> u >> v;
+		G[u].push_back(v);
+	}
+	memset(vis, 0, sizeof vis);
+	memset(use, 0, sizeof use);
+	for (int i = 1; i <= n; ++i) {
+		if (!vis[i]) {
+			*sta = 0;
+			Tarjan(i);
+		}
+	}
+	out(-1);
 }
 
 int main() {

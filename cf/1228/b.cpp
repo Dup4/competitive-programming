@@ -20,23 +20,37 @@ template <class T> inline void out(T s) { cout << s << "\n"; }
 template <class T> inline void out(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 1e5 + 10;
-constexpr int INF = 0x3f3f3f3f;
-int n, m, f[1 << 12]; 
+constexpr int N = 1e3 + 10;
+int n, m, r[N], c[N], G[N][N]; 
 void run() {
-	memset(f, 0x3f, sizeof f);
-	f[0] = 0;
-	for (int i = 1; i <= m; ++i) {
-		int a, b; cin >> a >> b;
-		int mask = 0;
-		for (int j = 1, x; j <= b; ++j) {
-			cin >> x;
-			mask |= (1 << (x - 1));
+	memset(G, -1, sizeof G);
+	for (int i = 1; i <= n; ++i) cin >> r[i];
+	for (int i = 1; i <= m; ++i) cin >> c[i];
+	for (int i = 1; i <= n; ++i) {
+		for (int j = 1; j <= r[i]; ++j) {
+			G[i][j] = 1;
 		}
-		for (int j = (1 << n) - 1; j >= 0; --j) 
-			f[j | mask] = min(f[j | mask], f[j] + a);
+		G[i][r[i] + 1] = 0;
 	}
-	cout << (f[(1 << n) - 1] == INF ? -1 : f[(1 << n) - 1]) << endl;
+	for (int j = 1; j <= m; ++j) {
+		for (int i = 1; i <= c[j]; ++i) {
+			if (G[i][j] == 0) {
+				out(0);
+				return;
+			}
+			G[i][j] = 1;
+		}
+		if (G[c[j] + 1][j] == 1) return out(0);
+		G[c[j] + 1][j] = 0;
+	}
+	ll res = 1;
+	for (int i = 1; i <= n; ++i)
+		for (int j = 1; j <= m; ++j) {
+			if (G[i][j] == -1) {
+				res = res * 2 % mod;
+			}
+		}
+	out(res);
 }
 
 int main() {
