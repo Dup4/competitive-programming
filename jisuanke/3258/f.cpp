@@ -95,9 +95,17 @@ int query(int u, int v, SEG &seg) {
 using pII = pair <int, int>;
 #define fi first
 #define se second
-struct RMQ {
+struct RMQ_F {
 	pII Max[N][M];
 	int mm[N];
+	pII max(pII x, pII y) {
+		if (x.fi != y.fi) {
+			if (x.fi > y.fi) return x;
+			return y;
+		}
+		if (x.se > y.se) return x;
+		return y;
+	}
 	void init(int n, int *b) {
 		mm[0] = -1;
 		for (int i = 1; i <= n; ++i) {
@@ -114,7 +122,36 @@ struct RMQ {
 		int k = mm[y - x + 1];
 		return max(Max[x][k], Max[y - (1 << k) + 1][k]).se; 
 	}
-}rmq_f, rmq_g; 
+}rmq_f;
+
+struct RMQ_G {
+	pII Max[N][M];
+	int mm[N];
+	pII max(pII x, pII y) {
+		if (x.fi != y.fi) {
+			if (x.fi > y.fi) return x;
+			return y;
+		} 
+		if (x.se < y.se) return x;
+		return y;
+	}
+	void init(int n, int *b) {
+		mm[0] = -1;
+		for (int i = 1; i <= n; ++i) {
+			mm[i] = ((i & (i - 1)) == 0) ? mm[i - 1] + 1 : mm[i - 1];
+			Max[i][0] = pII(b[i], i);
+		}
+		for (int j = 1; j <= mm[n]; ++j) {
+			for (int i = 1; i + (1 << j) - 1 <= n; ++i) {
+				Max[i][j] = max(Max[i][j - 1], Max[i + (1 << (j - 1))][j - 1]);
+			}
+		}
+	}
+	int queryMax(int x, int y) {
+		int k = mm[y - x + 1];
+		return max(Max[x][k], Max[y - (1 << k) + 1][k]).se; 
+	}
+}rmq_g; 
 
 int getin(int l, int r) {
 	int pr = preg[r + 1], pl = rmq_g.queryMax(l, r);
