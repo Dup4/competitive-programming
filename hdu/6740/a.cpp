@@ -36,13 +36,12 @@ int main() {
 		scanf("%s", s + 1);
 		get();
 		reverse(t, t + n); t[n] = 0;
-		cout << t << endl;
 		kmp.get_Next(t);
 		ll res = a - b; 
 		for (int i = 1; i < n; ++i) {
 			ll p = i + 1;
-			cout << i << " " << kmp.Next[i] << endl;
-			ll l = i - kmp.Next[i] + 1;
+		//	cout << i << " " << kmp.Next[i + 1] << endl;
+			ll l = p - kmp.Next[i + 1];
 			res = max(res, a * p - b * l);
 		}	
 		printf("%lld\n", res);
