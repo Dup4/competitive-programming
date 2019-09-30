@@ -33,7 +33,7 @@ int main() {
 			f[i] = C(n, A) * C(m, i) % mod * qpow(p, m - i) % mod;
 		}
 		ll ans = 0; 
-		for (int i = B; i <= m; ++i) ans = (ans + f[i]) % mod;
+		for (int i = B; i < m; ++i) ans = (ans + f[i]) % mod;
 		printf("%lld\n", ans);
 	}
 	return 0;
