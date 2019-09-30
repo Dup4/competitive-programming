@@ -24,24 +24,21 @@ constexpr int N = 300 + 10;
 int n, K; ll f[N][N], C[N][N];
 void run() {
 	if (n == 1 || K == 1) return out(1);
-	memset(f, 0, sizeof f);
-	for (int i = 1; i <= n; ++i) {
-		f[1][i] = C[n][i] * qpow(K - 1, n - i) % mod;
-	}
-	for (int i = 2; i <= n; ++i) {
-		for (int j = 1; j <= n; ++j) { 
-			ll p = qpow(K, j);
-			for (int k = j; k <= n; ++k) {
-				if (k == j) chadd(f[i][k], f[i - 1][j] * (p + mod - qpow(K - 1, j)) % mod * qpow(K - 1, n - k) % mod);
-				else chadd(f[i][k], f[i - 1][j] * p % mod * C[n - j][k - j] % mod * qpow(K - 1, n - k) % mod); 
-			}
+	ll ans = 0;
+	//枚举有i行，j列没有1，容斥
+	for (int i = 0; i <= n; ++i) {
+		for (int j = 0; j <= n; ++j) {
+			ll ch = i * n + j * n - i * j;
+			ll ex = n * n - ch;
+			ll now = C[n][i] * C[n][j] % mod * qpow(K - 1, ch) % mod * qpow(K, ex) % mod;
+			if ((i + j) & 1) chadd(ans, mod - now);
+			else chadd(ans, now);
 		}
 	}
-	out(f[n][n]); 
+	out(ans);
 }
 
 int main() {
-	memset(C, 0, sizeof C);
 	C[0][0] = 1;
 	for (int i = 1; i < N; ++i) {
 		C[i][0] = C[i][i] = 1;
