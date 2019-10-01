@@ -21,16 +21,21 @@ template <class T> inline void pt(T s) { cout << s << "\n"; }
 template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 1e5 + 10;
-int n; 
+constexpr int N = 1e6 + 10;
+int n, k; ll D = 1e18, fac[N], inv[N]; 
 void run() {
-
+	if (k > n / 2) k = n - k; 
+	
+	
 }
 
 int main() {
+	fac[0] = 1;
+	for (int i = 1; i < N; ++i) fac[i] = fac[i - 1] * i;
+	
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> k) run();
 	return 0;
 }
