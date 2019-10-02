@@ -29,9 +29,9 @@ int main() {
 		}
 		int pos = -1;
 		for (int i = 0; i < q; ++i) {
-			if (cnt[i][0] >= 70) {
+			if (cnt[i][0] >= 85) {
 				S[i] = T[i] = 0;
-			} else if (cnt[i][1] >= 70) {
+			} else if (cnt[i][1] >= 85) {
 				S[i] = T[i] = 1;
 			} else {
 				vis[i] = 1; 
