@@ -21,50 +21,66 @@ template <class T> inline void pt(T s) { cout << s << "\n"; }
 template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-const int N = 1e5 + 10, M = 28;
-int n, m, q; 
-struct node {
-	int ls, rs, sum; 
-	node() {
-		ls = rs = sum = 0;
+const int N = 1e5 + 10;
+int n, m, q, num[2]; 
+set <pII> se[2];
+bool cross(pII x, pII y) {
+	if ((x.fi >= y.fi && x.fi <= y.se) || (x.se >= y.fi && x.se <= y.se) || (y.fi >= x.fi && y.fi <= x.se) || (y.se >= x.fi && y.se <= x.se))
+		return true;
+	return false;
+}
+void ins(int id, int l, int r) {
+	pII t = pII(l, r);
+	if (se[id].empty()) {
+		se[id].insert(t);
+		num[id] += r - l + 1;
+	} else {
+		auto pos = se[id].lower_bound(t);
+		vector <pII> vec, tmp;
+		if (pos != se[id].begin()) {
+			--pos;
+		}
+		while (pos != se[id].end()) {
+			if (cross(*pos, t)) {
+				vec.push_back(*pos);
+			}
+			if ((*pos).fi > t.se) break;
+			++pos;
+		}
+		for (auto &it : vec) {
+			se[id].erase(it);
+			num[id] -= it.se - it.fi + 1;
+		}
+		vec.push_back(t);
+		sort(vec.begin(), vec.end(), [&] (pII x, pII y) {
+			if (x.fi == y.fi) return x.se > y.se;
+			return x.fi < y.fi;		
+		});
+		for (auto &it : vec) {
+			if (tmp.empty())
+				tmp.push_back(it);
+			else {
+				if (it.fi <= tmp.end()[-1].se) chmax(tmp.end()[-1].se, it.se);
+				else tmp.push_back(it);
+			}
+		}
+		for (auto &it : tmp) {
+			num[id] += it.se - it.fi + 1;
+			se[id].insert(it);
+		}
 	}
-}t[N * M];  
-int tot, rt[2];  
-inline int newnode() {
-	++tot;
-	assert(tot < N * M);
-	t[tot] = node();
-	return tot;
-}
-inline void init() { tot = 0; rt[0] = newnode(); rt[1] = newnode(); }
-void up(int id) {
-	int ls = t[id].ls, rs = t[id].rs;
-	t[id].sum = 0;
-	if (ls) t[id].sum += t[ls].sum;
-	if (rs) t[id].sum += t[rs].sum;
-}
-void update(int &id, int l, int r, int ql, int qr) {
-	if (!id) id = newnode();
-	if (l >= ql && r <= qr) {
-		t[id].sum = r - l + 1;
-		return;
-	}
-	int mid = (l + r) >> 1;
-	if (ql <= mid) update(t[id].ls, l, mid, ql, qr);
-	if (qr > mid) update(t[id].rs, mid + 1, r, ql, qr);
-	up(id);
-}
+} 
 void run() {
-	init(); 
-	ll a = 0, b = 0;
+	num[0] = num[1] = 0;
+	se[0].clear(); se[1].clear();
+	ll a = 0, b = 0; 
 	for (int i = 1, op, l, r; i <= q; ++i) {
 		cin >> op >> l >> r;
-		update(rt[op - 1], 1, 1000000000, l, r);
-		a = t[rt[0]].sum;
-		b = t[rt[1]].sum;
+		ins(op - 1, l, r);
+		a = num[0], b = num[1];
 		ll res = 1ll * n * m;
 		if (a == 0) {
-			res -= b * (n - 1);
+			res -= b * (n - 1); 
 		} else if (b == 0) {
 			res -= a * (m - 1);
 		} else {
