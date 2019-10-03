@@ -6,6 +6,7 @@ const int N = 2e5 + 10;
 const ll M = 1e6;
 int n, m; ll mod, lst;
 
+//6 digits
 ll getdb() {
 	char s[30];
 	scanf("%s", s);
