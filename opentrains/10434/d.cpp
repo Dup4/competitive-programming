@@ -24,7 +24,7 @@ bool Union(int x, int y) {
 	for (auto &v : vis[x]) {
 		vis[y][v.first] = 1;
 	}
-//	if (cant[x].size() > cant[y].size()) swap(cant[x], cant[y]);
+	if (cant[x].size() > cant[y].size()) swap(cant[x], cant[y]);
 	for (auto &v : cant[x]) {
 		cant[y][v.first] = 1;
 	}
