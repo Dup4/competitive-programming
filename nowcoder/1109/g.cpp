@@ -22,8 +22,39 @@ template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout <
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-int n; 
+int n; ll res;  
+pII a[N];
+inline void scan(pII &a) {
+	int l, d; string s;
+	cin >> l >> s >> d;
+	if (s[0] == '(') res += 1ll * l * d, d = -d;
+	a = pII(l, d);
+}
 void run() {
+	res = 0;
+	for (int i = 1; i <= n; ++i) scan(a[i]);
+	ll tot = 0, has = 0; 
+	priority_queue <pII, vector<pII>, greater<pII>> pq;
+	for (int i = 1; i <= n; ++i) {
+		tot += a[i].fi;
+		ll need = ((tot + 1) / 2) - has;
+	//	cout << need << endl;
+		has += need;
+		pq.push(pII(a[i].se, a[i].fi));
+		while (!pq.empty()) {
+			pII t = pq.top(); pq.pop();
+			if (t.se >= need) {
+				t.se -= need;
+				res += 1ll * need * t.fi;
+				pq.push(t);
+				break; 
+			} else {
+				need -= t.se; 
+				res += 1ll * t.fi * t.se;
+			}
+		}	
+	}
+	pt(res); 
 }
 
 int main() {

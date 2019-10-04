@@ -22,14 +22,26 @@ template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout <
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-int n; 
+int n, m; ll a[N], C, S[N];
 void run() {
+	*S = 0;
+	for (int i = 1; i <= n; ++i) {
+		cin >> a[i];
+		S[i] = S[i - 1] + a[i];
+	} 
+	sort(S, S + 1 + n);
+	ll res = 0, sum = 0;
+	for (int i = 0; i < m; ++i) {
+		sum += S[n - i] - S[i] - C;
+		chmax(res, sum);
+	}
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> m >> C) run();
 	return 0;
 }
