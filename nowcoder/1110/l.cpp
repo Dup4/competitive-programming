@@ -21,35 +21,32 @@ template <class T> inline void pt(T s) { cout << s << "\n"; }
 template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 2e5 + 10;
-int n, m, x[N]; ll S[N]; 
-inline void add(int l, int r, int v) {
-	if (l > r) return;
-	S[l] += v;
-	S[r + 1] -= v;
-}
+constexpr int N = 1e5 + 10;
+int n, a[N]; ll inv6, S[3][N]; 
 void run() {
-	memset(S, 0, sizeof S); 
-	for (int i = 1; i <= m; ++i) cin >> x[i];
-	for (int i = 1; i < m; ++i) {
-		int a = x[i], b = x[i + 1];
-		if (a == b) continue;
-		if (a > b) swap(a, b);
-		add(1, a - 1, b - a);
-		add(b + 1, n, b - a);
-		add(a + 1, b - 1, b - a - 1);
-		add(a, a, b - 1);
-		add(b, b, a);
+	for (int i = 1; i <= n; ++i) cin >> a[i];
+	for (int i = 0; i < 3; ++i) {
+		S[i][0] = 0;
+		for (int j = 1; j <= n; ++j) {
+			S[i][j] = S[i][j - 1] + qpow(a[j], i + 1);
+			S[i][j] %= mod;
+		}
 	}
-	for (int i = 1; i <= n; ++i) S[i] += S[i - 1];
-	for (int i = 1; i <= n; ++i)
-		cout << S[i] << " \n"[i == n];
+	ll res = 0;
+	for (int i = 1; i + 3 <= n; ++i) {
+		ll t = 1ll * a[i] * inv6 % mod;
+		chadd(res, t * 2 % mod * (S[2][n] - S[2][i] + mod) % mod);
+		chadd(res, mod - t * 3 % mod * (S[0][n] - S[0][i] + mod) % mod * (S[1][n] - S[1][i] + mod) % mod);
+		chadd(res, t * qpow((S[0][n] - S[0][i] + mod) % mod, 3) % mod);
+	}
+	pt(res);
 }
 
 int main() {
+	inv6 = qpow(6, mod - 2);
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> m) run();
+	while (cin >> n) run();
 	return 0;
 }

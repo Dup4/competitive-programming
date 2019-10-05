@@ -21,35 +21,40 @@ template <class T> inline void pt(T s) { cout << s << "\n"; }
 template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 2e5 + 10;
-int n, m, x[N]; ll S[N]; 
-inline void add(int l, int r, int v) {
-	if (l > r) return;
-	S[l] += v;
-	S[r + 1] -= v;
-}
+constexpr int N = 2e6 + 10, D = (1 << 20) - 1;
+int n, f[N]; char s[N]; 
 void run() {
-	memset(S, 0, sizeof S); 
-	for (int i = 1; i <= m; ++i) cin >> x[i];
-	for (int i = 1; i < m; ++i) {
-		int a = x[i], b = x[i + 1];
-		if (a == b) continue;
-		if (a > b) swap(a, b);
-		add(1, a - 1, b - a);
-		add(b + 1, n, b - a);
-		add(a + 1, b - 1, b - a - 1);
-		add(a, a, b - 1);
-		add(b, b, a);
+	n = strlen(s + 1);
+	memset(f, 0, sizeof f);
+	for (int i = n; i >= 1; --i) {
+		int mask = 0, num = 0;
+		for (int j = i; j >= 1; --j) {
+			int c = s[j] - 'a';
+			if (((mask >> c) & 1) == 0) {
+				mask |= 1 << c; 
+				++num;
+				chmax(f[mask], num);
+			} else break;
+		}
 	}
-	for (int i = 1; i <= n; ++i) S[i] += S[i - 1];
-	for (int i = 1; i <= n; ++i)
-		cout << S[i] << " \n"[i == n];
+	for (int i = 0; i < 20; ++i) {
+		for (int j = 0; j <= D; ++j) {
+			if ((j >> i) & 1) {
+				chmax(f[j], f[j ^ (1 << i)]); 
+			}
+		}
+	}	
+	int res = 0;
+	for (int i = 0; i <= D; ++i) {
+		chmax(res, f[i] + f[D ^ i]);
+	}
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> m) run();
+	while (cin >> (s + 1)) run();
 	return 0;
 }
