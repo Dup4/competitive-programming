@@ -21,27 +21,29 @@ template <class T> inline void pt(T s) { cout << s << "\n"; }
 template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout << it << " "; cout << endl; } 
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-constexpr int N = 1e5 + 10;
-int n;
-
+constexpr int N = 1e6 + 10;
+using B = bitset <2016>; 
+int n, id[N], r, a[N];
+B F;
 void run() {
-	
+	for (int i = 1; i <= n; ++i) cin >> a[i], a[i] = id[a[i]];
+	F.reset();
+	F[0] = 1; 
+	for (int i = 1, x; i <= n; ++i) {
+		x = a[i];
+		F = F ^ (F << x) ^ (F >> (2016 - x));
+	}
+	pt(F[id[r]]);
 }
 
 int main() {
-	for (int i = 0; i < 2017; ++i) {
-		int base = i;
-		int cnt = 0;
-		while (base) {
-			++cnt;
-			base += i;
-			base %= 2017;
-		}
-		cout << i << " " << cnt << endl;
+	for (int i = 0, f = 1; i < 2016; ++i) {
+		id[f] = i;
+	   	f = f * 5 % 2017;	
 	}
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> r) run();
 	return 0;
 }
