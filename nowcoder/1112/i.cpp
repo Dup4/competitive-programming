@@ -23,9 +23,79 @@ template <class T> inline void pt(const vector <T> &vec) { for (auto &it : vec) 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-int n; 
+int n, c[N], cnt[N][2], ans[N], res; 
+vector <vector<pII>> G; 
+int fa[N], sze[N], son[N], son_id[N], big[N]; 
+void dfs(int u) {
+	sze[u] = 1; son[u] = 0;
+	for (auto &it : G[u]) {
+		int v = it.fi;
+		if (v == fa[u]) continue;
+		fa[v] = u;
+		dfs(v);
+		sze[u] += sze[v];
+		if (!son[u] || sze[v] > sze[son[u]]) {
+			son[u] = v;
+			son_id[u] = it.se;
+		}
+	}
+}
+void add(int u, int f) {
+	if (cnt[c[u]][0] && cnt[c[u]][1]) --res;
+	if (f) {
+		--cnt[c[u]][0];
+		++cnt[c[u]][1];
+	} else {
+		++cnt[c[u]][0];
+		--cnt[c[u]][1];
+	}
+	if (cnt[c[u]][0] && cnt[c[u]][1]) ++res;
+}
+void up(int u, int f) {
+	add(u, f);
+	for (auto &it : G[u]) {
+		int v = it.fi;
+		if (big[v] || v == fa[u]) continue;
+		up(v, f);
+	}
+}
+void gao(int u, int id) {
+	for (auto &it : G[u]) {
+		int v = it.fi;
+		if (v == fa[u] || v == son[u]) continue;
+		gao(v, it.se);
+	}
+	if (son[u]) {
+		big[son[u]] = 1;
+		gao(son[u], son_id[u]);
+	} 
+	for (auto &it : G[u]) {
+		int v = it.fi;
+		if (v == fa[u] || v == son[u]) continue;
+		up(v, 1);	
+	}
+	add(u, 1);
+	ans[id] = res;
+	if (son[u]) big[son[u]] = 0;
+	if (!big[u]) up(u, 0);
+}
 void run() {
-	
+	memset(cnt[0], 0, sizeof (cnt[0]) * (n + 10)); 
+	memset(cnt[1], 0, sizeof (cnt[1]) * (n + 10)); 
+	memset(ans, 0, sizeof (ans[0]) * (n + 10));
+	G.clear(); G.resize(n + 1);
+	res = 0;
+	for (int i = 1; i <= n; ++i) {
+		cin >> c[i];
+		++cnt[c[i]][0];
+	}
+	for (int i = 1, u, v; i < n; ++i) {
+		cin >> u >> v;
+		G[u].push_back(pII(v, i));
+		G[v].push_back(pII(u, i));
+	}
+	dfs(1); gao(1, 0);
+	for (int i = 1; i < n; ++i) pt(ans[i]);
 }
 
 int main() {
