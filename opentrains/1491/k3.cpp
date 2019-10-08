@@ -59,6 +59,7 @@ inline ll gao1() {
 }
 
 inline ll gao2() {
+	if (lent > lens) return 0;
 	if (lent == 1) return lens;
 	T[lent + 1] = All; 
 	for (int i = lent; i >= 1; --i) {
@@ -82,10 +83,10 @@ void copy(char *s, char *t) {
 }
 
 int main() {
-	T.clear(); T.resize(N / 64 + 10);
+	T.clear(); T.resize(N / 16 + 10);
 	int _T; scanf("%d", &_T);
 	while (_T--) { 
-		scanf("%s", s + 1); lens = strlen(s + 1); unit = lens / 64; copy(s, rs); 
+		scanf("%s", s + 1); lens = strlen(s + 1); unit = lens / 16; copy(s, rs); 
 		for (int i = 0; i < 26; ++i) S[i].reset();
 		for (int i = 1; s[i]; ++i) S[s[i] - 'a'][i] = 1; 
 		All.set(); 
@@ -95,8 +96,9 @@ int main() {
 		while (q--) {
 			scanf("%s", t + 1); lent = strlen(t + 1); copy(t, rt);
 			ll res = 0;
-			if (lent >= unit) res = gao1();
-			else res = gao2();
+			res = gao1();
+		//	if (lent >= unit) res = gao1();
+		//	else res = gao2();
 			printf("%lld\n", res);
 		}
 	}
