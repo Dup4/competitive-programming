@@ -25,6 +25,7 @@ inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * b
 constexpr int N = 1e5 + 10;
 int n, m, f[30][30]; char s[N];
 void run() {
+	cout << __lg(n) << endl;
 	cin >> (s + 1);
 	memset(f, 0, sizeof f);
 	for (int i = 2; i <= n; ++i) {
