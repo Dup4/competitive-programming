@@ -66,7 +66,8 @@ struct SEG {
 		if (ql > qr) return INFLL;
 		if (l >= ql && r <= qr) return t[id].Min; 
 		int mid = (l + r) >> 1;
-		ll res = INFLL;
+		down(id);
+		ll res = INFLL; 
 		if (ql <= mid) res = min(res, query(id << 1, l, mid, ql, qr));
 		if (qr > mid) res = min(res, query(id << 1 | 1, mid + 1, r, ql, qr));
 		return res;
@@ -88,25 +89,24 @@ int main() {
 					r = mid - 1; 
 				}
 			}
-			if (res) pre[i] = sta[res]; 
-			else pre[i] = -1;  
-			while (*sta && a[i] >= sta[*sta]) --*sta;
+			if (res) pre[i] = sta[res] - 1; 
+			else pre[i] = -1;   
+			while (*sta && a[i] >= a[sta[*sta]]) --*sta;
 			sta[++*sta] = i; 
 		}
 	//	for (int i = 1; i <= n; ++i) cout << i << " " << pre[i] << endl;
-		seg.build(1, 0, n); seg.set(1, 0, n, 0, 0); seg.update(1, 0, n, 0, 0, a[1]); 
+		seg.build(1, 0, n); seg.set(1, 0, n, 0, 0); seg.update(1, 0, n, 0, 0, a[1] * 2); 
 		int bored = -1; f[0] = 0;
 		for (int i = 1; i <= n; ++i) {
-			while (bored < i - 1 && f[bored + 1] <= t[i]) { 
+			while (bored < i - 1 && f[bored + 1] <= t[i]) {  
 				++bored;
 				seg.set(1, 0, n, bored, 0);
 			}
 			seg.update(1, 0, n, pre[i] + 1, i - 1, a[i] * 2); 
-		    cout << bored << " " << seg.query(1, 0, n, 0, bored) << endl; 	
-			f[i] = seg.query(1, 0, n, 0, bored) + t[i];
-			f[i] = min(f[i], seg.query(1, 0, n, bored + 1, i - 1));  
-			seg.set(1, 0, n, i, f[i]); seg.update(1, 0, n, i, i, a[i + 1]);   
-		   	cout << i << " " << f[i] << endl; 	
+		 //  cout << bored << " " << seg.query(1, 0, n, 0, bored) << endl; 	
+			f[i] = min(seg.query(1, 0, n, 0, bored) + t[i], seg.query(1, 0, n, bored + 1, i - 1));  
+		   //	cout << i << " " << seg.query(1, 0, n, 0, bored) + t[i] << " " << seg.query(1, 0, n, bored + 1, i - 1) << endl; 	
+			seg.set(1, 0, n, i, f[i]); seg.update(1, 0, n, i, i, a[i + 1] * 2);   
 		}
 		printf("%lld\n", f[n]);
 	}
