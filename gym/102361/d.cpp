@@ -23,22 +23,20 @@ template <class T> inline void pt(const vector <T> &vec) { for (auto &it : vec) 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-int n, m, f[30][30]; char s[N];
+int n; 
 void run() {
-	cout << __lg(n) << endl;
-	cin >> (s + 1);
-	memset(f, 0, sizeof f);
-	for (int i = 2; i <= n; ++i) {
-		++f[s[i] - 'a'][s[i - 1] - 'a'];
-		++f[s[i - 1] - 'a'][s[i] - 'a'];
-	}
-	
+	cin >> n;
+	while (n % 2 == 0) n /= 2;
+	while (n % 5 == 0) n /= 5;
+	if (n == 1) pt("No");
+	else pt("Yes");
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> m) run();
+	int _T; cin >> _T;
+	while (_T--) run();
 	return 0;
 }
