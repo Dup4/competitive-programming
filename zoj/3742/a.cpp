@@ -5,8 +5,8 @@ using pII = pair <int, int>;
 #define fi first
 #define se second
 const int N = 1e5 + 10, S = 300;
-int n, m, q, e[N][3], d[N], W[N], big[N], bigp[N], cntp[N], cnte[N];  
-ll f[N][2], g[2];  //0 + 1 -
+int n, m, q, e[N][3], d[N], W[N], big[N], bigp[N], vis[N];  
+ll f[N][2], g[2], *h;  //0 + 1 -
 vector <vector<pII>> G;  
 
 int main() {
@@ -14,9 +14,8 @@ int main() {
 	while (scanf("%d%d%d", &n, &m, &q) != EOF) {
 		if (empty) puts(""); empty = 1;
 		for (int i = 0; i <= n; ++i) {
-			d[i] = big[i] = 0;
+			d[i] = big[i] = vis[i] = 0;
 			f[i][0] = f[i][1] = 0;
-			cntp[i] = 0;
 		}
 		*bigp = 0; g[0] = g[1] = 0;
 		G.clear(); G.resize(n + 1);
@@ -30,7 +29,6 @@ int main() {
 		for (int i = 1; i <= m; ++i) {
 			int u = e[i][0], v = e[i][1], w = e[i][2];
 			if (w == 0) continue;
-			cnte[i] = 0;
 			W[i] = w;
 			if (big[u] == big[v]) {
 				G[u].emplace_back(v, i);
@@ -66,38 +64,15 @@ int main() {
 				printf("%lld\n", res);
 			} else { 
 				scanf("%d", &u);
-				if (big[u]) swap(f[u][0], f[u][1]), cntp[u] ^= 1; 
+				if (big[u]) swap(f[u][0], f[u][1]);
+			    vis[u] ^= 1;	
 				for (auto &it: G[u]) {
 					int v = it.fi, &w = W[it.se];
-					if (big[u] != big[v]) {
-						cnte[it.se] ^= 1;
-						if (cntp[u] ^ cnte[it.se]) {
-							if (w < 0) {
-								f[v][1] -= abs(w);
-								f[v][0] += abs(w);
-							} else {
-								f[v][0] -= abs(w);
-								f[v][1] += abs(w);
-							}
-						} else {
-							if (w > 0) {
-								f[v][1] -= abs(w);
-								f[v][0] += abs(w);
-							} else {
-								f[v][0] -= abs(w);
-								f[v][1] += abs(w);
-							}
-						}
-					} else {	
-						if (w < 0) {
-							g[1] -= abs(w);
-							g[0] += abs(w);
-						} else {
-							g[0] -= abs(w);
-							g[1] += abs(w);  
-						}
-						w = -w;
-					}
+					if (big[u] == big[v]) h = g;
+					else h = f[v];
+					int p = vis[u] ^ vis[v] ^ (w > 0);
+					h[p] -= abs(w);
+					h[p ^ 1] += abs(w);
 				}
 			}	
 		}	
