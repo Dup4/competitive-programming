@@ -9,8 +9,9 @@ int fa[N], dep[N], tot, res, vis[N], Insta[N];
 void DFS(int u) {
 	vis[u] = 1;
 	Insta[u] = 1;
-	for (auto &v : G[u]) if (v != fa[u]) { 
-		if (Insta[v] && dep[u] > dep[v]) {
+	for (auto &v : G[u]) if (v != fa[u]) {   
+		if (Insta[v]) {
+			assert(dep[u] > dep[v]);
 			tot -= dep[u] - dep[v] + 1;
 			res = 1ll * res * (bit[dep[u] - dep[v] + 1] - 1 + mod) % mod;
 			res %= mod;
