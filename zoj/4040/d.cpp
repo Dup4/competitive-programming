@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-#define ll long long
+using ll = long long;
 mt19937 rd(time(0));
 inline ll gcd(ll a, ll b) {
 	return b ? gcd(b, a % b) : a;
@@ -22,11 +21,12 @@ inline ll qmod(ll base, ll n, ll p) {
 	return res;
 }
 struct Mill {
-	ll n, fac[220]; int tot; 
+	ll n, fac[220][2], bk[220]; int tot; 
+   	//fac[i][0] 第i个质因子 fac[i][1] 第i个质因子的幂次	
 	const int C = 2307;
-	const int S = 10;
+	const int S = 8;
 	inline bool check(ll a, ll n) {
-		ll m = n - 1, x, y;
+		ll m = n - 1, x, y = 0;
 		int j = 0;
 		while (!(m & 1)) {
 			m >>= 1;
@@ -79,7 +79,7 @@ struct Mill {
 			return;
 		}
 		if (miller_rabin(n)) {
-			fac[++tot] = n;
+			bk[++*bk] = n;
 			return;
 		}
 		ll m = n;
@@ -91,22 +91,31 @@ struct Mill {
 	}
 	inline void gao(ll _n, vector <ll> &vec) {
 		vec.clear();
-		n = _n;
-		tot = 0;
-		findfac(n, C);
-		sort(fac + 1, fac + 1 + tot); 	
-		vec.push_back(1); 
-		int sze;
-		for (int i = 1; i <= tot; ++i) {
-			if (i == 1 || fac[i - 1] % fac[i]) {
-				sze = vec.size();
+		n = _n; *bk = 0;
+		findfac(n, C); 
+		sort(bk + 1, bk + 1 + *bk); 
+		fac[1][0] = bk[1]; fac[1][1] = 1;
+		tot = 1;
+		for (int i = 2; i <= *bk; ++i) {
+			if (bk[i] == bk[i - 1]) {
+				++fac[tot][1];
 			} else {
-				fac[i] *= fac[i - 1];
-			}
-			for (int j = 0; j < sze; ++j) {
-				vec.push_back(fac[i] * vec[j]);
+				++tot;
+				fac[tot][0] = bk[i]; 
+				fac[tot][1] = 1;
 			}
 		}
+		vec.push_back(1); 
+		for (int i = 1, sze = 0; i <= *bk; ++i) {
+			if (i == 1 || bk[i - 1] % bk[i]) {
+				sze = vec.size();
+			} else {
+				bk[i] *= bk[i - 1];
+			}
+			for (int j = 0; j < sze; ++j) {
+				vec.push_back(bk[i] * vec[j]);
+			}
+		} 
 		sort(vec.begin(), vec.end());
 	}
 }mill;
@@ -124,7 +133,7 @@ int main() {
 				res += it;
 			} else break;
 		}
-		printf("%lld\n", res + 1);
+		printf("%lld\n", res + 1); 
 	}
 	return 0;
 }

@@ -3,23 +3,23 @@ using namespace std;
 
 const int N = 1e6 + 10;
 const int INF = 0x3f3f3f3f;
-int n, m, a, b, e[N][2], uN, que[N * 5], ql, qr, tot;  
+int n, m, a, b, e[N][2], uN, tot;  
 vector <int> G[N]; 
 int Mx[N], My[N], dx[N], dy[N], dis;
 bool used[N];
 bool SearchP() {
-	ql = 1, qr = 0;
+	queue <int> que;
 	dis = INF;
 	memset(dx, -1, sizeof (dx[0]) * tot);
 	memset(dy, -1, sizeof (dy[0]) * tot);
 	for (int i = 0; i < uN; ++i) {
 		if (Mx[i] == -1) {
-			que[++qr] = i;
+			que.push(i);
 			dx[i] = 0;
 		}
 	}
-	while (ql <= qr) {
-		int u = que[ql]; ++ql;
+	while (!que.empty()) {
+		int u = que.front(); que.pop();
 		if (dx[u] > dis) break;
 		for (auto &v : G[u]) {
 			if (dy[v] == -1) {
@@ -27,7 +27,7 @@ bool SearchP() {
 				if (My[v] == -1) dis = dy[v];
 				else {
 					dx[My[v]] = dy[v] + 1;
-					que[++qr] = My[v];
+					que.push(My[v]);
 				}
 			}
 		}

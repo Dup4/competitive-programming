@@ -8,7 +8,9 @@ using P = pair<ll, int>;
 const int N = 1e5 + 10;
 int n, q, ans[N]; char s[N], t[N];
 struct Hash {
-	static ll seed[2], mod[2], base[2][N];
+	constexpr static ll seed[2] = {233, 13331};
+	constexpr static ll mod[2] = {998244353, 1000000007};
+	static ll base[2][N];
 	static void init() {
 		base[0][0] = base[1][0] = 1;
 		for (int i = 1; i < N; ++i) {
@@ -29,7 +31,7 @@ struct Hash {
 	//	return pLL(a[0][r] - a[0][l - 1] * base[0][r - l + 1], a[1][r] - a[1][l - 1] * base[1][r - l + 1]);
 	}
 }hs, ht;
-ll Hash::base[2][N] = {{0}, {0}}, Hash::seed[2] = {233, 13331}, Hash::mod[2] = {998244353, 1000000007};
+ll Hash::base[2][N] = {{0}, {0}};
 unordered_map <ll, int> pre, have;
 vector <vector<P>> vec;
 void gao(int len) {
