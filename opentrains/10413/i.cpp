@@ -27,9 +27,9 @@ struct Hash {
 			a[1][i] = (a[1][i - 1] * seed[1] % mod[1] + s[i]) % mod[1];
 		}	
 	}
-	inline pLL get(int l, int r) {
-	//	return (a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0] * mod[0] + (a[1][r] - a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1];
-		return pLL((a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0], (a[1][r] - a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1]);
+	inline ll get(int l, int r) {	
+		return (a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0] * mod[0] + (a[1][r] - a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1];
+	//	return pLL((a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0], (a[1][r] - a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1]);
 	}
 }hs;
 ll Hash::base[2][N] = {{0}, {0}};
