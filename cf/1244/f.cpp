@@ -29,16 +29,85 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-int n; 
+constexpr int N = 4e5 + 10;
+int n, k, vis[N]; char s[N]; 
+bool ok() {
+	for (int i = 2; s[i]; ++i)
+		if (s[i - 1] == s[i])
+			return false;
+	return true;
+}
+bool ok2() {
+	for (int i = 2; s[i]; ++i)
+		if (s[i - 1] != s[i])
+			return false;
+	return true;
+}
+void gao(int l, int r) {
+	if (l == r) {
+		s[l] = s[l - 1];
+		return;
+	}
+	char chl = s[l - 1], chr = s[r + 1];
+	for (int i = 1; i <= k && l <= r; ++i) {
+		s[l] = chl; s[r] = chr;
+		++l; --r;
+	}
+	if (l <= r && (k & 1)) {
+		for (int i = l; i <= r; ++i) {
+			s[i] = (s[i] == 'W' ? 'B' : 'W'); 
+		}
+	} 
+}
 void run() {
-	
+	cin >> (s + 1);
+	for (int i = n + 1; i <= 2 * n; ++i) s[i] = s[i - n];
+	if (ok()) {
+		if (k & 1) {
+			for (int i = 1; i <= n; ++i) 
+				s[i] = (s[i] == 'W' ? 'B' : 'W');
+		}
+		s[n + 1] = 0;
+		return pt(s + 1);
+	}
+   	if (ok2()) {
+		s[n + 1] = 0;
+		return pt(s + 1);
+	}
+	memset(vis, 0, sizeof vis);	
+	for (int i = 2; i <= n * 2; ++i) {
+		if (s[i - 1] == s[i]) {
+			vis[i - 1] = vis[i] = 1;
+		}
+	}
+	if (s[1] == s[n]) {
+		vis[1] = vis[n] = vis[n + 1] = vis[n * 2] = 1;
+	}
+	int pos = 0;
+	for (int i = 1; i <= n; ++i) {
+		if (vis[i]) {
+			pos = i;
+			break;
+		}
+	}
+	for (int i = pos + 1, l = -1, r = -1; i <= n + pos; ++i) {
+		if (vis[i] == 0) {
+			if (l == -1) l = i;
+			r = i;
+		} else {
+			if (l != -1) gao(l, r);
+			l = r = -1;
+		}
+	}
+	for (int i = n + 1; i <= n + pos - 1; ++i) cout << s[i];
+	for (int i = pos; i <= n; ++i) cout << s[i];
+	pt();
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> k) run();
 	return 0;
 }
