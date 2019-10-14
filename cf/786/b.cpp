@@ -1,8 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-const int N = 1e6 + 10, INF = 0x3f3f3f3f;
-int n, m, p, id, pos[N];
+using ll = long long;
+const int N = 2e5 + 10;
+const ll INF = 0x3f3f3f3f3f3f3f3f;
+int n, q, s, id, pos[N]; 
 struct Edge { int v, nx, w; }e[N * 8]; int h[N]; 
 inline void addedge(int u, int v, int w) { e[++*h] = {v, h[u], w}; h[u] = *h; }
 struct SEG {
@@ -59,10 +60,10 @@ struct SEG {
 	}
 }seg;
 
-void add(int a, int b, int c, int d) {
+void add(int a, int b, int c, int d, int w) {
 	int p1 = ++id, p2 = ++id;
 	seg.add(seg.rt_out, 1, n, a, b, p1, 0, 1);
-	addedge(p1, p2, 1);
+	addedge(p1, p2, w);
 	seg.add(seg.rt_in, 1, n, c, d, p2, 0, 0);
 }
 
@@ -75,15 +76,15 @@ struct Dijkstra {
 			return w > other.w;
 		}
 	};
-    int dis[N]; bool used[N];
+    ll dis[N]; bool used[N];
 	void gao() {
 		for (int i = 1; i <= id; ++i) {
 			dis[i] = INF;
 			used[i] = 0;
 		}
-		dis[pos[p]] = 0;
+		dis[pos[s]] = 0;
 		priority_queue <node> pq;
-		pq.push(node(pos[p], 0));
+		pq.push(node(pos[s], 0));
 		while (!pq.empty()) {
 			int u = pq.top().u; pq.pop();
 			if (used[u]) continue;
@@ -96,24 +97,35 @@ struct Dijkstra {
 				}
 			}
 		}
-		for (int i = 1; i <= n; ++i)
-			printf("%d\n", dis[pos[i]]);
+		for (int i = 1; i <= n; ++i) {
+			if (dis[pos[i]] == INF) dis[pos[i]] = -1;
+			printf("%lld%c", dis[pos[i]], " \n"[i == n]);
+		}
 	}
 }dij;
 
 int main() {
-	while (scanf("%d%d%d", &n, &m, &p) != EOF) {
-		memset(h, 0, sizeof h);
-		seg.init();
+	while (scanf("%d%d%d", &n, &q, &s) != EOF) {
+		memset(h, 0, sizeof h); 
+		seg.init(); 
 		seg.build(seg.rt_in, 1, n, 1);
 		seg.build(seg.rt_out, 1, n, 0);
 		seg.addleaf(seg.rt_in, seg.rt_out, 1, n);
-		for (int i = 1, a, b, c, d; i <= m; ++i) {
-			scanf("%d%d%d%d", &a, &b, &c, &d);
-			add(a, b, c, d);
-			add(c, d, a, b);
+		for (int i = 1, op, u, v, l, r, w; i <= q; ++i) {
+			scanf("%d", &op);
+			if (op == 1) {
+				scanf("%d%d%d", &u, &v, &w);
+				add(u, u, v, v, w);
+			} else if (op == 2) {
+				scanf("%d%d%d%d", &u, &l, &r, &w);
+				add(u, u, l, r, w);
+			} else {
+				scanf("%d%d%d%d", &l, &r, &v, &w);
+				add(l, r, v, v, w);
+			}
 		}
 		dij.gao();
 	}
 	return 0;
 }
+
