@@ -1,10 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-const int N = 2e5 + 10;
+const int N = 1e6 + 10;
 const ll INF = 0x3f3f3f3f3f3f3f3f;
 int n, q, s, id, pos[N]; 
-struct Edge { int v, nx, w; }e[N * 8]; int h[N]; 
+struct Edge { int v, nx, w; }e[N * 8]; int h[N * 8]; 
 inline void addedge(int u, int v, int w) { e[++*h] = {v, h[u], w}; h[u] = *h; }
 struct SEG {
 	struct node {
@@ -51,7 +51,6 @@ struct SEG {
 	void addleaf(int rt_in, int rt_out, int l, int r) {
 		if (l == r) {
 			addedge(rt_in, rt_out, 0);  
-			addedge(rt_out, rt_in, 0); 
 			return;
 		}
 		int mid = (l + r) >> 1;
@@ -69,9 +68,9 @@ void add(int a, int b, int c, int d, int w) {
 
 struct Dijkstra {
 	struct node {
-		int u, w;
+		int u; ll w;
 		node() {}
-		node(int u, int w) : u(u), w(w) {}
+		node(int u, ll w) : u(u), w(w) {}
 		bool operator < (const node &other) const {
 			return w > other.w;
 		}
@@ -120,11 +119,11 @@ int main() {
 				scanf("%d%d%d%d", &u, &l, &r, &w);
 				add(u, u, l, r, w);
 			} else {
-				scanf("%d%d%d%d", &l, &r, &v, &w);
+				scanf("%d%d%d%d", &v, &l, &r, &w);
 				add(l, r, v, v, w);
 			}
 		}
-		dij.gao();
+		dij.gao(); 
 	}
 	return 0;
 }
