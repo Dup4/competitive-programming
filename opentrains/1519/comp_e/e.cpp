@@ -1,8 +1,5 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define dbg(x...) do { cout << "\033[32;1m" << #x << " -> "; err(x); } while (0) 
-void err() { cout << "\033[39;0m" << endl; } 
-template <class T, class... Ts> void err(const T& arg, const Ts&... args) { cout << arg << ' '; err(args...); }
 using ll = long long;
 const int N = 2e6 + 10, OFFSET = 2e6; 
 int n, rt, all, sze[N], f[N], vis[N]; ll ans;
@@ -80,7 +77,7 @@ ll calc() {
 	for (int i = 1; i <= cw; ++i) {
 		if (i == 1 || w[i].v != w[i - 1].v) ++bit.POS;
 		if (w[i].op == 1) bit.update(w[i].l);
-		else res += bit.query(w[i].l, w[i].r);
+		else ans += bit.query(w[i].l, w[i].r);
 	}
 	return res;
 }
@@ -109,9 +106,11 @@ void gao(int u) {
 	}
 }
 
+
 int main() {
 	bit.init();
-	while (scanf("%d", &n) != EOF) {
+	scanf("%d", &n);
+//	while (scanf("%d", &n) != EOF) {
 		G.clear(); G.resize(n + 1);
 		memset(vis, 0, sizeof vis);
 		for (int i = 1, u, v; i < n; ++i) {
@@ -123,6 +122,6 @@ int main() {
 		all = f[0] = n; rt = 0;
 		getrt(1, 0); gao(rt); 
 		printf("%lld\n", ans + n);
-	}
+//	}
 	return 0;
 }
