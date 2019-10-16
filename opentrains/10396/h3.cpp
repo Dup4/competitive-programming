@@ -5,7 +5,7 @@ void err() { cout << "\033[39;0m" << endl; }
 template <class T, class... Ts> void err(const T& arg, const Ts&... args) { cout << arg << ' '; err(args...); } 
 using ll = long long;
 const int N = 2e5 + 10;
-int n, m, k, d, a[N], c[N], vis[N];
+int n, m, k, d, a[N], c[N];
 map<int, int> mp;
 set <int> se;
 
@@ -18,46 +18,25 @@ int main() {
 		mp.clear(); se.clear(); 
 		for (int i = 1; i <= k; ++i) mp[a[i]] = i, se.insert(a[i]);
 		int way = 0;
-		memset(vis, 0, sizeof vis);
-		vector <int> vec;
 		se.insert(n);
-		for (int i = 1; i <= k; ++i) {
-			if (vis[i]) continue;
-			if (a[i] - 1 > d) continue; 
-			int it = a[i]; 
-			vec.clear();
-			vec.push_back(i);
-			se.erase(it);  
+		for (int i = 1; i <= k * 2; ++i) {
+			int pos = 1;
 			while (!se.empty()) { 
-				auto pos = se.upper_bound(it + d); 
-			    if (pos == se.begin()) break;
-				--pos;
-				if (*pos == n) {
-					it = *pos;
-					break; 
-				}
-				if (*pos > it) {
-					vec.push_back(mp[*pos]);
-					it = *pos;
-					se.erase(*pos);
-				} else 
+				auto it = se.upper_bound(pos + d); 
+			    if (it == se.begin()) break;
+				--it;
+				pos = *it;
+				if (pos == n) {
+					++way;
 					break;
-			}
-			if (it == n) {
-				++way;
-				for (auto &it : vec) {
-					vis[it] = 1; 
+				} else {
+					se.erase(it);
 				}
-			} else {
-				for (auto &it : vec) 
-					se.insert(a[it]);
 			}
-			se.insert(n);
+			if (way == m) break;
 		}
-		if (d >= n - 1) way = m;
 		ll res = 0;
 		if (way > 0) {
-			res = 0;
 			int need = m - way;
 			for (int i = 1; i <= need; ++i) res += c[i]; 
 		} else {

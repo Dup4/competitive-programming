@@ -54,7 +54,6 @@ int main() {
 			}
 			se.insert(n);
 		}
-		if (d >= n - 1) way = m;
 		ll res = 0;
 		if (way > 0) {
 			res = 0;

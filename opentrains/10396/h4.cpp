@@ -20,7 +20,6 @@ int main() {
 		int way = 0;
 		memset(vis, 0, sizeof vis);
 		vector <int> vec;
-		se.insert(n);
 		for (int i = 1; i <= k; ++i) {
 			if (vis[i]) continue;
 			if (a[i] - 1 > d) continue; 
@@ -28,33 +27,28 @@ int main() {
 			vec.clear();
 			vec.push_back(i);
 			se.erase(it);  
-			while (!se.empty()) { 
+			while (it + d < n && !se.empty()) { 
 				auto pos = se.upper_bound(it + d); 
 			    if (pos == se.begin()) break;
 				--pos;
-				if (*pos == n) {
-					it = *pos;
-					break; 
-				}
 				if (*pos > it) {
 					vec.push_back(mp[*pos]);
 					it = *pos;
 					se.erase(*pos);
-				} else 
-					break;
+				} else break;
+				if (it + d >= n) break; 
 			}
-			if (it == n) {
+			if (it + d >= n) {
 				++way;
 				for (auto &it : vec) {
-					vis[it] = 1; 
+					vis[it] = 1;
 				}
 			} else {
-				for (auto &it : vec) 
+				for (auto &it : vec) if (it != i)
 					se.insert(a[it]);
 			}
-			se.insert(n);
 		}
-		if (d >= n - 1) way = m;
+		if (d >= n - 1) way = m; 
 		ll res = 0;
 		if (way > 0) {
 			res = 0;
@@ -75,3 +69,4 @@ int main() {
 	}
 	return 0;
 }
+
