@@ -22,24 +22,9 @@ template <class T> inline void pt(vector <T> &vec) { for (auto &it : vec) cout <
 inline ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 constexpr int N = 1e5 + 10;
-int n, a[N]; 
+int n, a[N];
+unordered_map <int, int> mp;
 void run() {
-	int l = 1, r = n, pos = 1;
-	while (r - l >= 0) {
-		int mid = (l + r) >> 1;
-		if (a[mid] >= 0) {
-			pos = mid;
-			r = mid - 1;
-		} else {
-			l = mid + 1;
-		}
-	}
-	int res;
-	if (a[1] >= 0) res = a[1];
-	else {
-		res = min(abs(a[pos - 1], a[pos]));
-	}
-	cout << res << "\n";
 }
 
 int main() {
