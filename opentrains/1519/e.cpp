@@ -88,6 +88,7 @@ ll calc() {
 void dfs(int u, int fa, int dis, int ma, int mi, int op) {
 	ma = max(ma, u);
 	mi = min(mi, u);
+	//计算当前点到rt这条路径的贡献
 	if (ma - mi == dis) ans += op;
 	e[++ce] = E(ma, mi, dis);
 	for (auto &v : G[u]) if (!vis[v] && v != fa) dfs(v, u, dis + 1, ma, mi, op);
@@ -98,6 +99,7 @@ void gao(int u) {
 	for (auto &v : G[u]) if (!vis[v]) {
 		ce = 0;
 		dfs(v, u, 1, u, u, 1);
+		//减去不经过u的假路径的贡献
 		ans -= calc();
 	}	
 	ce = 0;
