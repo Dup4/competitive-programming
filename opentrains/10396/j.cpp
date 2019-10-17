@@ -3,7 +3,8 @@ using namespace std;
 using uint = unsigned int;
 using ull = unsigned long long;
 const int N = 1e7 + 10;
-int n, m; uint s, ans[N / 32 + 10]; 
+int n, m; uint s;
+vector <int> f;
 struct E {
 	int u, v, id; ull w;
 	E() {}
@@ -20,21 +21,20 @@ uint getNext() {
 	return s;
 }
 
-int fa[N];
-int find(int u) { return fa[u] == u ? u : fa[u] = find(fa[u]); }
+int find(int u) { return f[u] == u ? u : f[u] = find(f[u]); }
 bool merge(int u, int v) {
 	int fu = find(u), fv = find(v);
 	if (fu == fv) return false;
-	fa[u] = v;
+	f[u] = v;
 	return true;
 }
 
 int main() {
 	while (scanf("%d%d%u", &n, &m, &s) != EOF) {
+		f.clear(); f.resize(n);
 		for (int i = 0; i < n; ++i) {
-			fa[i] = i;
+			f[i] = i;
 		}
-		memset(ans, 0, sizeof ans);
 		G.clear(); G.resize((1 << 21) + 10);
 		for (int i = 0; i < m; ++i) {
 			int u = getNext() % n;
@@ -46,15 +46,25 @@ int main() {
 		for (auto &vec : G) if (!vec.empty()) {
 			sort(vec.begin(), vec.end()); 
 			for (auto &it : vec) {
-				int u = it.u, v = it.v, id = it.id;
+				int u = it.u, v = it.v; 
 				if (merge(u, v)) {
-					ans[id / 32] |= (1 << (id % 32));
+					it.w = 0; 
+				//	ans[id / 32] |= (1 << (id % 32));
 				}
 			}
 		}
 		int sze = (m + 31) / 32;
+		f.clear(); f.resize(sze);
+		for (auto &vec : G) if (!vec.empty()) {
+			for (auto &it : vec) {
+				int id = it.id;
+				if (it.w == 0) {
+					f[id / 32] |= (1 << (id % 32));
+				}
+			}
+		}
 		for (int i = 0; i < sze; ++i)
-			printf("%u%c", ans[i], " \n"[i == sze - 1]);
+			printf("%u%c", f[i], " \n"[i == sze - 1]);
 	}
 	return 0;
 }
