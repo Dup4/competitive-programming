@@ -29,33 +29,55 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-struct E {
-	int x, y, f;
-	E() {}
-	E(int x, int y, int f) : x(x), y(y), f(f) {}
-};
-constexpr int N = 2e5 + 10, OFFSET = 2e5;
-int n, m, a[N]; 
-vector <vector<E>> vec;
-ll gao1() {
-	vec.clear(); vec.resize(N * 2);  
-	for (int i = 0; i < m; ++i) {
-		
+constexpr int N = 1e6 + 10, OFFSET = 2e5;
+int n, m, a[N], l[N], r[N], f[N], last[N];
+//y - x
+void gaol() {
+	memset(last, -1, sizeof last);
+	for (int i = m; i >= 1; --i) {
+		int p = a[i] + 1 + i;
+		if (last[p] == -1) f[i] = max(1, a[i] - (m - i)); 
+		else f[i] = f[last[p]];
+		last[a[i] + i] = i;
+	}
+	for (int i = 1; i <= n; ++i) {
+		int p = i;
+//		dbg(i, p, last[p]);
+		if (last[p] == -1) l[i] = max(1, i - (m + 1));
+		else l[i] = f[last[p]];
+	}
+}
+void gaor() {
+	memset(last, -1, sizeof last);
+	for (int i = m; i >= 1; --i) {
+		int p = a[i] - 1 - i + OFFSET; 
+		if (last[p] == -1) f[i] = min(n, a[i] + m - i); 
+		else f[i] = f[last[p]];
+		last[a[i] - i + OFFSET] = i;
+	}
+	for (int i = 1; i <= n; ++i) {
+		int p = i + OFFSET;
+		if (last[p] == -1) r[i] = min(n, i + m + 1);
+		else r[i] = f[last[p]];
 	}
 }
 void run() {
-	for (int i = 0; i < m; ++i) a[i] = rd();
-	if (n == 1) return pt(1);
-	ll ans = n;
-	ans += gao1();
-	ans += gao2();
-	pt(ans);
+	for (int i = 1; i <= m; ++i) a[i] = rd();
+	if (n == 1) return pt(0);
+	gaol();
+   	gaor();
+	ll ans = 0;
+	for (int i = 1; i <= n; ++i) {
+	//	dbg(i, l[i], r[i]);
+		ans += r[i] - l[i] + 1;
+	}
+	pt(ans);	
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> m) run();
 	return 0;
 }

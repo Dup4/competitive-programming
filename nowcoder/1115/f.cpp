@@ -29,27 +29,10 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-struct E {
-	int x, y, f;
-	E() {}
-	E(int x, int y, int f) : x(x), y(y), f(f) {}
-};
-constexpr int N = 2e5 + 10, OFFSET = 2e5;
-int n, m, a[N]; 
-vector <vector<E>> vec;
-ll gao1() {
-	vec.clear(); vec.resize(N * 2);  
-	for (int i = 0; i < m; ++i) {
-		
-	}
-}
+constexpr int N = 1e5 + 10;
+int n; 
 void run() {
-	for (int i = 0; i < m; ++i) a[i] = rd();
-	if (n == 1) return pt(1);
-	ll ans = n;
-	ans += gao1();
-	ans += gao2();
-	pt(ans);
+	
 }
 
 int main() {

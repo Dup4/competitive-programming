@@ -29,33 +29,35 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-struct E {
-	int x, y, f;
-	E() {}
-	E(int x, int y, int f) : x(x), y(y), f(f) {}
-};
-constexpr int N = 2e5 + 10, OFFSET = 2e5;
-int n, m, a[N]; 
-vector <vector<E>> vec;
-ll gao1() {
-	vec.clear(); vec.resize(N * 2);  
-	for (int i = 0; i < m; ++i) {
-		
-	}
+constexpr int N = 3e6 + 10; 
+ll n, k, fac[N], inv[N]; 
+ll C(int n, int m) {
+	if (n < m) return 0;
+	return fac[n] * inv[m] % mod * inv[n - m] % mod;
 }
 void run() {
-	for (int i = 0; i < m; ++i) a[i] = rd();
-	if (n == 1) return pt(1);
-	ll ans = n;
-	ans += gao1();
-	ans += gao2();
-	pt(ans);
+	if (k == 0) return pt(1);
+	if (k & 1) {
+		ll zero = n - k;
+		--k;
+		k /= 2;
+		return pt(C(zero + k, k));
+	} else {
+		ll zero = n - k;
+		k -= 2;
+		k /= 2;
+		return pt(C(zero + k, k));
+	}
 }
 
 int main() {
+	fac[0] = 1;
+	for (int i = 1; i < N; ++i) fac[i] = fac[i - 1] * i % mod;
+	inv[N - 1] = qpow(fac[N - 1], mod - 2);
+	for (int i = N - 1; i >= 1; --i) inv[i - 1] = inv[i] * i % mod;
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> k) run();
 	return 0;
 }
