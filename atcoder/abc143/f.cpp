@@ -29,44 +29,38 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e2 + 10;
-int n, k, a[N], f[N][N], g[N];
-//f[i][j]表示i的子树中，最小深度为j的最大贡献
-vector <vector<int>> G;
-void dfs(int u, int fa, int dep) {
-	for (auto &v : G[u]) if (v != fa) {
-		dfs(v, u, dep + 1);
-		memset(g, 0, sizeof g);
-		for (int i = 0; i <= n; ++i) {
-			for (int j = 0; j <= n; ++j) {
-				if (i + j + 1 > k) {
-					chmax(g[min(i, j + 1)], f[u][i] + f[v][j]);
-				}
-			}
+constexpr int N = 3e5 + 10;
+int n, a[N], res, tot;
+priority_queue <int, vector <int>, less<int> > pq; 
+bool ok(int k) {
+	while (!pq.empty()) {
+		int top = pq.top(); pq.pop();
+		if (top > res) {
+			pq.push(top - 1);
+			--tot;
+		} else {
+			pq.push(top);
+			break;
 		}
-		for (int i = 0; i <= n; ++i) chmax(f[u][i], g[i]);
 	}
-	chmax(f[u][0], f[u][k + 1] + a[u]); 
+	return tot / k >= res;
 }
 void run() {
-	G.clear(); G.resize(n + 1);
-	for (int i = 1; i <= n; ++i) a[i] = rd();
-	for (int i = 1, u, v; i < n; ++i) {
-		cin >> u >> v;
-		G[u].push_back(v);
-		G[v].push_back(u);
+	memset(a, 0, sizeof a);
+	while (!pq.empty()) pq.pop();
+	for (int i = 1; i <= n; ++i) ++a[rd()];
+	for (int i = 1; i <= n; ++i) pq.push(a[i]);
+	res = n; tot = n; 
+	for (int i = 1; i <= n; ++i) {
+		while (res && !ok(i)) --res;
+		pt(res);
 	}
-	memset(f, 0, sizeof f);
-	dfs(1, 0, 0);
-	int res = 0;
-	for (int i = 0; i <= n; ++i) chmax(res, f[1][i]);
-	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> k) run();
+	while (cin >> n) run();
 	return 0;
 }

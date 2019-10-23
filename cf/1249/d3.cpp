@@ -29,41 +29,54 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e2 + 10;
-int n, k, a[N], f[N][N], g[N];
-//f[i][j]表示i的子树中，最小深度为j的最大贡献
-vector <vector<int>> G;
-void dfs(int u, int fa, int dep) {
-	for (auto &v : G[u]) if (v != fa) {
-		dfs(v, u, dep + 1);
-		memset(g, 0, sizeof g);
-		for (int i = 0; i <= n; ++i) {
-			for (int j = 0; j <= n; ++j) {
-				if (i + j + 1 > k) {
-					chmax(g[min(i, j + 1)], f[u][i] + f[v][j]);
-				}
-			}
-		}
-		for (int i = 0; i <= n; ++i) chmax(f[u][i], g[i]);
+constexpr int N = 2e5 + 10;
+int n, m, k;  
+vector <vector<pII>> vec;
+struct BIT {
+	int a[N];
+	void init() { memset(a, 0, sizeof a); }
+	void update(int x, int v) {
+		for (; x < N; x += x & -x)
+			a[x] += v;
 	}
-	chmax(f[u][0], f[u][k + 1] + a[u]); 
-}
+	int query(int x) {
+		int res = 0;
+		for (; x > 0; x -= x & -x)
+			res += a[x];
+		return res;
+	}
+	void update(int l, int r, int v) {
+		if (l > r) return;
+		update(l, v);
+		update(r + 1, -v);
+	}
+}bit;
 void run() {
-	G.clear(); G.resize(n + 1);
-	for (int i = 1; i <= n; ++i) a[i] = rd();
-	for (int i = 1, u, v; i < n; ++i) {
-		cin >> u >> v;
-		G[u].push_back(v);
-		G[v].push_back(u);
+	bit.init();
+	vec.clear(); vec.resize(N + 1); 
+	for (int i = 1, l, r; i <= n; ++i) {
+		cin >> l >> r;
+		bit.update(l, r, 1);
+		vec[l].push_back(pII(r, i));
 	}
-	memset(f, 0, sizeof f);
-	dfs(1, 0, 0);
-	int res = 0;
-	for (int i = 0; i <= n; ++i) chmax(res, f[1][i]);
-	pt(res);
+	vector <int> res;
+	priority_queue <pII, vector<pII>, less<pII>> pq;
+	for (int i = 1; i <= m; ++i) {
+		for (auto &it : vec[i]) pq.push(it);
+		while (bit.query(i) > k) {
+			pII t = pq.top(); pq.pop();
+			res.push_back(t.se);
+			bit.update(i, t.fi, -1); 
+		}
+	}
+	int sze = res.size();
+	pt(sze);
+	for (int i = 0; i < sze; ++i)
+		cout << res[i] << " \n"[i == sze - 1];
 }
 
 int main() {
+	m = 2e5;
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
