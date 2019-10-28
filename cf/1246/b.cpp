@@ -29,7 +29,7 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
+constexpr int N = 3e5 + 10;
 constexpr ll M = 1e10 + 10;
 mt19937 rnd(time(0));
 inline ll mul(ll a, ll b, ll p) {
@@ -51,7 +51,7 @@ struct Mill {
 	ll n, fac[220][2], bk[220]; int tot; 
    	//fac[i][0] 第i个质因子 fac[i][1] 第i个质因子的幂次	
 	const int C = 2307;
-	const int S = 6;
+	const int S = 8;
 	inline bool check(ll a, ll n) {
 		ll m = n - 1, x, y = 0;
 		int j = 0;
@@ -121,17 +121,17 @@ struct Mill {
 		n = _n; *bk = 0;
 		findfac(n, C); 
 		sort(bk + 1, bk + 1 + *bk); 
-	//	fac[1][0] = bk[1]; fac[1][1] = 1; 
-	//	tot = 1;
-	//	for (int i = 2; i <= *bk; ++i) {
-	//		if (bk[i] == bk[i - 1]) {
-	//			++fac[tot][1];
-	//		} else {
-	//			++tot;
-	//			fac[tot][0] = bk[i]; 
-	//			fac[tot][1] = 1;
-	//		}
-	//	}
+		fac[1][0] = bk[1]; fac[1][1] = 1; 
+		tot = 1;
+		for (int i = 2; i <= *bk; ++i) {
+			if (bk[i] == bk[i - 1]) {
+				++fac[tot][1];
+			} else {
+				++tot;
+				fac[tot][0] = bk[i]; 
+				fac[tot][1] = 1;
+			}
+		}
 		vec.push_back(1); 
 		for (int i = 1, sze = 0; i <= *bk; ++i) {
 			if (i == 1 || bk[i - 1] % bk[i]) {
@@ -142,12 +142,12 @@ struct Mill {
 			for (int j = 0; j < sze; ++j) {
 				vec.push_back(bk[i] * vec[j]);
 			}
-		//	if (vec.back() > 100000) break;
 		} 
 		sort(vec.begin(), vec.end());
 	}
 }mill;
-int n, m, k, a[N];  
+int n, m, k, a[N], id[N];
+vector <ll> fac;
 ll f(int x, int k) {
 	ll res = 1;
 	for (int i = 1; i <= k; ++i) {
@@ -157,42 +157,52 @@ ll f(int x, int k) {
 	return res;
 }
 void run() {
-	memset(a, 0, sizeof a);
 	m = 1e5;
-	for (int i = 1; i <= n; ++i) ++a[rd()];
-	vector <ll> fac;
-	ll res = 0;
-//	vector <ll> vec;
-//	for (int i = 1; ; ++i) {
-//		ll x = f(i, k);
-//		if (x == -1) break;
-//		vec.push_back(x); 
-//	}
-//	for (int i = 1; i <= m; ++i) {
-//		for (auto &it : vec)
-//			res += it % i == 0;
-//	}
-//	return pt(res);
-	for (int i = 1; ; ++i) {
-		ll x = f(i, k);
-		if (x == -1) break;
-		fac.clear();
-		mill.gao(x, fac);
-		for (auto &it : fac) {
-			ll p = it, q = x / p;
-			if (p > q) break;
-			if (p < q) {
-				if (p <= m && q <= m) 
-					chadd(res, 1ll * a[p] * a[q]); 	
-			} else if (p == q) {
-				if (p <= m) {
-					chadd(res, (1ll * a[p] * (a[p] - 1) / 2) % mod);
+	memset(a, 0, sizeof a);
+	if (k > 2) {
+		for (int i = 1; i <= n; ++i) ++a[rd()];  
+		ll res = 0;
+		for (int i = 1; ; ++i) {
+			ll x = f(i, k);
+			if (x == -1) break;
+			mill.gao(x, fac);
+			for (auto &it : fac) {
+				ll p = it, q = x / p;
+				if (p > q) break;
+				if (p < q) {
+					if (p <= m && q <= m) 
+						res += 1ll * a[p] * a[q];
+				} else if (p == q) {
+					if (p <= m) {
+						res += 1ll * a[p] * (a[p] - 1) / 2;
+					}
+					break;
 				}
-				break;
 			}
 		}
-	}
-	pt(res);	
+		pt(res);
+	} else {
+		id[1] = 1;
+		for (int i = 2; i <= m; ++i) {
+			mill.gao(i, fac);
+			int x = 1;
+			for (int j = 1; j <= mill.tot; ++j) {
+				if (mill.fac[j][1] % 2 == 1) {
+					x *= mill.fac[j][0]; 
+				}
+			}
+			id[i] = x;
+		}
+		for (int i = 1; i <= n; ++i) {
+			int x = rd();
+			++a[id[x]];
+		}
+		ll res = 0;
+		for (int i = 1; i <= m * 3; ++i) {
+		    res += 1ll * a[i] * (a[i] - 1) / 2;	
+		}
+		pt(res);
+	}	
 }
 
 int main() {
