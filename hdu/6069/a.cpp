@@ -17,22 +17,34 @@ void sieve() {
 		}
 	}
 }
-ll l, r, k, a[N], f[N];
+ll l, r, K, a[N], f[N];
 
 int main() {
 	sieve();
 	int _T; scanf("%d", &_T);
 	while (_T--) {
-		scanf("%lld%lld%lld", &l, &r, &k);
-		for (int i = 0; i < r - l; ++i) {
-			f[i] = 1;
+		scanf("%lld%lld%lld", &l, &r, &K);
+		for (int i = 0; i <= r - l; ++i) {
+			f[i] = 1; 
 			a[i] = i + l;
 		}
 		for (int j = 1; j <= *pri; ++j) {
 			for (ll k = max(1ll, (l + pri[j] - 1) / pri[j]); k * pri[j] <= r; ++k) {
-				
+				int c = 0;
+				ll t = k * pri[j] - l;
+				while (a[t] % pri[j] == 0) {
+					++c;
+					a[t] /= pri[j];
+				}
+				f[t] = f[t] * (K * c % mod + 1) % mod;
 			}
 		}
+		ll res = 0;
+		for (int i = 0; i <= r - l; ++i) {
+			if (a[i] != 1) f[i] = f[i] * (K + 1) % mod;
+			res = (res + f[i]) % mod;
+		}
+		printf("%lld\n", res);
 	}
 	return 0;
 }

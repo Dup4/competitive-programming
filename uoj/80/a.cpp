@@ -58,6 +58,7 @@ struct KM {
 		n = max(nl, nr);
 		for (int u = 1; u <= n; ++u) {
 			lx[u] = ly[u] = 0;
+			left[u] = right[u] = 0;
 			for (int v = 1; v <= n; ++v) {
 				w[u][v] = 0;
 			}
