@@ -72,6 +72,16 @@ struct Dicnic {
 const int N = 110;
 int n, m, col[N][N], A[N][N], B[N][N], C[N][N];
 inline int id(int x, int y) { return (x - 1) * m + y; }
+int Move[][2] = {
+	{0, 1},
+	{0, -1},
+	{1, 0},
+	{-1, 0}
+};
+inline bool ok(int x, int y) {
+	if (x < 1 || x > n || y < 1 || y > m) return false;
+	return true;
+}
 
 int main() {
 	while (scanf("%d%d", &n, &m) != EOF) {
@@ -99,13 +109,13 @@ int main() {
 			}
 		}
 		for (int i = 1; i <= n; ++i) for (int j = 1; j <= m; ++j) {
-			if (i > 1) {
-				dicnic.addedge(id(i - 1, j), id(i, j), C[i - 1][j] + C[i][j]);
-				tot += C[i - 1][j] + C[i][j];
-			} 
-			if (j > 1) {
-				dicnic.addedge(id(i, j - 1), id(i, j), C[i][j - 1] + C[i][j]);
-				tot += C[i][j - 1] + C[i][j];
+			for (int k = 0; k < 4; ++k) {
+				int x = i + Move[k][0];
+				int y = j + Move[k][1];
+				if (ok(x, y)) {
+					dicnic.addedge(id(i, j), id(x, y), C[i][j]);
+					tot += C[i][j];
+				}
 			}
 		}
 		dicnic.set(S, T);
