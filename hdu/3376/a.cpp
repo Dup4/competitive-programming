@@ -3,7 +3,7 @@ using namespace std;
 using ll = long long;
 const ll INFLL = 0x3f3f3f3f3f3f3f3f;
 struct Dinic {
-	static const int M = 2e6 + 10;
+	static const int M = 3e6 + 10;
 	static const int N = 1e5 + 10;
     struct Edge {
         int to, nxt;
