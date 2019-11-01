@@ -94,7 +94,7 @@ struct MinCost {
    	pair <int,ll> flow(int zrzr, int ujuj) {
    		zr=zrzr; uj=ujuj;
    		vert(zr+1); vert(uj+1);
-   		//spfa();
+   		spfa();
    		pair <int,ll> ret{0, 0};
    		while(1) {
    			//dij();
