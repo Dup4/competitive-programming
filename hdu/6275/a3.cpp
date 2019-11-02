@@ -20,7 +20,7 @@ int gao(ll a, ll b, ll c, ll n) {
     }
     if (a >= c || b >= c) { 
         ll tmp = gao(a % c, b % c, c, n);
-        ll res = ((tmp + (a / c) * sum(n) & 1) + ((b / c) * (n + 1) & 1)) & 1;  
+        ll res = ((tmp + ((a / c) * sum(n) & 1) & 1) + ((b / c) * (n + 1) & 1)) & 1;  
         return res;
     }
 	ll m = (a * n + b) / c; 
@@ -42,15 +42,17 @@ int main() {
 	int _T; scanf("%d", &_T);
 	while (_T--) {
 		scanf("%lld", &n);
-		up = min(30000000ll, n);
+		up = min(10000000ll, n);
 		ll ans = 0; 
 		for (int i = 1; i <= up; ++i) {
 			ans ^= (n % i);
 		}
 		ll res = 0;
-		for (int i = 48; i >= 0; --i) {
-			if (gogogo(1ll << i)) 
-				res |= 1ll << i;
+		for (ll i = up + 1, j; i <= n; i = j + 1) {
+			j = n / (n / i);
+		   	ll lim = n - (n / j) * (j - i);
+			for (ll k = 1; k <= lim; k <<= 1)
+				res += gao(n / i, n % j, k, j - i) * k;
 		}
 	//	dbg(ans, res);	
 		printf("%lld\n", res ^ ans);
