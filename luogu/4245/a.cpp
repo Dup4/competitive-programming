@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define maxn 300005
+#define maxn 400005
 #define LL long long
  
 int n,m, RealMod;
@@ -59,11 +59,18 @@ void mul(int *ret,int *A,int lena,int *B,int lenb,int id)
 }
  
 //O(1)快速乘
-LL mul(LL a,LL b,LL P)
-{
-	a=(a%P+P)%P,b=(b%P+P)%P;
-	return ((a*b-(LL)((long double)a/P*b+1e-6)*P)%P+P)%P;
+//LL mul(LL a,LL b,LL P)
+//{
+//	a=(a%P+P)%P,b=(b%P+P)%P;
+//	return ((a*b-(LL)((long double)a/P*b+1e-6)*P)%P+P)%P;
+//}
+
+LL mul(LL a, LL b, LL mod) {
+    a %= mod, b %= mod;
+    return ((a * b - (long long)((long long)((long double)a / mod * b + 1e-3) * mod)) % mod + mod) % mod;
+
 }
+
 /*
 long long mul (long long a, long long b, long long mod) {
 	a%=mod,b%=mod;
@@ -104,7 +111,7 @@ int main()
 		int tmp=(c[0][i]+RealMod)%RealMod;
 		printf("%d ",tmp);
 	}
-	printf("%d\n",(c[0][n+m]+RealMod)%RealMod);
+	printf("%d ",(c[0][n+m]+RealMod)%RealMod);
 	
 	//printf("%d\n",clock()-t1);
 }
