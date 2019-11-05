@@ -103,17 +103,14 @@ struct Trie {
 	}
 }trie;
 
-
 int main() {
 	while (scanf("%d%d", &n, &q) != EOF) {
 		trie_pos[0] = 1; trie.init();		
-		sam.init();
 		for (int i = 1, p; i <= n; ++i) {
 			scanf("%s%d", s, &p);
-			trie_pos[i] = trie.add(trie_pos[p], s[0] - 'A');		
+			trie_pos[i] = trie.add(trie_pos[p], s[0] - 'A');	
 		}
-		trie.bfs();
-		sam.build();
+		sam.init(); trie.bfs(); sam.build();
 		for (int i = 1; i <= q; ++i) {
 			scanf("%s", s + 1);
 			int len = strlen(s + 1);			

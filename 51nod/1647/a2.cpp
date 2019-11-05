@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 1e6 + 10, ALP = 26, M = 21;
+const int N = 1e6 + 5, ALP = 26, M = 21;
 int n, q;
-vector <string> s;
+char s[N]; 
 vector <vector<int>> trie_pos;  
 struct SAM {
 	//空间开两倍，节点个数是两倍字符串长度
@@ -11,20 +11,17 @@ struct SAM {
 	//fa 表示节点i的后缀链接 cnt 表示节点i的enspos集合大小 
 	//c[]表示拓扑排序辅助数组,　rk[]表示拓扑序，rk[i],i小的节点所表示的后缀长度也小
 	struct node {
-		int maxlen, cnt, fa, nx[ALP];
-		node() { maxlen = cnt = fa = 0; memset(nx, 0, sizeof nx); } 
-	};
-	vector <node> t;
-	int tot, c[N << 1], rk[N << 1], fa[N << 1][M]; 
-	inline int newnode() { 
+		int maxlen, cnt, fa, nx[ALP];  
+		void init() { maxlen = cnt = fa = 0; memset(nx, 0, sizeof nx); } 
+	}t[N << 1];   
+	int tot, c[N << 1], rk[N << 1], bz[N << 1][M]; 
+	inline int newnode() {   
 		++tot;
-		t.push_back(node());
+		t[tot].init();
 		return tot;
 	}
-	inline void init() {
-		t.clear();
+	inline void init() { 
 		tot = 0;
-		t.push_back(node());
 		newnode();
 	}
 	inline int extend(int id, int lst, int cnt) { 
@@ -33,9 +30,9 @@ struct SAM {
 		t[cur].maxlen = t[lst].maxlen + 1; 
 		for (p = lst; p && !t[p].nx[id]; p = t[p].fa) t[p].nx[id] = cur;
 		if (!p) {
-			t[cur].fa = 1;
+			t[cur].fa = 1; 
 		} else {
-			int q = t[p].nx[id];
+			int q = t[p].nx[id]; 
 			if (t[q].maxlen == t[p].maxlen + 1) {
 				t[cur].fa = q;
 			} else {
@@ -56,40 +53,37 @@ struct SAM {
 		for (int i = 1; i <= tot; ++i) rk[c[t[i].maxlen]--] = i;
 		for (int i = tot; i; --i) t[t[rk[i]].fa].cnt += t[rk[i]].cnt;
 		for (int i = 1; i <= tot; ++i) {
-			int p = rk[i];
-			fa[p][0] = t[p].fa;
+			int p = rk[i]; bz[p][0] = t[p].fa;
 			for (int j = 1; j < M; ++j)
-				fa[p][j] = fa[fa[p][j - 1]][j - 1];
+				bz[p][j] = bz[bz[p][j - 1]][j - 1];
 		}
 	}
 	void query(int p, int len) {
 		for (int i = M - 1; i >= 0; --i) {
-			int nx = fa[p][i];
-			if (t[nx].maxlen - t[t[nx].fa].maxlen >= len) {
+			int nx = bz[p][i];
+			if (t[nx].maxlen >= len) {
 				p = nx;
 			}
 		}
-		cout << t[p].cnt << "\n";
+		printf("%d\n", t[p].cnt);
 	}
 }sam;
 
 struct Trie {
 	struct node {
 		int nx[ALP], cnt, sam_pos;
-	    node() { memset(nx, 0, sizeof nx);  cnt = 0; sam_pos = 0; }	
-	};
-	vector <node> t; 
+	    void init() { memset(nx, 0, sizeof nx);  cnt = 0; sam_pos = 0; }	
+	}t[N];
 	int rt, tot;  
 	int newnode() {
 		++tot;     
-		t.push_back(node());
+		t[tot].init();
 		return tot;
 	}
-	void init() { t.clear(); t.push_back(node()); tot = 0; rt = newnode(); }  
-	void insert(const string &s, vector<int> &vec) {
-		int sze = s.size();
+	void init() { tot = 0; rt = newnode(); }  
+	void insert(char *s, vector<int> &vec) {
 		int p = 1;
-		for (int i = 0; i < sze; ++i) {
+		for (int i = 1; s[i]; ++i) {
 			int ch = s[i] - 'a';
 			if (!t[p].nx[ch]) {
 				int tmp = newnode();
@@ -117,21 +111,19 @@ struct Trie {
 }trie;
 
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(0); cout.tie(0);
-	while (cin >> n) {
+	while (scanf("%d", &n) != EOF) {
 		trie.init();
-		s.clear(); s.resize(n + 1);
 		trie_pos.clear(); trie_pos.resize(n + 1);
-		for (int i = 1, sze; i <= n; ++i) {
-			cin >> s[i]; sze = s[i].size();
-			trie_pos[i].resize(sze);
-			trie.insert(s[i], trie_pos[i]);
+		for (int i = 1, len; i <= n; ++i) {
+			scanf("%s", s + 1); 
+			len = strlen(s + 1);
+			trie_pos[i].resize(len + 1);
+			trie.insert(s, trie_pos[i]);
 		}
 		sam.init(); trie.bfs(); sam.build();
-		cin >> q;
+		scanf("%d", &q);
 		for (int i = 1, p, x, y; i <= q; ++i) {
-			cin >> p >> x >> y; --x, --y;
+			scanf("%d%d%d", &p, &x, &y);
 			sam.query(trie.t[trie_pos[p][y]].sam_pos, y - x + 1); 
 		}	
 	}

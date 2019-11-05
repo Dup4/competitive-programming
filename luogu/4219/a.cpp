@@ -9,6 +9,7 @@ struct LCT {
 	#define rs t[x].son[1]
 	struct node {
 		int fa, son[2];
+		//si　表示虚子树信息总和　s表示原子树(原树中的一条链)信息总和
 		int s, si;
 		//翻转标记
 		bool r;
@@ -25,6 +26,7 @@ struct LCT {
 	}
 	//上传信息
 	inline void pushup(int x) {
+		//两个实子树的和　＋　虚子树的和　＋　本身的值
 		t[x].s = t[ls].s + t[rs].s + t[x].si + 1; 
 	}
 	//翻转操作
@@ -144,6 +146,7 @@ int main() {
 				break;
 			case 'Q' :
 				lct.split(x, y); 
+				//把x -> y 的边抠出来，那么经过该边路径数量就是　(x的虚子树 + 1) * (y的虚子树 + 1)
 				printf("%lld\n", 1ll * (lct.t[x].si + 1) * (lct.t[y].si + 1));
 				break;
 		}
