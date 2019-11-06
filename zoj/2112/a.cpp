@@ -16,7 +16,7 @@ struct E {
 	E(int op, int x, int y, int z) : op(op), x(x), y(y), z(z) {}
 }e[N]; 
 
-inline int lowbit(int x) { return x & -x; }
+inline int lowbit(int x) { return x & (-x); }
 
 struct SEG {
 	struct node {
@@ -27,9 +27,10 @@ struct SEG {
 	int newnode() {
 		++tot;
 		t[tot].init();
+		assert(tot < N * 50);
 		return tot;
 	}
-	void init() { memset(rt, 0, sizeof rt); tot = 0; }
+	void init() { memset(rt, 0, sizeof rt); tot = 0; t[0].init(); }
 	void update(int &rt, int l, int r, int pos, int v) {
 		if (!rt) rt = newnode();
 		t[rt].sum += v;
@@ -37,6 +38,11 @@ struct SEG {
 		int mid = (l + r) >> 1;
 		if (pos <= mid) update(t[rt].ls, l, mid, pos, v);
 		else update(t[rt].rs, mid + 1, r, pos, v);
+	}
+	void update(int x, int pos, int v) {
+		for (int i = x; i <= n; i += lowbit(i)) {
+			update(rt[i], 1, m, pos, v);
+		}
 	}
 	int query(int l, int r, int k) {
 		if (l == r) return l;
@@ -53,11 +59,13 @@ struct SEG {
 			for (int i = 1; i <= *R; ++i) R[i] = t[R[i]].rs;
 			return query(mid + 1, r, k - (rsum - lsum));
 		}
-	} 
+	}
 }seg;
 
 int main() {
-	while (scanf("%d%d", &n, &q) != EOF) {
+	int _T; scanf("%d", &_T);
+	while (_T--) {
+		scanf("%d%d", &n, &q);
 		hs.init();
 		for (int i = 1; i <= n; ++i) {
 			scanf("%d", a + i);
@@ -80,9 +88,7 @@ int main() {
 		for (int i = 1; i <= q; ++i) if (e[i].op == 1) e[i].y = hs.get(e[i].y);	
 		seg.init();   
 		for (int i = 1; i <= n; ++i) { 
-			for (int j = i; j <= n; j += lowbit(j)) {
-				seg.update(seg.rt[j], 1, m, a[i], 1); 
-			}
+			seg.update(i, a[i], 1);
 		}
 		for (int i = 1; i <= q; ++i) { 
 			if (e[i].op == 0) { 
@@ -93,17 +99,14 @@ int main() {
 				for (int j = e[i].y; j; j -= lowbit(j)) {
 					R[++*R] = seg.rt[j];
 				}
-				printf("%d\n", hs.a[seg.query(1, m, e[i].z) - 1]);
+				printf("%d\n", hs.a[seg.query(1, m, e[i].z) - 1]); 
 			} else {
-				for (int j = e[i].x; j <= n; j += lowbit(j)) {
-					seg.update(seg.rt[j], 1, m, a[e[i].x], -1);
-				}
+				seg.update(e[i].x, a[e[i].x], -1);
 				a[e[i].x] = e[i].y;
-				for (int j = e[i].x;j <= n; j += lowbit(j)) {
-					seg.update(seg.rt[j], 1, m, a[e[i].x], 1);
-				}
+				seg.update(e[i].x, a[e[i].x], 1);
 			}
 		}
 	}
 	return 0;
 }
+
