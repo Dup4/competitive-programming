@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cmath>
 #include <algorithm>
+#include <cstring>
 using namespace std;
 #define db double
 const int N = 1e3 + 10;
@@ -10,8 +11,7 @@ inline int sgn(db x) {
 	return x > 0 ? 1 : -1;
 }
 int n, x[N], y[N], h[N];
-db w[N][N], dis[N][N], cost[N][N];
-db ans;
+db dis[N][N], cost[N][N], ans;
 inline db getdis(int a, int b) {
 	return sqrt((x[a] - x[b]) * (x[a] - x[b]) + (y[a] - y[b]) * (y[a] - y[b]));
 }
@@ -23,10 +23,10 @@ struct Prime {
 		for (int i = 1; i <= n; ++i) {
 			w[i] = cost[1][i] - dis[1][i] * k;
 			val[i] = cost[1][i];
+			vis[i] = 0;
 		}
-		memset(vis, 0, sizeof vis);
-		vis[1] = true;
-		for (int k = 2; k <= n; ++k) {
+		vis[1] = 1;
+		for (int o = 2; o <= n; ++o) {
 			db mi = 1e9;
 			int pos = 0;
 			for (int i = 1; i <= n; ++i) if (!vis[i]) {
