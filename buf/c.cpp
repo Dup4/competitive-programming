@@ -1,28 +1,21 @@
-#include <bits/stdc++.h>
-using namespace std;
-using ll = long long;
-char s[110];
-bool ok() {
-	
-	for (int i = 0; i < 8; ++i) {
-		
-	}
-}
-void dfs(int cur) {
-	if (cur == 8) {
-		if (ok()) {
-			s[8] = 0;
-			printf("%s\n", s + 1);
-			return;
-		}
-	}
-	for (int i = '0'; i <= '9'; ++i) {
-		s[cur] = i;
-		dfs(cur + 1);
-	}
-}
+#include <cstdio>
+#include <cstring>
+const int N = 1e5 + 10;
+int n, f[N][3];
 
 int main() {
-	dfs(0);
+	while (scanf("%d", &n) != EOF) {
+		memset(f, 0, sizeof f);
+		f[0][0] = 1;
+		for (int i = 1; i <= n; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				f[i][0] += f[i - 1][j]; 
+				if (i > 1 && j < 2) {
+					f[i][j + 1] += f[i - 2][j];
+				}	
+			}
+		}
+		printf("%d\n", f[n][0] + f[n][1] + f[n][2]); 
+	}
 	return 0;
 }
