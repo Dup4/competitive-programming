@@ -31,7 +31,7 @@ inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * b
 //head
 constexpr int N = 1e5 + 10, INF = 0x3f3f3f3f;
 ll v, bit[20]; int res;
-void NO() { pt("Impossible"); }
+void NO() { cout << "Impossible" << endl; }
 void dfs(int cur, int now, int cnt) {
 	if (now == 0) {
 		chmin(res, cnt);
@@ -55,7 +55,7 @@ void run() {
 	res = INF;
 	dfs(9, v, 0);
 	if (res > 9) NO();
-	else pt(res);
+	else cout << res << endl;
 }
 
 int main() {

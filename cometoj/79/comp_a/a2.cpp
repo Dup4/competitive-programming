@@ -29,76 +29,36 @@ void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << '
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 5e2 + 10, M = 5e4 + 1100;
-int n, W, a[N], fa[N], f[2][N][M], g[2][M], h[N];   
-//0 不选　1 选
-vector <vector<pII>> G;
-void dfs(int u) {
-	f[0][u][0] = 0; 
-	h[u] = 0;
-	for (auto &it : G[u]) {
-		int v = it.fi, w = it.se;
-		if (v == fa[u]) continue;
-		fa[v] = u;
-		dfs(v);
-		for (int i = 0; i <= h[u]; ++i) {
-			for (int j = 0; j < 2; ++j) {
-				g[j][i] = f[j][u][i];
-			}
+constexpr int N = 1e5 + 10, INF = 2e9;
+ll v, bit[15]; 
+int res;
+void dfs(int cur, int cost, ll now) {
+	if (now > v || cost > res) return; 
+	if (cur == 9) {
+		if (now == v) {
+			chmin(res, cost);
 		}
-		int H = h[u];
-		for (int i = 0; i <= h[v]; ++i) { 
-			for (int j = 0; j <= h[u]; ++j) {
-				if ((f[0][v][i] != -1 || f[1][v][i] != -1)) {
-					int Max = max(f[0][v][i], f[1][v][i]);
-					if (g[0][j] != -1) {
-						chmax(f[0][u][i + j], g[0][j] + Max);
-						chmax(H, i + j);
-						if (f[0][v][i] != -1) {
-							chmax(f[1][u][i + j + w], g[0][j] + f[0][v][i] + a[u] + a[v]);
-							chmax(H, i + j + w);
-						}
-					}		
-					if (g[1][j] != -1) {
-						chmax(f[1][u][i + j], g[1][j] + Max);
-						chmax(H, i + j);
-					}
-				}
-			}
-		}	
-		h[u] = H;
+		return;
+	}
+	for (int i = 0; i <= 9; ++i) {
+		dfs(cur + 1, cost + i, now + bit[cur] * i);
 	}
 }
 void run() {
-	for (int i = 1; i <= n; ++i) a[i] = rd();
-	G.clear(); G.resize(n + 1);
-	for (int i = 1, u, v, w; i < n; ++i) {
-		u = rd(), v = rd(), w = rd();
-		G[u].push_back(pII(v, w));
-		G[v].push_back(pII(u, w));
-	}
-	memset(f, -1, sizeof f);
-    fa[1] = 1;	
-	dfs(1);
-	ll A = 0, B = 1;
-	for (int j = W; j < M; ++j) {
-		for (int k = 0; k < 2; ++k) {
-			ll tot = f[k][1][j];
-			if (tot != -1) {
-				if (tot * B > A * j) {
-					A = tot;
-					B = j;
-				}
-			}
-		}
-	}
-	pt(A * 1.0 / B);
+	v = rd();
+	res = 10;
+	dfs(0, 0, 0);
+	if (res > 9) cout << "Impossible" << endl;
+	else cout << res << endl;
 }
 
 int main() {
+	bit[0] = 1;
+	for (int i = 1; i <= 8; ++i) bit[i] = bit[i - 1] * 10 + 1;
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
-	cout << fixed << setprecision(2);
-	while (cin >> n >> W) run();
+	cout << fixed << setprecision(20);
+	int _T = rd();
+	while (_T--) run();
 	return 0;
 }
