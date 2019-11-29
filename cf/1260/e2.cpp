@@ -30,60 +30,18 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 3e5 + 10;
-int n, a[N], vis[N]; 
+int n, a[N]; 
 void run() {
-	memset(vis, 0, sizeof vis);
-	int pos = -1;
-	for (int i = 1; i <= n; ++i) {
-		a[i] = rd();
-		if (a[i] == -1) pos = i;
-	}
-	int lower = pos - 1, upper = n - pos;
-	vector <pII> vec;
-	for (int i = pos + 1; i <= n; ++i) {
-		vec.push_back(pII(a[i], i)); 
-	}
-	sort(vec.begin(), vec.end(), [&](pII a, pII b) { return a.fi < b.fi; });
-	int l = 0, r, sze = vec.size() - 1; 
+	for (int i = 1; i <= n; ++i) a[i] = rd();
+	priority_queue <int, vector<int>, greater<int>> pq;
 	ll res = 0;
-	int tot = n;
-	while (tot > 1) {
-		if (lower >= 1) {
-			--lower; 
-		} else {
-			while (1) {
-				if (vis[vec[l].se] == 0) 
-					break;
-				++l;
-			}
-			res += vec[l].fi;
-			vis[vec[l].se] = 1;
-			--upper; 
+	for (int i = n; i >= 1; --i) {
+		pq.push(a[i]);
+		if ((i & -i) == i) {
+			int top = pq.top(); pq.pop();
+			if (top == -1) break;
+			res += top;
 		}
-		if (lower % 2 == 0) { 
-			lower /= 2;
-		} else {
-			--lower;
-			lower /= 2;
-		}
-		int need = upper / 2;
-		upper -= need;
-		r = sze;
-		for (int i = n; need; --i) {
-			if (vis[i] == 0) {
-				--need;
-				while (1) {
-					int it = vec[r].se;
-					if (it < i && vis[it] == 0) {
-						break;
-					}
-					--r;
-				}
-				dbg(i, vec[r].se);
-				vis[vec[r].se] = 1;
-			}
-		}
-		tot /= 2; 
 	}
 	pt(res);
 }
