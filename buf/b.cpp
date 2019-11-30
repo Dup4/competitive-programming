@@ -1,17 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define N 10000010
-long long b[156255];
+unsigned int x;
 
 int main() {
-	int n;
-	cin >> n;
-	for (int i = 1, x; i <= n; ++i) {
-		cin >> x;
-		if (x >= 1 && x <= 10000000) {
-			b[x] = 1;
-		}
-	}
-	cout << -1 << endl;	
+	x = 8;
+	int y = (1 << 9) - 1;
+	cout << x & y << endl;
+	x >>= 8;
+
+	
 	return 0;
 }
