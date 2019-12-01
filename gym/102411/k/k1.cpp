@@ -108,28 +108,40 @@ void gaoU1(char str[][N]) {
 	for (int i = 1; i <= n; ++i) {
 		for (int j = 1; j <= m; ++j) {
 			if (str[i][j] > 'A' && str[i][j] <= 'Z') {
-				up[i][j] = i;
-				for (int o = 1; ; ++o) {
-					if (i - o < 1) break;
-					if (str[i - o][j] != '.') break;
-					up[i][j] = i - o;
-					str[i - o][j] = str[i][j] - 'A' + 'a';
+				for (int o = i - 1; o >= 1; --o) {
+					int F = 1;
+					for (int k = up[i][j]; k <= down[i][j]; ++k) {
+						if (str[o][k] != '.') {
+							F = 0;
+							break;
+						}
+					}
+					if (!F) break;
+					for (int k = up[i][j]; k <= down[i][j]; ++k) {
+						str[o][k] = str[i][j] - 'A' + 'a';
+					}
 				}
-			}	
+			}
 		}
 	}
 }
 
 void gaoD1(char str[][N]) {
 	for (int i = 1; i <= n; ++i) {
-		for (int j = m; j >= 1; --j) {
+		for (int j = 1; j <= m; ++j) {
 			if (str[i][j] > 'A' && str[i][j] <= 'Z') {
-				down[i][j] = i;
-				for (int o = 1; ; ++o) {
-					if (i + o > n) break;
-					if (str[i + o][j] != '.') break;
-					down[i][j] = i + o;
-					str[i + o][j] = str[i][j] - 'A' + 'a'; 
+				for (int o = i + 1; o <= n; ++o) {
+					int F = 1;
+					for (int k = up[i][j]; k <= down[i][j]; ++k) {
+						if (str[o][k] != '.') {
+							F = 0;
+							break;
+						}
+					}
+					if (!F) break;
+					for (int k = up[i][j]; k <= down[i][j]; ++k) {
+						str[o][k] = str[i][j] - 'A' + 'a';
+					}
 				}
 			}
 		}
@@ -140,114 +152,28 @@ void gaoL1(char str[][N]) {
 	for (int j = 1; j <= m; ++j) {
 		for (int i = 1; i <= n; ++i) {
 			if (str[i][j] > 'A' && str[i][j] <= 'Z') {
-				up[i][j] = i; 
+				up[i][j] = j; 
 				for (int o = 1; ; ++o) {
-					if (i - o < 1) break;
-					if (str[i - o][j] != '.') break;
-					up[i][j] = i - o;
-					str[i - o][j] = str[i][j] - 'A' + 'a';
+					if (j - o < 1) break; 
+					if (str[i][j - o] != '.') break;
+					up[i][j] = j - o; 
+					str[i][j - o] = str[i][j] - 'A' + 'a';
 				}
 			}	
 		}
 	}
 }
 
-void gaoD(char str[][N]) {
-	for (int i = 1; i <= n; ++i) {
-		for (int j = m; j >= 1; --j) {
-			if (str[i][j] > 'A' && str[i][j] <= 'Z') {
-				down[i][j] = i;
-				for (int o = 1; ; ++o) {
-					if (i + o > n) break;
-					if (str[i + o][j] != '.') break;
-					down[i][j] = i + o;
-					str[i + o][j] = str[i][j] - 'A' + 'a'; 
-				}
-			}
-		}
-	}
-}
-
-void gaoL(char str[][N]) {
-	for (int j = 1; j <= m; ++j) {
-		for (int i = 1; i <= n; ++i) {
-			if (str[i][j] > 'A' && str[i][j] <= 'Z') {
-				for (int o = j - 1; o >= 1; --o) {
-					int F = 1;
-					for (int k = up[i][j]; k <= down[i][j]; ++k) { 
-						if (str[k][o] != '.') {
-							F = 0;
-							break;
-						}
-					}
-					if (!F) break;
-					for (int k = up[i][j]; k <= down[i][j]; ++k) {
-						str[k][o] = str[i][j] - 'A' + 'a';
-					}
-				}
-			}
-		}
-	}
-}
-
-void gaoR(char str[][N]) {
-	for (int j = m; j >= 1; --j) {
-		for (int i = 1; i <= n; ++i) { 
-			if (str[i][j] > 'A' && str[i][j] <= 'Z') { 
-				for (int o = j + 1; o <= m; ++o) { 
-					int F = 1; 
-					for (int k = up[i][j]; k <= down[i][j]; ++k) {
-						if (str[k][o] != '.') {
-							F = 0;
-							break;
-						}
-					}
-					if (!F) break;
-					for (int k = up[i][j]; k <= down[i][j]; ++k) {
-						str[k][o] = str[i][j] - 'A' + 'a';
-					}
-				}
-			}
-		}
-	}
-}
-	for (int j = 1; j <= m; ++j) {
-		for (int i = 1; i <= n; ++i) {
-			if (str[i][j] > 'A' && str[i][j] <= 'Z') {
-				for (int o = j - 1; o >= 1; --o) {
-					int F = 1;
-					for (int k = up[i][j]; k <= down[i][j]; ++k) { 
-						if (str[k][o] != '.') {
-							F = 0;
-							break;
-						}
-					}
-					if (!F) break;
-					for (int k = up[i][j]; k <= down[i][j]; ++k) {
-						str[k][o] = str[i][j] - 'A' + 'a';
-					}
-				}
-			}
-		}
-	}
-}
-
 void gaoR1(char str[][N]) {
 	for (int j = m; j >= 1; --j) {
-		for (int i = 1; i <= n; ++i) { 
-			if (str[i][j] > 'A' && str[i][j] <= 'Z') { 
-				for (int o = j + 1; o <= m; ++o) { 
-					int F = 1; 
-					for (int k = up[i][j]; k <= down[i][j]; ++k) {
-						if (str[k][o] != '.') {
-							F = 0;
-							break;
-						}
-					}
-					if (!F) break;
-					for (int k = up[i][j]; k <= down[i][j]; ++k) {
-						str[k][o] = str[i][j] - 'A' + 'a';
-					}
+		for (int i = 1; i <= n; ++i) {
+			if (str[i][j] > 'A' && str[i][j] <= 'Z') {
+				down[i][j] = j;
+				for (int o = 1; ; ++o) {
+					if (j + o > m) break;
+					if (str[i][j + o] != '.') break;
+					down[i][j] = j + o;
+					str[i][j + o] = str[i][j] - 'A' + 'a';
 				}
 			}
 		}
@@ -324,13 +250,19 @@ int main() {
 				strb[i][j] = str[i][j];
 			}
 		}
+
 		gaoU(stra);
 		gaoD(stra);
 		gaoL(stra);
 		gaoR(stra);
 
-		if (ok(stra)) print(stra);
-		else if (ok(strb)) print(strb);
+		gaoL1(strb);
+		gaoR1(strb);
+		gaoU1(strb);
+		gaoD1(strb);
+
+		if (ok(strb)) print(strb);
+		else if (ok(stra)) print(stra);
 		else assert(0);
 	}
 	return 0;
