@@ -32,15 +32,27 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10;
-int n; 
+ll r, b, k;
+ll ceil(ll x, ll y) {
+	return (x + y - 1) / y;
+}
 void run() {
-	
+	cin >> r >> b >> k;
+	if (r > b) swap(r, b);
+	if (r == b) pt("OBEY");
+	else {
+		ll g = gcd(r, b);
+		ll Max = ceil(b - g, r);
+		if (Max < k) pt("OBEY");
+		else pt("REBEL");
+	}
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	int _T = rd();
+	while (_T--) run();
 	return 0;
 }

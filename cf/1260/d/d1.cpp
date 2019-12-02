@@ -31,16 +31,65 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-int n; 
+constexpr int N = 2e5 + 10;
+int n, m, K, T, a[N]; 
+struct E {
+	int l, r, d;
+	E() {}
+	void scan() { cin >> l >> r >> d; --l; }
+	bool operator < (const E &other) const {
+		if (l != other.l)
+			return l < other.l;
+		return r < other.r;
+	}
+}e[N];
+bool check(int x) {
+	vector <pII> vec;
+	for (int i = 1; i <= K; ++i) {
+		if (a[x] < e[i].d) {
+			int l = e[i].l, r = e[i].r;
+			if (vec.empty() || l > vec.back().se) {
+				vec.push_back(pII(l, r));
+			} else {
+				chmax(vec.back().se, r);
+			}
+		}
+	}
+	vec.push_back(pII(m + 1, m + 1));
+	int time = 0;
+	int pre = 0;
+	for (auto &it : vec) {
+		time += it.fi - pre;
+		time += (it.se - it.fi) * 3;
+		pre = it.se;
+		if (time > T) return false;
+	}
+//	dbg(x, a[x], time);
+	return time <= T;
+}
 void run() {
-	
+	for (int i = 1; i <= n; ++i) a[i] = rd();
+	for (int i = 1; i <= K; ++i) e[i].scan();
+	sort(e + 1, e + 1 + K);
+	sort(a + 1, a + 1 + n);
+	reverse(a + 1, a + 1 + n);
+	int l = 1, r = n, res = 0;
+	while (r - l >= 0) {
+		int mid = (l + r) >> 1;
+		if (check(mid)) {
+			res = mid;
+			l = mid + 1;
+		} else {
+			r = mid - 1;
+		}
+	}
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> m >> K >> T) run();
 	return 0;
 }
