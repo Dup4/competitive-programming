@@ -2,12 +2,17 @@
 using namespace std;
 
 int main() {
-	vector <int> vec(10), vec2(10);
-	iota(vec.begin(), vec.end(), 1);
-	iota(vec2.begin(), vec2.end(), 1);
-
-	copy(vec.begin(), vec.end(), ostream_iterator<int>{cout, " "});
-	cout << endl;
+//	int a[] = {0, 1, 2, 3, 4, 5};
+//	for (int i = 0; i < 6; ++i)
+//		printf("%d%c", a[i], " \n"[i == 5]);
+//
+//	vector <int> vec(10), vec2(5);
+//	iota(vec.begin(), vec.end(), 1);
+//	copy(vec.begin(), vec.end(), ostream_iterator<int>{cout, " "});
+//	iota(vec2.begin(), vec2.end(), 1);
+//	
+//
+//	cout << endl;
 
 	
 
@@ -31,11 +36,21 @@ int main() {
 
 //	adjacent_difference(vec.begin(), vec.end(), ostream_iterator<int>{cout, " "});
 //	cout << endl;
+//	1 2 3 4 5
+//	1 3 6 10 15
 //	partial_sum(vec.begin(), vec.end(), ostream_iterator<int>{cout, " "});
 //	cout << endl;
 //	partial_sum(vec.begin(), vec.end(), vec.begin() + 2);
 //	copy(vec.begin(), vec.end(), ostream_iterator<int>{cout, " "});
 //	cout << endl;
+
+	vector <int> vec{1, 2, 3};
+	do {
+		copy(vec.begin(), vec.end(), ostream_iterator<int>{cout, " "});
+		cout << endl;
+	} while (next_permutation(vec.begin(), vec.end()));
+	
+	
 
 
 	return 0;
