@@ -31,17 +31,27 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10; 
-int n, m, a[N]; ll b[N];   
+constexpr int N = 1e5 + 10;
+int n, m, f[N], g[N]; pII a[N];
 void run() {
-	for (int i = 1; i <= n; ++i) a[i] = rd();
+	memset(f, 0x3f, sizeof f);
+	f[0] = 0;
+	for (int i = 1; i <= n; ++i) cin >> a[i].fi >> a[i].se;
 	sort(a + 1, a + 1 + n);
-	ll res = 0; 
-	for (int i = 1; i <= n; ++i) {
-		b[i % m] += a[i];
-		res += b[i % m];
-		cout << res << " \n"[i == n];
+	for (int i = 1, x, s; i <= n; ++i) {
+		x = a[i].fi, s = a[i].se;
+		memset(g, 0x3f, sizeof g); 
+		for (int j = x + s, k = x - s, cost = 0; cost <= m; ++j, --k, ++cost) { 
+			chmin(j, m);
+			chmax(k, 1); 
+			chmin(g[j], f[k - 1] + cost);
+		}
+		for (int j = m; j >= 1; --j) {
+			chmin(f[j], g[j]);
+			chmin(f[j], f[j + 1]);
+		}
 	}
+	pt(f[m]);
 }
 
 int main() {

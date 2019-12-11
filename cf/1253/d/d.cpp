@@ -31,17 +31,47 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10; 
-int n, m, a[N]; ll b[N];   
-void run() {
-	for (int i = 1; i <= n; ++i) a[i] = rd();
-	sort(a + 1, a + 1 + n);
-	ll res = 0; 
-	for (int i = 1; i <= n; ++i) {
-		b[i % m] += a[i];
-		res += b[i % m];
-		cout << res << " \n"[i == n];
+constexpr int N = 2e5 + 10;
+int n, m;
+struct UFS {
+	int fa[N], Max[N];
+	void init() {
+		for (int i = 1; i <= n; ++i) {
+			fa[i] = i;
+			Max[i] = i;
+		}
 	}
+	int find(int x) {
+		return fa[x] == x ? x : fa[x] = find(fa[x]);
+	}
+	int merge(int x, int y) {
+		int fx = find(x), fy = find(y);
+		if (fx != fy) {
+			fa[fx] = fy;
+			chmax(Max[fy], Max[fx]);
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+}ufs;
+
+void run() {
+	ufs.init();
+	for (int i = 1, u, v; i <= m; ++i) {
+		cin >> u >> v;
+		ufs.merge(u, v);
+	}
+	int res = 0;
+	int it = 1;
+	for (int i = 1; i <= n; ++i) {
+		chmax(it, i);
+		while (it < ufs.Max[ufs.find(i)]) {
+			res += ufs.merge(i, it);
+			++it;
+		}
+	}
+	pt(res);
 }
 
 int main() {

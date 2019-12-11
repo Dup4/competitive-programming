@@ -32,31 +32,52 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e6 + 10;
-int n, b[N]; 
+int n, a[N], b[N], cnt[N], pos[N], POS;  
+void add(int x, int v) {
+	if (pos[x] == POS) {
+		cnt[x] += v;
+	} else {
+		cnt[x] = v;
+	}
+	pos[x] = POS;
+}
+int get(int x) {
+	if (pos[x] == POS)
+		return cnt[x];
+	return 0;
+}
 void run() {
 	memset(b, 0, sizeof b);
-	int cnt = 0;
+	memset(cnt, 0, sizeof cnt);
+	memset(pos, 0, sizeof pos);
+	POS = 0;
+	int num = 0, pre = 0;
 	vector <int> vec; 
+    for (int i = 1; i <= n; ++i) a[i] = rd(); 	
 	for (int i = 1, x; i <= n; ++i) {
-		x = rd();
+		x = a[i];
 		if (x > 0) {
 			if (b[x]) {
 				return pt(-1);
 			} 
 			b[x] = 1;
-			++cnt; 
+			++num; 
 		} else {
-			if (b[x] == 0) {
+			x = -x;
+			if (b[x] == 0 || get(x) > 0) {
 				return pt(-1);
 			}
+			add(x, 1); 
 			b[x] = 0;
-			--cnt;
+			--num;
 		}
-		if (cnt == 0) {
-			vec.push_back(i);
+		if (num == 0) {
+			++POS;
+			vec.push_back(i - pre);
+			pre = i;
 		}
 	}
-	if (cnt) return pt(-1);
+	if (num) return pt(-1);
 	pt(vec.size());
 	pt(vec);
 }
