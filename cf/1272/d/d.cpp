@@ -31,23 +31,25 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-ll n; 
+constexpr int N = 2e5 + 10;
+int n, a[N], f[N], g[N]; 
 void run() {
-	vector <ll> vec;
-	ll x = n;
-	for (ll i = 2; i * i <= x; ++i) { 
-		while (x % i == 0) {
-			vec.push_back(i);
-			x /= i;
-		}
+	for (int i = 1; i <= n; ++i) a[i] = rd();
+	int res = 0;
+	for (int i = n; i >= 1; --i) {
+		if (i == n || a[i] >= a[i + 1]) f[i] = 1;
+		else f[i] = f[i + 1] + 1;
+		chmax(res, f[i]);
 	}
-	if (vec.empty()) return pt(n); 
-    if (x > 1) vec.push_back(x); 	
-	sort(vec.begin(), vec.end());
-	vec.erase(unique(vec.begin(), vec.end()), vec.end());
-	if (vec.size() == 1) return pt(vec[0]);
-	pt(1);
+	for (int i = 1; i <= n; ++i) {
+		if (i == 1 || a[i] <= a[i - 1]) g[i] = 1;
+		else g[i] = g[i - 1] + 1; 
+		if (i - 1 >= 1 && i + 1 <= n && a[i - 1] < a[i + 1])
+			chmax(res, g[i - 1] + f[i + 1]);
+	}
+//	for (int i = 1; i <= n; ++i)
+//		dbg(i, g[i], f[i]);
+	pt(res);
 }
 
 int main() {

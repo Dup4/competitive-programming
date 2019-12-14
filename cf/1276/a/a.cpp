@@ -31,29 +31,44 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-ll n; 
+constexpr int N = 2e5 + 10;
+char s[N];
+int n; 
+bool same(int l, int r, string t) {
+	for (int i = l, j = 0; i <= r; ++i, ++j) {
+		if (s[i] != t[j])
+			return false;
+	}
+	return true;
+}
 void run() {
-	vector <ll> vec;
-	ll x = n;
-	for (ll i = 2; i * i <= x; ++i) { 
-		while (x % i == 0) {
-			vec.push_back(i);
-			x /= i;
+	cin >> (s + 1);
+	n = strlen(s + 1);
+	vector <int> res;
+	for (int i = 1; i <= n; ++i) {
+		if (i >= 3) {
+			if (same(i - 2, i, "one")) {
+				res.push_back(i - 1); 
+			} else if (same(i - 2, i, "two")) {
+				if (i + 2 <= n && same(i + 1, i + 2, "ne")) {
+					res.push_back(i);
+					i += 2;
+				} else {
+					res.push_back(i - 1);
+				}
+			}
 		}
 	}
-	if (vec.empty()) return pt(n); 
-    if (x > 1) vec.push_back(x); 	
-	sort(vec.begin(), vec.end());
-	vec.erase(unique(vec.begin(), vec.end()), vec.end());
-	if (vec.size() == 1) return pt(vec[0]);
-	pt(1);
+	pt(res.size());
+	if ((int)res.size() == 0) cout << endl;
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	int _T = rd();
+	while (_T--) run();
 	return 0;
 }

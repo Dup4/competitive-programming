@@ -32,28 +32,26 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10;
-ll n; 
+ll a, b;
 void run() {
-	vector <ll> vec;
-	ll x = n;
-	for (ll i = 2; i * i <= x; ++i) { 
-		while (x % i == 0) {
-			vec.push_back(i);
-			x /= i;
-		}
+	cin >> a >> b;
+	ll gap = abs(a - b);
+	int res = gap / 5;
+	gap %= 5;
+	if (gap) {
+		if (gap == 1 || gap == 2)
+			++res;
+		else
+			res += 2;
 	}
-	if (vec.empty()) return pt(n); 
-    if (x > 1) vec.push_back(x); 	
-	sort(vec.begin(), vec.end());
-	vec.erase(unique(vec.begin(), vec.end()), vec.end());
-	if (vec.size() == 1) return pt(vec[0]);
-	pt(1);
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	int _T = rd();
+	while (_T--) run();
 	return 0;
 }

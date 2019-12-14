@@ -31,29 +31,35 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-ll n; 
+constexpr int N = 2e5 + 10;
+int n, K, mp[300]; char s[N];
+ll f(ll x) {
+	return x * (x + 1) / 2;
+}
 void run() {
-	vector <ll> vec;
-	ll x = n;
-	for (ll i = 2; i * i <= x; ++i) { 
-		while (x % i == 0) {
-			vec.push_back(i);
-			x /= i;
-		}
+	memset(mp, 0, sizeof mp);
+	cin >> (s + 1);
+	for (int i = 1; i <= K; ++i) {
+		static char ch[10]; cin >> ch;
+		mp[ch[0]] = 1;
 	}
-	if (vec.empty()) return pt(n); 
-    if (x > 1) vec.push_back(x); 	
-	sort(vec.begin(), vec.end());
-	vec.erase(unique(vec.begin(), vec.end()), vec.end());
-	if (vec.size() == 1) return pt(vec[0]);
-	pt(1);
+	int cnt = 0;
+	ll res = 0; 
+	for (int i = 1; i <= n + 1; ++i) {
+		if (i == n + 1 || !mp[s[i]]) {
+			res += f(cnt);
+			cnt = 0;
+		} else {
+			++cnt;
+		}
+	}	
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> K) run();
 	return 0;
 }

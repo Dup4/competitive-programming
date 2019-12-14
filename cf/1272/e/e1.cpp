@@ -31,23 +31,70 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-ll n; 
-void run() {
-	vector <ll> vec;
-	ll x = n;
-	for (ll i = 2; i * i <= x; ++i) { 
-		while (x % i == 0) {
-			vec.push_back(i);
-			x /= i;
+constexpr int N = 2e5 + 10, INF = 0x3f3f3f3f;
+int n, a[N], ans[N];
+vector <vector<int>> G;
+vector <int> vec[2];
+int used[N], dis[N];
+struct E {
+	int u, w;
+	E() {}
+	E(int u, int w) : u(u), w(w) {}
+	bool operator < (const E &other) const {
+		return w > other.w;
+	}
+};
+void Dijkstra(vector <int> vec) {
+	for (int i = 1; i <= n; ++i) {
+		used[i] = 0;
+		dis[i] = INF;
+	}
+	priority_queue <E> pq;
+	for (auto &it : vec) {
+		dis[it] = 0;
+		pq.emplace(it, 0);
+	}
+	while (!pq.empty()) {
+		int u = pq.top().u; pq.pop();
+		if (used[u]) continue;
+		used[u] = 1;
+		for (auto &v : G[u]) {
+			if (dis[v] > dis[u] + 1) {
+				dis[v] = dis[u] + 1;
+				pq.emplace(v, dis[v]);
+			}
 		}
 	}
-	if (vec.empty()) return pt(n); 
-    if (x > 1) vec.push_back(x); 	
-	sort(vec.begin(), vec.end());
-	vec.erase(unique(vec.begin(), vec.end()), vec.end());
-	if (vec.size() == 1) return pt(vec[0]);
-	pt(1);
+}
+void run() {
+	G.clear();
+	G.resize(n + 1);
+	for (int i = 1; i <= n; ++i) {
+		a[i] = rd();
+		int pre = i - a[i],
+			 nx = i + a[i];
+		if (pre >= 1) G[pre].push_back(i);
+		if (nx <= n) G[nx].push_back(i);
+	}
+	for (int i = 1; i <= n; ++i) {
+		ans[i] = INF;
+	}
+	vec[0].clear(); vec[1].clear(); 
+	for (int i = 1; i <= n; ++i) {
+		vec[a[i] & 1].push_back(i);
+	}
+	for (int i = 0; i < 2; ++i) {
+		Dijkstra(vec[i]);
+		for (int j = 1; j <= n; ++j) {
+			if ((a[j] & 1 ^ 1) == i) {
+				ans[j] = dis[j];
+			}
+		}
+	}
+	for (int i = 1; i <= n; ++i) {
+		if (ans[i] == INF) ans[i] = -1;
+		cout << ans[i] << " \n"[i == n];
+	}
 }
 
 int main() {

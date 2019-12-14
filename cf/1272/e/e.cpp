@@ -31,23 +31,34 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-ll n; 
+constexpr int N = 2e5 + 10, INF = 0x3f3f3f3f;
+int n, a[N], f[N][2]; 
 void run() {
-	vector <ll> vec;
-	ll x = n;
-	for (ll i = 2; i * i <= x; ++i) { 
-		while (x % i == 0) {
-			vec.push_back(i);
-			x /= i;
+	for (int i = 1; i <= n; ++i)
+		a[i] = rd(),
+		f[i][a[i] & 1] = 0,
+		f[i][a[i] & 1 ^ 1] = INF;
+	for (int o = 1; o <= 200; ++o) {
+		for (int j = 1; j <= n; ++j) {
+			int pre = j - a[j];
+			if (pre >= 1) {
+				chmin(f[j][0], f[pre][0] + 1);
+				chmin(f[j][1], f[pre][1] + 1);
+			}
 		}
+		for (int j = n; j >= 1; --j) {
+			int nx = j + a[j];
+			if (nx <= n) {
+				chmin(f[j][0], f[nx][0] + 1);
+				chmin(f[j][1], f[nx][1] + 1);
+			}
+		}
+	}	
+	for (int i = 1; i <= n; ++i) {
+		int res = f[i][a[i] & 1 ^ 1];
+		if (res == INF) res = -1;
+		cout << res << " \n"[i == n];
 	}
-	if (vec.empty()) return pt(n); 
-    if (x > 1) vec.push_back(x); 	
-	sort(vec.begin(), vec.end());
-	vec.erase(unique(vec.begin(), vec.end()), vec.end());
-	if (vec.size() == 1) return pt(vec[0]);
-	pt(1);
 }
 
 int main() {
