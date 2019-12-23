@@ -14,17 +14,23 @@ int getNum() {
 int dfs() {
 	if (!(ss >> s)) return 0;
 	if (s == "#") return 0;
-	int num = getNum();
+	int num = getNum(); 
 	int cnt = dfs() + dfs();
 	if (cnt == 2) res += num;	
 	return 1;
 }
 
 int main() {
+	int T; cin >> T;
 	getline(cin, s);
-	ss << s;
-	res = 0;
-	dfs();
-	cout << res << "\n";
+	while (T--) {
+		getline(cin, s);
+		ss.clear();
+		ss.str("");
+		ss << s;
+		res = 0;
+		dfs();
+		cout << res << "\n";
+	}
 	return 0;
 }
