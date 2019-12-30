@@ -43,7 +43,7 @@ int main() {
 		for (int i = 1, pos, x; i <= q; ++i) {
 			scanf("%d%d", &pos, &x);
 			seg.update(1, 1, n, pos, x);
-			printf("%d\n", seg.t[1].cnt);
+			printf("%d\n", seg.t[1].cnt); 
 		}
 	}
 	return 0;
