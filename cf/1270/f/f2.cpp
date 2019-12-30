@@ -1,10 +1,12 @@
 #pragma GCC optimize("Ofast,unroll-loops,no-stack-protector,fast-math")
 #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 #define fi first
 #define se second
 #define endl "\n" 
 using namespace std;
+using namespace __gnu_pbds;
 using db = double;
 using ll = long long;
 using ull = unsigned long long; 
@@ -31,69 +33,66 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e3 + 10;
-int n, k, large, small;
+constexpr int N = 2e5 + 10;
+int n, pre[N]; char s[N]; 
 
-inline pII query(const vector <int> &vec) {
-	cout << "? ";
-	pt(vec);
-	cout.flush();
-	pII res;
-	cin >> res.fi >> res.se;
-	return res;
-}
-
-inline void add(int x, int y) {
-	if (x > y) {
-		++large;
-	} else {
-		++small;
-	}
+inline ll calc(ll l, ll r, ll k) {
+	if (l > r) return 0;
+	return (r / k) - ((l - 1) / k);
 }
 
 void run() {
-	vector <int> vec;
-	pII it[2];
-	for (int i = 1; i <= k; ++i) vec.push_back(i); 
-	it[0] = query(vec);
-	vec.clear();
-	for (int i = 1; i <= k; ++i) {
-		if (i != it[0].fi)
-			vec.push_back(i);
-	}
-	vec.push_back(k + 1);
-	it[1] = query(vec);
-	large = 0, small = 0;
-	vec.clear();
+	n = strlen(s + 1);
+	pre[0] = 0;
 	for (int i = 1; i <= n; ++i) {
-		if (i == it[1].fi) continue;
-		if (vec.size() < k) {
-			vec.push_back(i);
-		} else {
-			break;
+		pre[i] = pre[i - 1] + (s[i] == '1');
+	}
+	vector <int> one;
+	for (int i = 1; i <= n; ++i) {
+		if (s[i] == '1') {
+			one.push_back(i);
 		}
 	}
-	for (int i = 0; i < k; ++i) {
-		if (vec[i] == it[0].fi) continue;
-		int tmp = vec[i];
-		vec[i] = it[1].fi;
-		pII now = query(vec);
-		if (now.se == it[0].se) {
-			add(it[1].se, it[0].se);
-		} else {
-			add(it[0].se, it[1].se);
-		}
-		vec[i] = tmp;
+	if (one.empty()) {
+		return pt(0);
 	}
-	cout << "! ";
-	pt(small + 1);
-	cout.flush();
+	one.push_back(n + 1);
+	ll res = 0;
+	int S = sqrt(n);
+	vector <int> mp(n * S + n);
+	for (int i = 1; i <= S; ++i) {
+		int OFFSET = i * n;
+		++mp[OFFSET];
+		for (int j = 1; j <= n; ++j) {
+			int val = j - i * pre[j];
+			res += mp[val + OFFSET];
+			++mp[val + OFFSET];
+		}
+		--mp[OFFSET];
+		for (int j = 1; j <= n; ++j) {
+			int val = j - i * pre[j];
+			--mp[val + OFFSET];
+		}
+	}
+	int sze = one.size() - 1;
+	for (int i = 1; i <= n / S; ++i) { 
+		int nx = 0;
+		for (int j = 1; j <= n; ++j) {
+			while (nx < sze && pre[one[nx]] - pre[j - 1] < i) ++nx;
+			if (nx == sze) break;
+			int delta = one[nx + 1] - one[nx] - 1;
+			int l = max(i * S + 1, one[nx] - j + 1);
+			int r = one[nx] - j + 1 + delta;
+			res += calc(l, r, i);
+		}
+	}
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> k) run();
+	while (cin >> (s + 1)) run();
 	return 0;
 }

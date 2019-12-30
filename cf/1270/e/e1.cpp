@@ -32,17 +32,8 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e3 + 10;
-int n, x[N], y[N], col[N];   
-
-struct E {
-	int id;
-	ll dis;
-	E() {}
-	E(int id, ll dis) : id(id), dis(dis) {}
-	bool operator < (const E &other) const {
-		return dis < other.dis;
-	}	
-}e[N];
+int n, x[N], y[N]; 
+ll d[N][N];
 
 inline ll sqr(ll x) {
 	return x * x;
@@ -52,32 +43,20 @@ inline ll getdis(int a, int b) {
 	return sqr(x[a] - x[b]) + sqr(y[a] - y[b]); 
 }
 
-map <ll, vector<pII>> mp; 
-
 void run() {
-	ufs.init();
 	for (int i = 1; i <= n; ++i) cin >> x[i] >> y[i];
-	memset(col, -1, sizeof col); 
-		
+	ll g = 0;
 	for (int i = 1; i <= n; ++i) {
-		int cnt = 0;
 		for (int j = 1; j <= n; ++j) {
-			if (j != i) {
-				e[++cnt] = E(j, getdis(i, j));
-			}
-		}
-		sort(e + 1, e + n);
-		for (int j = 2; j < n; ++j) {
-			if (e[j].dis == e[j - 1].dis) {
-			//	dbg(e[j].id, e[j - 1].id);
-				ufs.merge(e[j].id, e[j - 1].id);
-			}
+			d[i][j] = d[j][i] = getdis(i, j);
+			g = gcd(g, d[i][j]);
 		}
 	}
 	vector <int> res;
 	res.push_back(1);
 	for (int i = 2; i <= n; ++i) {
-		if (ufs.find(i) == ufs.find(1))
+		d[1][i] /= g;
+		if (d[1][i] % 2 == 0) 
 			res.push_back(i);
 	}
 	int sze = res.size();

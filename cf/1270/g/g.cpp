@@ -31,69 +31,60 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e3 + 10;
-int n, k, large, small;
+constexpr int N = 1e6 + 10;
+int n, a[N], vis[N], Insta[N], sta[N]; 
+vector <vector<int>> G;
+vector <int> res;
 
-inline pII query(const vector <int> &vec) {
-	cout << "? ";
-	pt(vec);
-	cout.flush();
-	pII res;
-	cin >> res.fi >> res.se;
-	return res;
-}
-
-inline void add(int x, int y) {
-	if (x > y) {
-		++large;
-	} else {
-		++small;
+void dfs(int u) {
+	vis[u] = 1;
+	Insta[u] = 1;
+	sta[++*sta] = u;
+	for (auto &v : G[u]) {
+		if (Insta[v]) {
+			if (res.empty()) {
+				int it = v;
+				while (1) {
+					res.push_back(it);
+					it = sta[*sta]; --(*sta);
+					if (it == v) break;
+				}
+				return;
+			}
+		}
+		if (!vis[v]) {
+			dfs(v);
+			if (!res.empty())
+				return;
+		}
 	}
+	Insta[u] = 0;
 }
 
 void run() {
-	vector <int> vec;
-	pII it[2];
-	for (int i = 1; i <= k; ++i) vec.push_back(i); 
-	it[0] = query(vec);
-	vec.clear();
-	for (int i = 1; i <= k; ++i) {
-		if (i != it[0].fi)
-			vec.push_back(i);
-	}
-	vec.push_back(k + 1);
-	it[1] = query(vec);
-	large = 0, small = 0;
-	vec.clear();
+	n = rd();
+	for (int i = 1; i <= n; ++i) cin >> a[i], vis[i] = 0, Insta[i] = 0;
+	G.clear(); G.resize(n + 1);
 	for (int i = 1; i <= n; ++i) {
-		if (i == it[1].fi) continue;
-		if (vec.size() < k) {
-			vec.push_back(i);
-		} else {
-			break;
+		G[i].push_back(i - a[i]);
+	}
+	res.clear();
+	for (int i = 1; i <= n; ++i) {
+		if (!vis[i] && res.empty()) {
+			*sta = 0;
+			dfs(i);
 		}
 	}
-	for (int i = 0; i < k; ++i) {
-		if (vec[i] == it[0].fi) continue;
-		int tmp = vec[i];
-		vec[i] = it[1].fi;
-		pII now = query(vec);
-		if (now.se == it[0].se) {
-			add(it[1].se, it[0].se);
-		} else {
-			add(it[0].se, it[1].se);
-		}
-		vec[i] = tmp;
-	}
-	cout << "! ";
-	pt(small + 1);
-	cout.flush();
+	int sze = res.size();
+	pt(sze);
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> k) run();
+	int _T = rd();
+	while (_T--) run();
 	return 0;
 }
