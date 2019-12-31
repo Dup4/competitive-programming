@@ -2,6 +2,7 @@
 using namespace std;
 using ll = long long;
 
+
 int main() {
 	unsigned int x = 8;
 	//返回x的最后一位1是从低位向高位第几位的 
