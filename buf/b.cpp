@@ -12,5 +12,12 @@ struct E {
 };
 
 int main(int argc, char *argv[]) { 
+	char a = 127;
+	cout << (int)a << endl;
+	char b = 0xfe; 
+	unsigned int x = b;
+	int y = b;
+	printf("%d %x %x %x\n", b, b, x, y);
+	cout << x << " " << y << endl;
 	return 0;
 }
