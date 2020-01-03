@@ -31,96 +31,35 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-ll n, k, bit[100];
-inline int getLow(ll x, int bit) {
-	return (x >> bit) % 2; 
-}
-inline void setOne(ll &x, int bit) {
-	x |= (1ll << bit); 
-}
-inline void setZero(ll &x, int bit) {
-	x |= (1ll << bit);
-	x ^= (1ll << bit); 
-}
-ll gao() {
-	ll res = 1, num = 0, suf = 0;
-	for (int i = 1; i < 62; ++i) {
-		if (bit[i] >= k) {
-			suf = k - bit[i - 1] - 1;
-			num = i;
-			break;
-		}
-	}
-	bool large = 0;
-	for (int i = num - 1; i >= 0; --i) {
-		int a = getLow(suf, i);
-		int b = getLow(n, i);
-		if (a == b) continue;
-		if (a > b) large = 1;
-		break;
-	}
-	res = n;
-	if (large) {
-		for (int i = num; i < 62; ++i) {
-			if (getLow(res, i) == 1) {
-				setZero(res, i);
-				for (int j = i - 1; j >= num; --j)
-					setOne(res, j);
-				break;
-			}
-		}
-	}
-	res >>= num;
-    return res;	
-}
-ll gao1() {
-	ll res = 1, num = 0, suf = 0;
-	for (int i = 1; i < 62; ++i) {
-		if (bit[i] - 1 >= k) {
-			suf = k - bit[i - 1];
-			num = i;
-			break;
-		}
-	}
-	bool large = 0;
-	for (int i = num - 1; i >= 0; --i) {
-		int a = getLow(suf, i);
-		int b = getLow(n, i);
-		if (a == b) continue;
-		if (a > b) large = 1;
-		break;
-	}
-	res = n;
-	if (large) {
-		for (int i = num; i < 62; ++i) {
-			if (getLow(res, i) == 1) {
-				setZero(res, i);
-				for (int j = i - 1; j >= num; --j)
-					setOne(res, j);
-				break;
-			}
-		}
-	}
-	res >>= num; 
-	res <<= 1;
-	return res;
-}
+constexpr int N = 5e3 + 10;
+int n, m, k, lst[N], f[2][N]; 
+struct E { int a, b, c; }e[N];
+vector <vector<int>> G; 
 void run() {
-	if (k == 1) return pt(n);
-	if (k == n) return pt(1);
-	return pt(max(gao(), gao1()));
+	for (int i = 1; i <= n; ++i) cin >> e[i].a >> e[i].b >> e[i].c, lst[i] = i;
+	G.clear(); G.resize(n + 1);
+	for (int i = 1, u, v; i <= m; ++i) {
+		cin >> u >> v;
+		chmax(lst[v], u);
+	}
+	for (int i = 1; i <= n; ++i) G[lst[i]].push_back(i);
+	memset(f, -0x3f, sizeof f); 
+	f[0][k] = 0; 
+	for (int i = 1; i <= n; ++i) {
+		int p = i & 1;
+		memset(f[p], -0x3f, sizeof f[p]);
+		if (*min_element(f[p ^ 1] + e[i].a, f[p ^ 1] + N) < 0) return pt(-1);
+		for (int j = max(0, e[i].a - e[i].b); j <= 5000; ++j) {
+			if (f[p ^ 1][j] >= 0) f[p][max(j - (e[i].a - e[i].b), 0)] = f[p ^ 1][j];
+		}	
+		
+	}
 }
 
 int main() {
-	bit[0] = 1;
-	for (int i = 1; i < 62; ++i) {
-		bit[i] = bit[i - 1] << 1;
-	}
-	for (int i = 1; i < 62; ++i)
-		bit[i] += bit[i - 1];
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> k) run();
+	while (cin >> n >> m >> k) run();
 	return 0;
 }
