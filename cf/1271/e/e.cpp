@@ -31,18 +31,102 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-int n; 
-inline int lowbit(int x) { return x & -x;}
+ll n, k, bit[100];
+inline int getLow(ll x, int bit) {
+	return (x >> bit) % 2; 
+}
+inline void setOne(ll &x, int bit) {
+	x |= (1 << bit); 
+}
+inline void setZero(ll &x, int bit) {
+	x |= (1 << bit);
+	x ^= (1 << bit); 
+}
+ll gao() {
+	ll res = 1;
+	ll num = 0;
+	ll suf = 0;
+	for (int i = 1; i < 62; ++i) {
+		if (bit[i] >= k) {
+			suf = k - bit[i - 1] - 1;
+			num = i;
+			break;
+		}
+	}
+	bool large = 0;
+	for (int i = num - 1; i >= 0; --i) {
+		if (getLow(suf, i) > getLow(n, i)) {
+			large = 1;
+			break;
+		}
+	}
+	res = n;
+	for (int i = num - 1; i >= 0; --i) {
+		setZero(res, i);
+		if (getLow(suf, i) == 1) 
+			setOne(res, i);
+	}
+	if (large) {
+		for (int i = num; i < 62; ++i) {
+			if (getLow(res, i) == 1) {
+				setZero(res, i);
+				break;
+			}
+		}
+	}
+	res >>= num;
+    return res;	
+}
+ll gao1() {
+	ll res = 1, num = 0, suf = 0;
+	for (int i = 1; i < 62; ++i) {
+		if (bit[i] - 1 >= k) {
+			suf = k - bit[i - 1];
+			num = i;
+			break;
+		}
+	}
+	bool large = 0;
+	for (int i = num - 1; i >= 0; --i) {
+		if (getLow(suf, i) > getLow(n, i)) {
+			large = 1;
+			break;
+		}
+	}
+	res = n;
+	for (int i = num - 1; i >= 0; --i) {
+		setZero(res, i);
+		if (getLow(suf, i) == 1) 
+			setOne(res, i);
+	}
+	if (large) {
+		for (int i = num; i < 62; ++i) {
+			if (getLow(res, i) == 1) {
+				setZero(res, i);
+				break;
+			}
+		}
+	}
+	res >>= num; 
+	res <<= 1;
+	return res;
+}
 void run() {
-	
+	if (k == 1) return pt(n);
+	if (k == n) return pt(1);
+   	pt(max(gao(), gao1()));	
 }
 
 int main() {
-	pt(8 - lowbit(8));
+	bit[0] = 1;
+	for (int i = 1; i < 62; ++i) {
+		bit[i] = bit[i - 1] << i;
+	}
+	for (int i = 1; i < 62; ++i)
+		bit[i] += bit[i - 1];
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-//	while (cin >> n) run();
+	while (cin >> n >> k) run();
 	return 0;
 }
