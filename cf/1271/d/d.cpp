@@ -32,28 +32,45 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 5e3 + 10;
-int n, m, k, lst[N], f[2][N]; 
+int n, m, k, lst[N], w[N];  
 struct E { int a, b, c; }e[N];
-vector <vector<int>> G; 
 void run() {
 	for (int i = 1; i <= n; ++i) cin >> e[i].a >> e[i].b >> e[i].c, lst[i] = i;
-	G.clear(); G.resize(n + 1);
 	for (int i = 1, u, v; i <= m; ++i) {
 		cin >> u >> v;
 		chmax(lst[v], u);
 	}
-	for (int i = 1; i <= n; ++i) G[lst[i]].push_back(i);
-	memset(f, -0x3f, sizeof f); 
-	f[0][k] = 0; 
+	vector <pII> vec;
+	for (int i = 1; i <= n; ++i) vec.push_back(pII(e[i].c, i));
+	sort(vec.begin(), vec.end(), [&](pII x, pII y) { 
+		if (x.fi != y.fi)
+			return x.fi > y.fi; 
+		else
+			return x.se > y.se;
+	});	
+	w[1] = k;
 	for (int i = 1; i <= n; ++i) {
-		int p = i & 1;
-		memset(f[p], -0x3f, sizeof f[p]);
-		if (*min_element(f[p ^ 1] + e[i].a, f[p ^ 1] + N) < 0) return pt(-1);
-		for (int j = max(0, e[i].a - e[i].b); j <= 5000; ++j) {
-			if (f[p ^ 1][j] >= 0) f[p][max(j - (e[i].a - e[i].b), 0)] = f[p ^ 1][j];
-		}	
-		
+		if (w[i] < e[i].a) return pt(-1);
+		w[i + 1] = w[i] + e[i].b;
 	}
+	e[n + 1].a = 0;
+	ll res = 0;
+	for (auto &it : vec) {
+		int ok = 1;
+		for (int i = lst[it.se] + 1; i <= n + 1; ++i) {
+			if (w[i] - 1 < e[i].a) {
+				ok = 0; 
+				break;
+			}
+		}
+		if (ok) {
+			res += it.fi;
+			for (int i = lst[it.se] + 1; i <= n + 1; ++i) {
+				w[i] -= 1; 
+			}
+		}
+	}
+	pt(res);
 }
 
 int main() {
