@@ -88,18 +88,20 @@ int main() {
 			for (int j = 0; j < n - 1; ++j) {
 				while (1) {
 					Line l1 = Line(g.p[j], g.p[nx % (n - 1)]);
-					Line l2 = Line(g.p[j], g.p[(nx + 1) % (n - 1)]);
+					Line l2 = Line(g.p[j], g.p[(nx + 1) % (n - 1)]); 
 					if (l1.realtion(P) != l2.realtion(P)) { 
 						break;
 					}
 					++nx;
 					nx %= (n - 1); 
 				}
-				if (nx > j) {
+				//dbg(nx, j);
+				if (nx > j) {  
 					//dbg(nx - j - 1, f[nx - j - 1]);
 					res -= f[nx - j - 1];
+					res -= f[max(0, n - 1 - nx - 1)]; 
 				} else {
-					res -= f[n - 1 - j - 1]; 
+				//	res -= f[max(0, n - 1 - j - 1)];  
 				//	dbg(n - 1 - j + nx, f[n - 1 - j + nx]);
 				//	res -= f[n - 1 - j + nx];
 				}
