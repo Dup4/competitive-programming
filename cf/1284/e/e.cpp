@@ -38,7 +38,7 @@ struct Line {
 	Point s, e;
 	Line() {}
 	Line(Point s, Point e) : s(s), e(e) {}
-	int realtion(Point p) {
+	int relation(Point p) {
 		int c = sgn((p - s) ^ (e - s));
 		if (c < 0) return 1;
 		else if (c > 0) return 2;
@@ -67,6 +67,10 @@ struct polygon {
 
 
 int main() {
+//	Line l1 = Line(Point(0, 3), Point(1, 0));
+//	Line l2 = Line(Point(0, 3), Point(10, -1));
+//	cout << l1.relation(Point(-1, 0)) << endl;
+//	cout << l2.relation(Point(-1, 0)) << endl;
 	f[0] = f[1] = 0;
 	for (int i = 2; i < N; ++i) {
 		f[i] = 1ll * i * (i - 1) / 2;
@@ -79,33 +83,61 @@ int main() {
 		res *= n;
 		for (int i = 1; i <= n; ++i) {
 			Point P = Point(a[i].fi, a[i].se);
-			polygon g = polygon();
+			polygon g = polygon(); 
 			for (int j = 1; j <= n; ++j) if (i != j) {
 				g.p.push_back(Point(a[j].fi, a[j].se)); 
 			}	
 			g.norm(P);
-			int nx = 1; 
-			for (int j = 0; j < n - 1; ++j) {
-				while (1) {
-					Line l1 = Line(g.p[j], g.p[nx % (n - 1)]);
-					Line l2 = Line(g.p[j], g.p[(nx + 1) % (n - 1)]); 
-					if (l1.realtion(P) != l2.realtion(P)) { 
+		//	dbg(a[i].fi, a[i].se);
+		//	for (auto &it : g.p)
+		//		dbg(it.x, it.y);
+			int nx = 1;
+		    ll del = 0;	
+			for (int j = 0; j < n - 1; ++j) { 
+				int ok = 0;
+				for (int k = 0; k < n - 1; ++k) {
+					nx = (k + 1) % (n - 1);
+					if (k == j || nx == j) continue; 
+					Line l1 = Line(g.p[j], g.p[k]);
+					Line l2 = Line(g.p[j], g.p[nx]); 
+				   	if (l1.relation(P) != l2.relation(P)) {
+						ok = 1;
+					//	dbg(i, j, k);
+						if (k > j) {
+							del += f[k - j - 1];
+							del += f[max(0, n - 2 - (k - j + 1))];
+						} else {
+							del += f[j - nx - 1];
+							del += f[max(0, n - 2 - (j - nx + 1))]; 
+						}
 						break;
-					}
-					++nx;
-					nx %= (n - 1); 
+					}	
 				}
-				//dbg(nx, j);
-				if (nx > j) {  
-					//dbg(nx - j - 1, f[nx - j - 1]);
-					res -= f[nx - j - 1];
-					res -= f[max(0, n - 1 - nx - 1)]; 
-				} else {
-				//	res -= f[max(0, n - 1 - j - 1)];  
-				//	dbg(n - 1 - j + nx, f[n - 1 - j + nx]);
-				//	res -= f[n - 1 - j + nx];
-				}
+				if (ok == 0) del += f[n - 3]; 
+				//dbg(P.x, P.y, j, res);
+			//	while (1) {
+			//		Line l1 = Line(g.p[j], g.p[nx % (n - 1)]);
+			//		Line l2 = Line(g.p[j], g.p[(nx + 1) % (n - 1)]); 
+			//		if (l1.relation(P) != l2.relation(P)) { 
+			//			break;
+			//		}
+			//		++nx;
+			//		nx %= (n - 1); 
+			//	}
+			//	if (nx > j) {  
+			//		//dbg(nx - j - 1, f[nx - j - 1]);
+			//		res -= f[max(0, nx - j - 1)];
+			//		res -= f[max(0, n - 1 - nx - 1)]; 
+			//	} else {
+			//		res -= f[max(0, n - 1 - j + nx)];
+			//		res -= f[max(0, j - nx - 1)];
+			//	//	res -= f[max(0, n - 1 - j - 1)];  
+			//	//	dbg(n - 1 - j + nx, f[n - 1 - j + nx]);
+			//	//	res -= f[n - 1 - j + nx];
+			//	}
 			}
+		//	dbg(i, del);
+			res -= del / 2;
 		}
 		printf("%lld\n", res);
 	}
