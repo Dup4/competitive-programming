@@ -1,5 +1,5 @@
-#include <stdio.h>
-#define N 5100
+#include <bits/stdc++.h>
+#define N 251000
 typedef struct EDGE Edge;
 struct EDGE
 {
@@ -13,9 +13,20 @@ Edge new_edge(int b, int e, int c)
     edge.c = c;
     return edge;
 }
-int less(Edge a, Edge b)
+/*int less(const void * a, const void * b)
 {
-    return a.c < b.c;
+    return (*(EDGE *)a).c < (*(EDGE *)b).c ? 1 : -1;
+}*/
+// int cmp (const void * a, const void * b)
+// {
+//   return ( *(int*)a - *(int*)b );
+//}
+
+int cmp(const void *q, const void *p) {
+	struct EDGE pp = *(struct EDGE *)p;
+	struct EDGE qq = *(struct EDGE *)q;
+	if (pp.c < qq.c) return 1;
+	return -1;
 }
 
 Edge es[N];
@@ -67,7 +78,8 @@ int main()
             c = 0;
         es[tot1++] = new_edge(b, e, c);
     }
-    for (i = 0; i < m; i++)
+    qsort(es,m,sizeof(es[0]),cmp); 
+    /*for (i = 0; i < m; i++)
     {
         for (j = 0; j < m - 1; j++)
         {
@@ -78,7 +90,7 @@ int main()
                 es[j + 1] = tmp;
             }
         }
-    }
+    }*/
     for (i = 1; i <= n; i++)
     {
         int v = getcost(i);
