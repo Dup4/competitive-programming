@@ -31,49 +31,71 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-int n, m; pII f[1 << 10]; 
+constexpr int N = 6e5 + 10;
+struct SEG {
+	struct node {
+		int sum;
+		node() { sum = 0; }
+		node operator + (const node &other) const {
+			node res = node();
+			res.sum = sum + other.sum;
+			return res;
+		}
+	}t[N << 2];
+	void build(int id, int l, int r) {
+		t[id] = node();
+		if (l == r) return;
+		int mid = (l + r) >> 1;
+		build(id << 1, l, mid);
+		build(id << 1 | 1, mid + 1, r);
+	}
+	void update(int id, int l, int r, int pos, int v) {
+		if (l == r) {
+			t[id].sum += v;
+			return;
+		}
+		int mid = (l + r) >> 1;
+		if (pos <= mid) update(id << 1, l, mid, pos, v);
+		else update(id << 1 | 1, mid + 1, r, pos, v);
+		t[id] = t[id << 1] + t[id << 1 | 1];
+	}
+	int query(int id, int l, int r, int ql, int qr) {
+		if (l >= ql && r <= qr) return t[id].sum;
+		int mid = (l + r) >> 1;
+		int res = 0;
+		if (ql <= mid) res += query(id << 1, l, mid, ql, qr);
+		if (qr > mid) res += query(id << 1 | 1, mid + 1, r, ql, qr);
+		return res;
+	}
+}seg;
+int n, m, OFFSET, a[N], l[N], r[N], pos[N]; 
 void run() {
-	memset(f, 0, sizeof f);
-	f[0] = pII(2e9, 1);
-	vector <vector<int>> vec(n + 1, vector<int>(m + 1));
-	int Max = 0, x = 1, y = 1;
+	OFFSET = m + 10; 
+	seg.build(1, 1, OFFSET + n);
 	for (int i = 1; i <= n; ++i) {
-		int Min = 2e9;
-		for (int j = 1; j <= m; ++j) {
-			cin >> vec[i][j];
-			chmin(Min, vec[i][j]);
-		}
-		if (Min > Max) {
-			Max = Min;
-			x = y = i;
-		}
-		for (int S = 0; S < (1 << m); ++S) {
-			Min = 2e9;
-			for (int j = 0; j < m; ++j) {
-				if ((S >> j) & 1) {
-					chmin(Min, vec[i][j + 1]);
-				}
-			}
-			if (Min > f[S].fi) {
-				f[S] = pII(Min, i);
-			}
-		}
+		l[i] = r[i] = i;
+	}
+	for (int i = 1; i <= m; ++i) {
+		cin >> a[i];
+		l[a[i]] = 1;
+	}
+   	for (int i = 1; i <= n; ++i) {
+		pos[i] = i + OFFSET;
+		seg.update(1, 1, OFFSET + n, pos[i], 1);
+	}	
+	int Min = OFFSET;
+	for (int i = 1; i <= m; ++i) {
+		int now_rank = seg.query(1, 1, OFFSET + n, 1, pos[a[i]]);
+		chmax(r[a[i]], now_rank);
+		seg.update(1, 1, OFFSET + n, pos[a[i]], -1);
+		pos[a[i]] = Min; --Min;
+		seg.update(1, 1, OFFSET + n, pos[a[i]], 1);
 	}
 	for (int i = 1; i <= n; ++i) {
-		for (int j = 1; j <= m; ++j) {
-			int S = 0;
-			for (int k = 1; k <= m; ++k) {
-				if (vec[i][k] < vec[i][j])
-					S |= (1 << (k - 1));
-			}
-			if (f[S].fi >= vec[i][j] && vec[i][j] >= Max) {
-				Max = vec[i][j];
-				x = i;
-				y = f[S].se;
-			}
-		}
+		chmax(r[i], seg.query(1, 1, OFFSET + n, 1, pos[i]));
 	}
-	pt(x, y);
+	for (int i = 1; i <= n; ++i)
+		pt(l[i], r[i]);
 }
 
 int main() {

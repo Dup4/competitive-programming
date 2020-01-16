@@ -31,16 +31,34 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10;
-int n; 
+constexpr int N = 1e3 + 10;
+int n, m, f[11][N], g[11][N]; 
+//f 非递增　g 非递减
 void run() {
-	
+	for (int i = 1; i <= n; ++i) f[1][i] = g[1][i] = 1;
+	for (int i = 2; i <= m; ++i) {
+		for (int j = 1; j <= n; ++j) {
+			for (int k = 1; k <= j; ++k) {
+				chadd(g[i][j], g[i - 1][k]);
+			}
+			for (int k = j; k <= n; ++k) {
+				chadd(f[i][j], f[i - 1][k]);
+			}
+		}
+	}	
+	ll res = 0;
+	for (int i = 1; i <= n; ++i) {
+		for (int j = i; j <= n; ++j) {
+			chadd(res, 1ll * f[m][j] * g[m][i] % mod);
+		}
+	}
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run();
+	while (cin >> n >> m) run();
 	return 0;
 }
