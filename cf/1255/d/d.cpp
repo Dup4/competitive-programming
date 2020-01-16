@@ -31,56 +31,66 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10;
-int n, a[N], d[N]; 
-vector <vector<int>> G;
+constexpr int N = 1e2 + 10;
+int n, m, k, pos, vis[N][N]; char S[N][N];
+vector <char> alpha;
+pII gao(pII it, int x, int y) { 
+	while (y--) {
+		int need = x;
+		while (1) {
+			if (S[it.fi][it.se] == 'R') --need;
+			vis[it.fi][it.se] = 1; 
+			S[it.fi][it.se] = alpha[pos];
+			if (it.fi % 2 == 1) ++it.se;
+			else --it.se;
+			if (it.se == m + 1) {
+				++it.fi;
+				it.se = m;
+			} else if (it.se == 0) {
+				++it.fi;
+				it.se = 1; 
+			}
+			if (need == 0) {
+				++pos;
+				break;
+			}
+		}
+	}
+	return it;
+}
 void run() {
-	memset(d, 0, sizeof d);
-	for (int i = 1; i < n; ++i) {
-		cin >> a[i];
-		++d[a[i]]; 
-	}
-	G.clear(); G.resize(n + 1);
-	vector <int> zero;
-	set <pII> se;
+	pos = 0; 
+	cin >> n >> m >> k;
+	int tot = 0;
 	for (int i = 1; i <= n; ++i) {
-		if (!d[i]) { 
-			zero.push_back(i);		
-		} else {
-			se.insert(pII(d[i], i)); 
+		cin >> (S[i] + 1);
+		for (int j = 1; j <= m; ++j) {
+			vis[i][j] = 0;
+			tot += (S[i][j] == 'R');
 		}
 	}
-	int rt; 
-	while (!zero.empty() && !se.empty()) {
-		auto it = *se.begin(); se.erase(se.begin());
-		int u = it.se;
-		int v = zero.back(); zero.pop_back();
-		G[u].push_back(v);
-		--d[u];
-		if (!d[u]) {
-			rt = u;
-			zero.push_back(u);
-		} else {
-			se.insert(pII(d[u], u));
+	gao(gao(pII(1, 1), tot / k + 1, tot % k), tot / k, k - tot % k);
+	for (int i = 1; i <= n; ++i) {
+		for (int j = 1; j <= m; ++j) {
+			if (vis[i][j] == 0) {
+				S[i][j] = alpha[k - 1];
+			}
 		}
 	}
-	for (int i = 1; i <= n; ++i) if (!G[i].empty())
-		sort(G[i].begin(), G[i].end());
-	if (!se.empty()) {
-		pt(-1);
-	} else {
-		pt(rt);
-		for (int i = 1; i < n; ++i) {
-			pt(a[i], G[a[i]].back());
-			G[a[i]].pop_back();
-		} 
+	for (int i = 1; i <= n; ++i) {
+		cout << (S[i] + 1) << endl;
 	}
 }
 
 int main() {
+	alpha.clear();
+	for (char i = 'a'; i <= 'z'; ++i) alpha.push_back(i);
+	for (char i = 'A'; i <= 'Z'; ++i) alpha.push_back(i);
+	for (char i = '0'; i <= '9'; ++i) alpha.push_back(i);
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run(); 
+	int _T = rd();
+	while (_T--) run();
 	return 0;
 }

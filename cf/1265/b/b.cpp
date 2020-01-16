@@ -32,55 +32,29 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 2e5 + 10;
-int n, a[N], d[N]; 
-vector <vector<int>> G;
+int n, p[N]; 
 void run() {
-	memset(d, 0, sizeof d);
-	for (int i = 1; i < n; ++i) {
-		cin >> a[i];
-		++d[a[i]]; 
-	}
-	G.clear(); G.resize(n + 1);
-	vector <int> zero;
-	set <pII> se;
+	n = rd();
+	string res = "";
 	for (int i = 1; i <= n; ++i) {
-		if (!d[i]) { 
-			zero.push_back(i);		
-		} else {
-			se.insert(pII(d[i], i)); 
-		}
+		int x = rd();
+		p[x] = i;
 	}
-	int rt; 
-	while (!zero.empty() && !se.empty()) {
-		auto it = *se.begin(); se.erase(se.begin());
-		int u = it.se;
-		int v = zero.back(); zero.pop_back();
-		G[u].push_back(v);
-		--d[u];
-		if (!d[u]) {
-			rt = u;
-			zero.push_back(u);
-		} else {
-			se.insert(pII(d[u], u));
-		}
+	int Min = p[1], Max = p[1];
+	for (int i = 1; i <= n; ++i) {
+		chmin(Min, p[i]);
+		chmax(Max, p[i]);
+		if (Max - Min + 1 == i) res += '1';
+		else res += '0';
 	}
-	for (int i = 1; i <= n; ++i) if (!G[i].empty())
-		sort(G[i].begin(), G[i].end());
-	if (!se.empty()) {
-		pt(-1);
-	} else {
-		pt(rt);
-		for (int i = 1; i < n; ++i) {
-			pt(a[i], G[a[i]].back());
-			G[a[i]].pop_back();
-		} 
-	}
+	cout << res << endl;
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run(); 
+	int _T = rd();
+	while (_T--) run();
 	return 0;
 }

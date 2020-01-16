@@ -31,56 +31,54 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10;
-int n, a[N], d[N]; 
-vector <vector<int>> G;
+constexpr int N = 1e5 + 10; 
+int n, p[N], cnt[N], vis[N];  
+struct E { int x[3]; }e[N]; 
 void run() {
-	memset(d, 0, sizeof d);
-	for (int i = 1; i < n; ++i) {
-		cin >> a[i];
-		++d[a[i]]; 
-	}
-	G.clear(); G.resize(n + 1);
-	vector <int> zero;
-	set <pII> se;
+	memset(cnt, 0, sizeof cnt);
+	memset(vis, 0, sizeof vis);
+    map<pII, vector<int>> mp;
 	for (int i = 1; i <= n; ++i) {
-		if (!d[i]) { 
-			zero.push_back(i);		
-		} else {
-			se.insert(pII(d[i], i)); 
+		for (int j = 0; j < 3; ++j) {
+			cin >> e[i].x[j];
+			++cnt[e[i].x[j]];
+		}
+		sort(e[i].x, e[i].x + 3);
+		do {
+			mp[pII(e[i].x[0], e[i].x[1])].push_back(e[i].x[2]);
+		} while (next_permutation(e[i].x, e[i].x + 3));
+	}
+	for (int i = 1; i <= n; ++i) {
+		int pos[3] = {-1, -1, -1};
+		for (int j = 0; j < 3; ++j) {
+			pos[cnt[e[i].x[j]]] = e[i].x[j];
+		}
+		if (pos[1] != -1 && pos[2] != -1) {
+			p[1] = pos[1];
+			p[2] = pos[2];
+			vis[p[1]] = 1;
+			vis[p[2]] = 1;
+			break;
 		}
 	}
-	int rt; 
-	while (!zero.empty() && !se.empty()) {
-		auto it = *se.begin(); se.erase(se.begin());
-		int u = it.se;
-		int v = zero.back(); zero.pop_back();
-		G[u].push_back(v);
-		--d[u];
-		if (!d[u]) {
-			rt = u;
-			zero.push_back(u);
-		} else {
-			se.insert(pII(d[u], u));
+	for (int i = 3; i <= n; ++i) {
+		for (auto &it : mp[pII(p[i - 2], p[i - 1])]) {
+			if (vis[it] == 0) {
+				p[i] = it;
+				vis[it] = 1;
+				break;
+			}
 		}
 	}
-	for (int i = 1; i <= n; ++i) if (!G[i].empty())
-		sort(G[i].begin(), G[i].end());
-	if (!se.empty()) {
-		pt(-1);
-	} else {
-		pt(rt);
-		for (int i = 1; i < n; ++i) {
-			pt(a[i], G[a[i]].back());
-			G[a[i]].pop_back();
-		} 
-	}
+	for (int i = 1; i <= n; ++i)
+		cout << p[i] << " \n"[i == n];
+
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run(); 
+	while (cin >> n) run();
 	return 0;
 }

@@ -10,7 +10,7 @@ using ll = long long;
 using ull = unsigned long long; 
 using pII = pair <int, int>;
 using pLL = pair <ll, ll>;
-constexpr int mod = 1e9 + 7;
+constexpr int mod = 998244353;
 template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; while (x >= mod) x -= mod; while (x < 0) x += mod; } 
 template <class T1, class T2> inline void chmax(T1 &x, T2 y) { if (x < y) x = y; }
 template <class T1, class T2> inline void chmin(T1 &x, T2 y) { if (x > y) x = y; }
@@ -32,55 +32,24 @@ ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 2e5 + 10;
-int n, a[N], d[N]; 
-vector <vector<int>> G;
+int n, inv, p[N]; pII a[N];
 void run() {
-	memset(d, 0, sizeof d);
-	for (int i = 1; i < n; ++i) {
-		cin >> a[i];
-		++d[a[i]]; 
-	}
-	G.clear(); G.resize(n + 1);
-	vector <int> zero;
-	set <pII> se;
 	for (int i = 1; i <= n; ++i) {
-		if (!d[i]) { 
-			zero.push_back(i);		
-		} else {
-			se.insert(pII(d[i], i)); 
-		}
+		cin >> p[i];
+		p[i] = 1ll * p[i] * inv % mod; 
 	}
-	int rt; 
-	while (!zero.empty() && !se.empty()) {
-		auto it = *se.begin(); se.erase(se.begin());
-		int u = it.se;
-		int v = zero.back(); zero.pop_back();
-		G[u].push_back(v);
-		--d[u];
-		if (!d[u]) {
-			rt = u;
-			zero.push_back(u);
-		} else {
-			se.insert(pII(d[u], u));
-		}
+	a[n] = pII(1, (1 - p[n] + mod) % mod);
+	for (int i = n - 1; i >= 1; --i) {
+		a[i] = pII((1 + p[i] * a[i + 1].fi % mod) % mod, (p[i] * a[i + 1].se % mod + (1 - p[i] + mod) % mod) % mod);
 	}
-	for (int i = 1; i <= n; ++i) if (!G[i].empty())
-		sort(G[i].begin(), G[i].end());
-	if (!se.empty()) {
-		pt(-1);
-	} else {
-		pt(rt);
-		for (int i = 1; i < n; ++i) {
-			pt(a[i], G[a[i]].back());
-			G[a[i]].pop_back();
-		} 
-	}
+	pt(1ll * a[1].fi * qpow((1 - a[1].se + mod) % mod, mod - 2) % mod);
 }
 
 int main() {
+	inv = qpow(100, mod - 2); 
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run(); 
+	while (cin >> n) run();
 	return 0;
 }

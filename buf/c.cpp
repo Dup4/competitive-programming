@@ -1,108 +1,59 @@
-#include <stdio.h>
-#define N 5100
-typedef struct EDGE Edge;
-struct EDGE
-{
-    int b, e, c;
-};
-Edge new_edge(int b, int e, int c)
-{
-    Edge edge;
-    edge.b = b;
-    edge.e = e;
-    edge.c = c;
-    return edge;
-}
-int less(Edge a, Edge b)
-{
-    return a.c < b.c;
-}
+#include<iostream>
+#include<string>
+#include<cmath>
+#include<cstring>
+#include<vector>
+#include<map>
+#include<set>
+#include<algorithm>
+#include<queue>
+#include<stack>
+#include<sstream>
+#include<cstdio>
+#define INF 0x3f3f3f3f
+const int maxn = 1e6 + 5;
+const double PI = acos(-1.0);
+typedef long long ll;
+using namespace std;
 
-Edge es[N];
-int ans[N], root[N];
-int tot1 = 0, tot2 = 0;
-int b, e, c, f, n, m, worstv;
+int d[205];
+int w[205][205];
+int n, m;
+bool vis[205];
 
-int findroot(int x)
-{
-    if (root[x] != x)
-        return root[x] = findroot(root[x]);
-    return root[x];
-}
+int main() {
+	//printf("%d",0x3f3f3f3f);
+	std::ios::sync_with_stdio(0);
+	cin.tie(0);
+	int a, b, c;
+    int xx,yy;
 
-int getcost(int k)
-{
-    int linkcount = 0, cost = 0;
-    for (int i = 1; i <= n; i++)
-    {
-        root[i] = i;
-    }
-    for (int i = 0; i < tot1; i++)
-    {
-        Edge item = es[i];
-
-        if (item.b == k || item.e == k)
-            continue;
-        int rb = findroot(item.b);
-        int re = findroot(item.e);
-        if (rb != re)
-        {
-            cost += item.c;
-            root[rb] = re;
-            linkcount++;
-            if (linkcount == n - 2)
-                return cost;
-        }
-    }
-    return 9999999;
-}
-int main()
-{
-    int i, j;
-    scanf("%d%d", &n, &m);
-    for (i = 0; i < m; i++)
-    {
-        scanf("%d%d%d%d", &b, &e, &c, &f);
-        if (f == 1)
-            c = 0;
-        es[tot1++] = new_edge(b, e, c);
-    }
-    for (i = 0; i < m; i++)
-    {
-        for (j = 0; j < m - 1; j++)
-        {
-            if (less(es[j + 1], es[j]))
-            {
-                Edge tmp = es[j];
-                es[j] = es[j + 1];
-                es[j + 1] = tmp;
-            }
-        }
-    }
-    for (i = 1; i <= n; i++)
-    {
-        int v = getcost(i);
-        if (v > worstv)
-        {
-            worstv = v;
-            tot2 = 0;
-            ans[tot2++] = i;
-        }
-        else if (v == worstv)
-            ans[tot2++] = i;
-    }
-    if (worstv == 0)
-        printf("0\n");
-    else
-    {
-        for (int i = 0; i < tot2; i++)
-        {
-            printf("%d", ans[i]);
-            if (i == tot2 - 1)
-                printf("\n");
-            else
-                printf(" ");
-        }
-    }
-    return 0;
+	while (cin >> n >> m) {
+		memset(w, 0x3f, sizeof w);
+		memset(d, 0, sizeof d);
+		memset(vis, 0, sizeof vis);
+		for (int i = 0; i < m; i++) {
+			cin >> a >> b >> c;
+			w[a][b] = min(w[a][b], c);
+			w[b][a] = min(w[b][a], c);
+		}
+		cin>>xx>>yy;
+		if(xx==yy){
+			printf("0\n");
+			continue;
+		}
+		for (int i = 0; i < n; i++) i == xx ? d[i] = 0 : d[i] = INF;       //Dijstra
+		for (int i = 0; i < n; i++) {
+			int x = n, M = INF;
+			for (int y = 0; y < n; y++) if (!vis[y] && d[y] < M) {
+				x = y;
+				M = d[x];
+			}
+			vis[x] = true;
+			for (int y = 0; y < n; y++)   d[y] = min(d[y], d[x] + w[x][y]); 
+		}
+		if(d[yy] != INF) cout << d[yy] << "\n";  
+		else  cout<<-1<<"\n";
+	}
+	return 0;
 }

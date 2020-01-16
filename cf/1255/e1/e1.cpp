@@ -28,59 +28,41 @@ template <class T, class... Ts> void pt(const T& arg, const Ts&... args) { cout 
 void pt() {}
 template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
-ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
+ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; } 
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10;
-int n, a[N], d[N]; 
-vector <vector<int>> G;
+constexpr int N = 1e5 + 10;
+constexpr ll INF = 0x3f3f3f3f3f3f3f3f;
+int n, m; ll a[N], S[N];  
 void run() {
-	memset(d, 0, sizeof d);
-	for (int i = 1; i < n; ++i) {
-		cin >> a[i];
-		++d[a[i]]; 
-	}
-	G.clear(); G.resize(n + 1);
-	vector <int> zero;
-	set <pII> se;
+	m = 0;
+	S[0] = 0;
 	for (int i = 1; i <= n; ++i) {
-		if (!d[i]) { 
-			zero.push_back(i);		
-		} else {
-			se.insert(pII(d[i], i)); 
+		int x = rd();
+		if (x == 1) {
+			a[++m] = i;
+			S[m] = S[m - 1] + i; 
+		}
+	}	
+	ll res = INF;
+	for (int i = 2; i <= m; ++i) {
+		if (m % i == 0) {
+			ll now = 0;
+			for (int j = 1; j <= m / i; ++j) {
+				int l = i * (j - 1) + 1, r = i * j, mid = (l + r) >> 1;
+				now += a[mid] * (mid - l) - (S[mid - 1] - S[l - 1]) - a[mid] * (r - mid) + (S[r] - S[mid]);		
+			}
+			chmin(res, now);
 		}
 	}
-	int rt; 
-	while (!zero.empty() && !se.empty()) {
-		auto it = *se.begin(); se.erase(se.begin());
-		int u = it.se;
-		int v = zero.back(); zero.pop_back();
-		G[u].push_back(v);
-		--d[u];
-		if (!d[u]) {
-			rt = u;
-			zero.push_back(u);
-		} else {
-			se.insert(pII(d[u], u));
-		}
-	}
-	for (int i = 1; i <= n; ++i) if (!G[i].empty())
-		sort(G[i].begin(), G[i].end());
-	if (!se.empty()) {
-		pt(-1);
-	} else {
-		pt(rt);
-		for (int i = 1; i < n; ++i) {
-			pt(a[i], G[a[i]].back());
-			G[a[i]].pop_back();
-		} 
-	}
+	if (res == INF) res = -1;
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run(); 
+	while (cin >> n) run();
 	return 0;
 }

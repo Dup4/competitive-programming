@@ -31,56 +31,46 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10;
-int n, a[N], d[N]; 
-vector <vector<int>> G;
+constexpr int N = 1e5 + 10;
+int n, k; 
 void run() {
-	memset(d, 0, sizeof d);
-	for (int i = 1; i < n; ++i) {
-		cin >> a[i];
-		++d[a[i]]; 
-	}
-	G.clear(); G.resize(n + 1);
-	vector <int> zero;
-	set <pII> se;
+	vector <string> s(n + 1);
+	unordered_map <string, int> mp;
 	for (int i = 1; i <= n; ++i) {
-		if (!d[i]) { 
-			zero.push_back(i);		
-		} else {
-			se.insert(pII(d[i], i)); 
+		cin >> s[i];
+		++mp[s[i]];
+	}
+	ll res = 0;	
+	for (int i = 1; i <= n; ++i) {
+		--mp[s[i]];
+		for (int j = i + 1; j <= n; ++j) {
+			--mp[s[j]];
+			string t = "";
+			for (int o = 0; o < k; ++o) {
+				if (s[i][o] == s[j][o]) t += s[i][o];
+				else {
+					for (auto &it : {'S', 'E', 'T'}) {
+						if (s[i][o] != it && s[j][o] != it) {
+							t += it;
+							break;
+						}
+					}
+				}
+			}
+			if (mp.count(t)) res += mp[t];
+			++mp[s[j]];
 		}
+		++mp[s[i]];
 	}
-	int rt; 
-	while (!zero.empty() && !se.empty()) {
-		auto it = *se.begin(); se.erase(se.begin());
-		int u = it.se;
-		int v = zero.back(); zero.pop_back();
-		G[u].push_back(v);
-		--d[u];
-		if (!d[u]) {
-			rt = u;
-			zero.push_back(u);
-		} else {
-			se.insert(pII(d[u], u));
-		}
-	}
-	for (int i = 1; i <= n; ++i) if (!G[i].empty())
-		sort(G[i].begin(), G[i].end());
-	if (!se.empty()) {
-		pt(-1);
-	} else {
-		pt(rt);
-		for (int i = 1; i < n; ++i) {
-			pt(a[i], G[a[i]].back());
-			G[a[i]].pop_back();
-		} 
-	}
+	assert(res % 3 == 0);
+	res /= 3;
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n) run(); 
+	while (cin >> n >> k) run();
 	return 0;
 }
