@@ -1,5 +1,3 @@
-#pragma GCC optimize("Ofast,unroll-loops,no-stack-protector,fast-math")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 #include <bits/stdc++.h>
 #define fi first
 #define se second
@@ -31,54 +29,46 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10;
-int n, q, p[N]; ll f[N], g[N], inv[N], inv100, res; 
-ll gao(int l, int r, int ff) {
-	ll A = (g[r] - g[l - 1] + mod) % mod * inv[l - 1] % mod;
-	ll B = f[r] * inv[l - 1] % mod;
-	return (A * qpow(B, mod - 2) % mod * ff + mod) % mod;
+constexpr int N = 2e3 + 10;
+int n, fac[N], inv[N]; char s[N]; pII l[N], r[N];
+ll C(int n, int m) {
+	return 1ll * fac[n] * inv[m] % mod * inv[n - m] % mod;
 }
 void run() {
-	f[0] = 1;
-	inv[0] = qpow(f[0], mod - 2);
-	g[0] = 0;
+	n = strlen(s + 1);
+	l[0] = pII(0, 0);
 	for (int i = 1; i <= n; ++i) {
-		cin >> p[i];
-		p[i] = 1ll * p[i] * inv100 % mod; 
-		g[i] = g[i - 1] + f[i - 1];
-		f[i] = f[i - 1] * p[i] % mod;
-		inv[i] = qpow(f[i], mod - 2);
+		l[i] = l[i - 1];
+		if (s[i] == '(') ++l[i].fi;
+		if (s[i] == '?') ++l[i].se;
 	}
-	set <int> se;
-	se.insert(1);
-	se.insert(n + 1); 
-	res = gao(1, n, 1);
-	for (int i = 1, x; i <= q; ++i) {
-		cin >> x;
-		auto pos = se.lower_bound(x);
-		if (*pos == x) {
-			auto pre = pos; --pre;
-			auto nx = pos; ++nx;
-			chadd(res, gao(*pre, *pos - 1, -1));
-			chadd(res, gao(*pos, *nx - 1, -1));
-			chadd(res, gao(*pre, *nx - 1, 1));
-			se.erase(pos);
-		} else {
-			auto pre = pos; --pre;
-			chadd(res, gao(*pre, *pos - 1, -1));
-			chadd(res, gao(*pre, x - 1, 1));
-			chadd(res, gao(x, *pos - 1, 1));
-			se.insert(x);
+	r[n + 1] = pII(0, 0);
+	for (int i = n; i >= 1; --i) {
+		r[i] = r[i + 1];
+		if (s[i] == ')') ++r[i].fi;
+		if (s[i] == '?') ++r[i].se;
+	}
+	int res = 0;
+	for (int i = 1; i <= n; ++i) {
+		for (int j = 0; j <= l[i].se; ++j) {
+			int x = l[i].fi + j;
+			int k = x - r[i + 1].fi;
+			if (k >= 0 && k <= r[i + 1].se) {
+				chadd(res, 1ll * x * C(l[i].se, j) % mod * C(r[i + 1].se, k) % mod);
+			}
 		}
-		pt(res);
 	}
+	pt(res);
 }
 
 int main() {
-	inv100 = qpow(100, mod - 2);
+	fac[0] = 1;
+	for (int i = 1; i < N; ++i) fac[i] = 1ll * fac[i - 1] * i % mod;
+	inv[N - 1] = qpow(fac[N - 1], mod - 2);
+	for (int i = N - 1; i >= 1; --i) inv[i - 1] = 1ll * inv[i] * i % mod;
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> q) run();
+	while (cin >> (s + 1)) run();
 	return 0;
 }

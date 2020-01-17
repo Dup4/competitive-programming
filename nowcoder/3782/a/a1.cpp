@@ -1,5 +1,3 @@
-#pragma GCC optimize("Ofast,unroll-loops,no-stack-protector,fast-math")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 #include <bits/stdc++.h>
 #define fi first
 #define se second
@@ -10,7 +8,7 @@ using ll = long long;
 using ull = unsigned long long; 
 using pII = pair <int, int>;
 using pLL = pair <ll, ll>;
-constexpr int mod = 998244353;
+constexpr int mod = 1e9 + 7;
 template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; while (x >= mod) x -= mod; while (x < 0) x += mod; } 
 template <class T1, class T2> inline void chmax(T1 &x, T2 y) { if (x < y) x = y; }
 template <class T1, class T2> inline void chmin(T1 &x, T2 y) { if (x > y) x = y; }
@@ -31,54 +29,61 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10;
-int n, q, p[N]; ll f[N], g[N], inv[N], inv100, res; 
-ll gao(int l, int r, int ff) {
-	ll A = (g[r] - g[l - 1] + mod) % mod * inv[l - 1] % mod;
-	ll B = f[r] * inv[l - 1] % mod;
-	return (A * qpow(B, mod - 2) % mod * ff + mod) % mod;
-}
+constexpr int N = 1e5 + 10; 
+int n, vis[N]; ll res[N];
+vector <vector<pII>> G;
 void run() {
-	f[0] = 1;
-	inv[0] = qpow(f[0], mod - 2);
-	g[0] = 0;
-	for (int i = 1; i <= n; ++i) {
-		cin >> p[i];
-		p[i] = 1ll * p[i] * inv100 % mod; 
-		g[i] = g[i - 1] + f[i - 1];
-		f[i] = f[i - 1] * p[i] % mod;
-		inv[i] = qpow(f[i], mod - 2);
+	G.clear();
+	G.resize(n + 1);
+	memset(vis, 0, sizeof vis);
+	for (int i = 1, x, y, z; i <= n; ++i) {
+		cin >> x >> y >> z;
+		G[x].push_back(pII(y, z));
+		G[y].push_back(pII(x, z));
 	}
-	set <int> se;
-	se.insert(1);
-	se.insert(n + 1); 
-	res = gao(1, n, 1);
-	for (int i = 1, x; i <= q; ++i) {
-		cin >> x;
-		auto pos = se.lower_bound(x);
-		if (*pos == x) {
-			auto pre = pos; --pre;
-			auto nx = pos; ++nx;
-			chadd(res, gao(*pre, *pos - 1, -1));
-			chadd(res, gao(*pos, *nx - 1, -1));
-			chadd(res, gao(*pre, *nx - 1, 1));
-			se.erase(pos);
-		} else {
-			auto pre = pos; --pre;
-			chadd(res, gao(*pre, *pos - 1, -1));
-			chadd(res, gao(*pre, x - 1, 1));
-			chadd(res, gao(x, *pos - 1, 1));
-			se.insert(x);
+	res[1] = 0;
+	int u = 1, fa = 1;
+	int f = 1;
+	while (1) {
+		int ok = 0;
+		for (auto &it : G[u]) {
+			if (it.fi == fa || vis[it.fi]) continue;
+			ok = 1;
+			res[1] += f * it.se;
+			fa = u;
+			u = it.fi;
+			break;
 		}
-		pt(res);
+		vis[u] = 1;
+		if (!ok) break;
+		if (f == 1) f = -1;
+		else f = 1;
+	} 
+	res[1] /= 2;
+	memset(vis, 0, sizeof vis);
+	vis[1] = 1, fa = 1;
+	u = 1;
+	while (1) {
+		int ok = 0;
+		for (auto &it : G[u]) {
+			if (it.fi == fa || vis[it.fi]) continue;
+			res[it.fi] = it.se - res[u];
+			fa = u;
+			u = it.fi;
+			ok = 1;
+			break;	
+		}
+		vis[u] = 1;
+		if (!ok) break;
 	}
+	for (int i = 1; i <= n; ++i)
+		pt(res[i]);
 }
 
 int main() {
-	inv100 = qpow(100, mod - 2);
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> q) run();
+	while (cin >> n) run();
 	return 0;
 }

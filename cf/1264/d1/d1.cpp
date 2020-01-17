@@ -1,5 +1,3 @@
-#pragma GCC optimize("Ofast,unroll-loops,no-stack-protector,fast-math")
-#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 #include <bits/stdc++.h>
 #define fi first
 #define se second
@@ -31,54 +29,45 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
 inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10;
-int n, q, p[N]; ll f[N], g[N], inv[N], inv100, res; 
-ll gao(int l, int r, int ff) {
-	ll A = (g[r] - g[l - 1] + mod) % mod * inv[l - 1] % mod;
-	ll B = f[r] * inv[l - 1] % mod;
-	return (A * qpow(B, mod - 2) % mod * ff + mod) % mod;
-}
+constexpr int N = 2e3 + 10;
+int n, f[N], g[N][N], bit[N]; char s[N];
 void run() {
-	f[0] = 1;
-	inv[0] = qpow(f[0], mod - 2);
-	g[0] = 0;
+	n = strlen(s + 1);
+	f[0] = 0;
 	for (int i = 1; i <= n; ++i) {
-		cin >> p[i];
-		p[i] = 1ll * p[i] * inv100 % mod; 
-		g[i] = g[i - 1] + f[i - 1];
-		f[i] = f[i - 1] * p[i] % mod;
-		inv[i] = qpow(f[i], mod - 2);
+		f[i] = f[i - 1] + (s[i] == '?');
 	}
-	set <int> se;
-	se.insert(1);
-	se.insert(n + 1); 
-	res = gao(1, n, 1);
-	for (int i = 1, x; i <= q; ++i) {
-		cin >> x;
-		auto pos = se.lower_bound(x);
-		if (*pos == x) {
-			auto pre = pos; --pre;
-			auto nx = pos; ++nx;
-			chadd(res, gao(*pre, *pos - 1, -1));
-			chadd(res, gao(*pos, *nx - 1, -1));
-			chadd(res, gao(*pre, *nx - 1, 1));
-			se.erase(pos);
-		} else {
-			auto pre = pos; --pre;
-			chadd(res, gao(*pre, *pos - 1, -1));
-			chadd(res, gao(*pre, x - 1, 1));
-			chadd(res, gao(x, *pos - 1, 1));
-			se.insert(x);
+	memset(g, 0, sizeof g);
+	for (int len = 2; len <= n; ++len) {
+		for (int i = 1; i + len - 1 <= n; ++i) {
+			int l = i, r = i + len - 1;
+			if (s[l] != '(') {
+				chadd(g[l][r], g[l + 1][r]);
+			}
+			if (s[r] != ')') {
+				chadd(g[l][r], g[l][r - 1]);
+			}
+			if (s[l] != '(' && s[r] != ')') {
+				chadd(g[l][r], mod - g[l + 1][r - 1]);
+			}
+			if (s[l] != ')' && s[r] != '(') {
+				chadd(g[l][r], g[l + 1][r - 1]);
+			    chadd(g[l][r], bit[f[r - 1] - f[l]]);
+			}
 		}
-		pt(res);
 	}
+	pt(g[1][n]);
 }
 
 int main() {
-	inv100 = qpow(100, mod - 2);
+	bit[0] = 1;
+	for (int i = 1; i < N; ++i) {
+		bit[i] = bit[i - 1] << 1;
+		bit[i] %= mod;
+	}
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	while (cin >> n >> q) run();
+	while (cin >> (s + 1)) run();
 	return 0;
 }
