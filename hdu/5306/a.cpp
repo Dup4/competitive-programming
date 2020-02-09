@@ -1,15 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-#define INF 0x3f3f3f3f
-#define ll long long
-#define N 1000010
+typedef long long ll;
+const int N = 1e6 + 10, INF = 0x3f3f3f3f;
 int n, q, a[N];
 
 struct SEG {
 	struct node {
 		ll sum;
-	   	int Max[2], num, cnt, lazy;
+	   	int Max[2], num, cnt, lazy; 
 		node() {
 			num = sum = cnt = lazy = 0;
 			Max[0] = -INF;
@@ -76,7 +74,7 @@ struct SEG {
 			x = min(x, t[id].Max[0]);
 			t[id].sum = x;
 			t[id].Max[0] = x;
-			t[id].Max[1] = -INF;
+			t[id].Max[1] = -INF; 
 			return;
 		} 
 		if (l >= ql && r <= qr) {

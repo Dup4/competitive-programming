@@ -1,37 +1,28 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define FOR(i,a,b) for(int i(a);i<=(b);++i)
-#define FOL(i,a,b) for(int i(a);i>=(b);--i)
-#define SZ(x) ((long long)(x).size())
-#define REW(a,b) memset(a,b,sizeof(a))
- 
-const int64_t Mod (1000000000) ;
-int64_t powEx(int64_t base,int64_t n,int64_t Mod = ::Mod ) {
-    int64_t ret(1);
-    while(n){
-        if(n&1) ret = ret*base%Mod ;
-        base = base * base %Mod ;
-        n >>= 1 ;
-    }
-    return ret % Mod ;
-}
+using ll = long long;
+const ll mod = 1e9;
  
 class Linear_Seq {
-using VI = vector<int64_t> ;
+#define FOR(i,a,b) for(int i(a);i<=(b);++i)
+#define SZ(x) ((int)(x).size())
+using VI = vector<ll> ;
 public:
     static const int N=10010;
-    int64_t res[N],base[N],c[N],md[N];
+    ll res[N],base[N],c[N],md[N];
     vector<int> Md;
-    inline void mulEx(int64_t *a,int64_t *b,int k) {
+    ll powmod(ll a,ll b) {ll res=1;a%=mod; assert(b>=0); for(;b;b>>=1){if(b&1)res=res*a%mod;a=a*a%mod;}return res;}
+	void mulEx(ll *a,ll *b,int k) {
         for(int i(0);i<k+k;++i) c[i]=0;
         for(int i(0);i<k;++i)if(a[i])for(int j(0);j<k;++j)
-            c[i+j]=(c[i+j]+a[i]*b[j])%Mod;
-        for (int i(k+k-1);i>=k;--i) if (c[i])for(int j(0);j<Md.size();++j)
-            c[i-k+Md[j]]=(c[i-k+Md[j]]-c[i]*md[Md[j]])%Mod;
+            c[i+j]=(c[i+j]+a[i]*b[j])%mod;
+        for (int i(k+k-1);i>=k;--i) if (c[i])for(int j(0);j<SZ(Md);++j)
+            c[i-k+Md[j]]=(c[i-k+Md[j]]-c[i]*md[Md[j]])%mod;
         copy(c,c+k,a) ;
     }
-    int solve(int64_t n,VI a,VI b) { // a 系数 b 初值 b[n+1]=a[0]*b[n]+...
-        int64_t ans(0),cnt(0);
+	// a 系数 b 初值 b[n+1]=a[0]*b[n]+...
+    int solve(ll n,VI a,VI b) { 
+        ll ans(0),cnt(0);
         int k(a.size());
         for(int i(0);i<k;++i) md[k-1-i]=-a[i];
         md[k]=1 ;  Md.clear() ;
@@ -43,84 +34,79 @@ public:
             mulEx(res,res,k);
             if ((n>>p)&1) {
                 for (int i(k-1);~i;--i) res[i+1]=res[i];res[0]=0;
-                for(int j(0);j<Md.size();++j)
-                    res[Md[j]]=(res[Md[j]]-res[k]*md[Md[j]])%Mod;
+                for(int j(0);j<SZ(Md);++j)
+                    res[Md[j]]=(res[Md[j]]-res[k]*md[Md[j]])%mod;
             }
         }
-        for(int i(0);i<k;++i) ans=(ans+res[i]*b[i])%Mod;
-        return ans+(ans<0?Mod:0);
+        for(int i(0);i<k;++i) ans=(ans+res[i]*b[i])%mod;
+        return ans+(ans<0?mod:0);
     }
     VI BM(VI s) {
         VI ret(1,1),B(1,1);
         int L(0),m(1),b(1);
-        for(int n(0);n<s.size();++n) {
-            int64_t d(0);
+        for(int n(0);n<SZ(s);++n) {
+            ll d(0);
             for(int i(0);i<=L;++i)
-                d=(d+(int64_t)ret[i]*s[n-i])%Mod;
+                d=(d+(ll)ret[i]*s[n-i])%mod;
             if (!d) ++m;
             else if (2*L<=n) {
                 VI T=ret;
-                int64_t c(Mod-d*powEx(b,Mod-2)%Mod);
-                while (ret.size()<B.size()+m) ret.push_back(0);
-                for (int i(0);i<B.size();++i)
-                    ret[i+m]=(ret[i+m]+c*B[i])%Mod;
+                ll c(mod-d*powmod(b,mod-2)%mod);
+                while (SZ(ret)<SZ(B)+m) ret.push_back(0);
+                for (int i=0;i<SZ(B);++i)
+                    ret[i+m]=(ret[i+m]+c*B[i])%mod;
                 L=n+1-L; B=T; b=d; m=1;
             } else {
-                int64_t c(Mod-d*powEx(b,Mod-2)%Mod);
+                ll c(mod-d*powmod(b,mod-2)%mod);
                 while (ret.size()<B.size()+m) ret.push_back(0);
-                for(int i(0);i<B.size();++i)
-                    ret[i+m]=(ret[i+m]+c*B[i])%Mod;
+                for(int i=0;i<SZ(B);++i)
+                    ret[i+m]=(ret[i+m]+c*B[i])%mod;
                 ++m;
             }
         }
         return ret;
     }
-    inline static void extand(VI &a, size_t d, int64_t value = 0) {
+    static void extand(VI &a, size_t d, ll value = 0) {
         if (d <= a.size()) return;
         a.resize(d, value);
     }
- 
-    inline static int64_t gcdEx(int64_t a, int64_t b, int64_t&x, int64_t& y)
-    {
+    static ll gcdEx(ll a, ll b, ll&x, ll& y) {
         if(!b) {x=1;y=0;return a;}
-        int64_t d = gcdEx(b,a%b,y,x);
+        ll d = gcdEx(b,a%b,y,x);
         y -= (a/b)*x;
         return d;
     }
- 
- 
-    static int64_t CRT(const VI &c, const VI &m) {
+    static ll CRT(const VI &c, const VI &m) {
         int n(c.size());
-        int64_t M(1), ans(0);
+        ll M(1), ans(0);
         for (int i = 0; i < n; ++i) M *= m[i];
         for (int i = 0; i < n; ++i) {
-            int64_t x,y,tM(M / m[i]);
+            ll x,y,tM(M / m[i]);
             gcdEx(tM, m[i], x, y);
             ans = (ans + tM * x * c[i] % M) % M;
         }
         return (ans + M) % M;
     }
- 
-    static VI ReedsSloane(const VI &s, int64_t Mod) {
-        auto Inv = [](int64_t a, int64_t Mod) {
-            int64_t x, y;
-            return gcdEx(a, Mod, x, y)==1?(x%Mod+Mod)%Mod:-1;
+    static VI ReedsSloane(const VI &s, ll mod) {
+        auto Inv = [](ll a, ll mod) {
+            ll x, y;
+            return gcdEx(a, mod, x, y)==1?(x%mod+mod)%mod:-1;
         };
         auto L = [](const VI &a, const VI &b) {
             int da = (a.size()>1||(a.size()== 1&&a[0]))?a.size()-1:-1000;
             int db = (b.size()>1||(b.size()== 1&&b[0]))?b.size()-1:-1000;
             return max(da, db + 1);
         };
-        auto prime_power = [&](const VI &s, int64_t Mod, int64_t p, int64_t e) {
-            // linear feedback shift register Mod p^e, p is prime
+        auto prime_power = [&](const VI &s, ll mod, ll p, ll e) {
+            // linear feedback shift register mod p^e, p is prime
             vector<VI> a(e), b(e), an(e), bn(e), ao(e), bo(e);
             VI t(e), u(e), r(e), to(e, 1), uo(e), pw(e + 1);;
             pw[0] = 1;
             for (int i(pw[0] = 1); i <= e; ++i) pw[i] = pw[i - 1] * p;
-            for (int64_t i(0); i < e; ++i) {
+            for (ll i(0); i < e; ++i) {
                 a[i] = {pw[i]}; an[i] = {pw[i]};
-                b[i] = {0}; bn[i] = {s[0] * pw[i] % Mod};
-                t[i] = s[0] * pw[i] % Mod;
+                b[i] = {0}; bn[i] = {s[0] * pw[i] % mod};
+                t[i] = s[0] * pw[i] % mod;
                 if (!t[i]) {t[i] = 1; u[i] = e;}
                 else for (u[i] = 0; t[i] % p == 0; t[i] /= p, ++u[i]);
             }
@@ -136,29 +122,29 @@ public:
                 }
                 a = an; b = bn;
                 for (int o(0); o < e; ++o) {
-                    int64_t d(0);
+                    ll d(0);
                     for (size_t i(0); i < a[o].size() && i <= k; ++i)
-                        d = (d + a[o][i] * s[k - i]) % Mod;
+                        d = (d + a[o][i] * s[k - i]) % mod;
                     if (d == 0) {t[o] = 1;u[o] = e;}
                     else {
                         for (u[o]=0, t[o]=d;!(t[o]%p);t[o]/=p ,++u[o]);
                         int g (e-1-u[o]);
                         if (!L(a[g], b[g])) {
                             extand(bn[o], k + 1);
-                            bn[o][k] = (bn[o][k] + d) % Mod;
+                            bn[o][k] = (bn[o][k] + d) % mod;
                         } else {
-                            int64_t coef = t[o]*Inv(to[g],Mod)%Mod*pw[u[o]-uo[g]]%Mod;
+                            ll coef = t[o]*Inv(to[g],mod)%mod*pw[u[o]-uo[g]]%mod;
                             int m(k-r[g]);
                             extand(an[o],ao[g].size()+m);
                             extand(bn[o],bo[g].size()+m);
                             for (size_t i(0);i < ao[g].size(); ++i) {
-                                an[o][i+m] -= coef*ao[g][i]%Mod;
-                                if (an[o][i + m]<0) an[o][i+m] += Mod;
+                                an[o][i+m] -= coef*ao[g][i]%mod;
+                                if (an[o][i + m]<0) an[o][i+m] += mod;
                             }
                             while (an[o].size() && !an[o].back()) an[o].pop_back();
                             for (size_t i(0); i < bo[g].size(); ++i) {
-                                bn[o][i+m] -= coef*bo[g][i]%Mod;
-                                if (bn[o][i + m] < 0) bn[o][i + m] -= Mod;
+                                bn[o][i+m] -= coef*bo[g][i]%mod;
+                                if (bn[o][i + m] < 0) bn[o][i + m] -= mod;
                             }
                             while (bn[o].size()&& !bn[o].back()) bn[o].pop_back();
                         }
@@ -167,23 +153,23 @@ public:
             }
             return make_pair(an[0], bn[0]);
         };
-        vector<tuple<int64_t, int64_t, int> > fac;
-        for (int64_t i(2); i*i <= Mod; ++i)
-            if (!(Mod % i)) {
-                int64_t cnt(0),pw(1);
-                while (!(Mod % i)) {Mod /= i; ++cnt; pw *= i;}
+        vector<tuple<ll, ll, int> > fac;
+        for (ll i(2); i*i <= mod; ++i)
+            if (!(mod % i)) {
+                ll cnt(0),pw(1);
+                while (!(mod % i)) {mod /= i; ++cnt; pw *= i;}
                 fac.emplace_back(pw, i, cnt);
             }
-        if (Mod > 1) fac.emplace_back(Mod, Mod, 1);
+        if (mod > 1) fac.emplace_back(mod, mod, 1);
         vector<VI> as;
         size_t n = 0;
         for (auto &&x: fac) {
-            int64_t Mod, p, e;
+            ll mod, p, e;
             VI a, b;
-            std::tie(Mod, p, e) = x;
+            std::tie(mod, p, e) = x;
             auto ss = s;
-            for (auto &&x: ss) x %= Mod;
-            std::tie(a, b) = prime_power(ss, Mod, p, e);
+            for (auto &&x: ss) x %= mod;
+            std::tie(a, b) = prime_power(ss, mod, p, e);
             as.emplace_back(a);
             n = max(n, a.size());
         }
@@ -197,37 +183,43 @@ public:
         }
         return a;
     }
-    int64_t solve(VI a,int64_t n,int64_t Mod,bool prime=true) {
+    ll solve(VI a,ll n,ll mod,bool prime=true) {
         VI c;
         if(prime) c = BM(a);
-        else c = ReedsSloane(a,Mod);
+        else c = ReedsSloane(a,mod);
         c.erase(c.begin());
-        for(int i(0);i<c.size();++i) c[i] = (Mod-c[i])%Mod;
+        for(int i(0);i<SZ(c);++i) c[i] = (mod-c[i])%mod;
         return solve(n,c,VI(a.begin(),a.begin()+c.size()));
     }
 }BM;
-typedef long long ll;
+
+ll qpow(ll base, ll n) {
+	ll res = 1;
+	while(n) {
+		if (n & 1) res = res * base % mod;
+		base = base * base % mod;
+		n >>= 1;
+	}
+	return res;
+}
+
 ll sum;
 ll a[1005];
-int main()
-{
-    cin.tie(0);
-    cout.tie(0);
-    int64_t n, m;
+int main() {
+    ll n, m;
 	while (cin >> n >> m) {
-   		 a[0]=a[1]=1;
-   		 vector<int64_t> f;//({0, 1});
-   		 //f.push_back(0);
+   		 a[0] = a[1] = 1;
+   		 vector<ll> f;
    		 f.push_back(1);
    		 f.push_back(2);
-   		 sum=2;
-   		 for (int i = 2; i < 1000; i++)
-   		 {
-   		     a[i]=(a[i-1]+a[i-2])%Mod;
-   		     sum =(sum+powEx(a[i],m,Mod))%Mod;
-   		     f.push_back(sum);                         //这里是因为题意要求出和的值所以导入数列和
+   		 sum = 2;
+   		 for (int i = 2; i < 1000; i++) {
+   		     a[i] = (a[i-1] + a[i-2]) % mod;
+   		     sum = (sum + qpow(a[i], m)) % mod;
+   		     f.push_back(sum);                         
    		 }
-   		 cout << BM.solve(f,n-1,Mod,false) << "\n";   //false-模数为合数
+		 //false-模数为合数
+   		 cout << BM.solve(f,n-1,mod,false) << "\n";   
 	}
     return 0;
 }

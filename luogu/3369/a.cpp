@@ -8,13 +8,13 @@ struct FHQ {
 		int son[2], key, rnd, sze;
 	}t[N];
 	int tot, rt;
-	inline void init() { tot = rt = 0; }
-	inline void pushup(int x) { t[x].sze = t[ls].sze + t[rs].sze + 1; }
-	inline int random() {
+	void init() { tot = rt = 0; }
+	void pushup(int x) { t[x].sze = t[ls].sze + t[rs].sze + 1; }
+	int random() {
 		static int seed = 703;
 		return seed = int(seed * 48217ll % 2147483647);
 	}
-	inline int newnode(int key) {
+	int newnode(int key) {
 		++tot;
 		t[tot].sze = 1;
 		t[tot].key = key;
@@ -72,7 +72,7 @@ struct FHQ {
 	}
 	//查询key的排名，若有多个相同的数，输出最小的排名
 	//按照key - 1将树分成x, y两棵，那么x树中最大的权值应该小于等于a - 1, 那么a的排名就是sze[x] + 1
-	inline int getRank(int key) {
+	int getRank(int key) {
 		int x, y;
 		split(rt, key - 1, x, y);
 		int res = t[x].sze + 1;
@@ -82,7 +82,7 @@ struct FHQ {
 	//插入一个数key
 	//先按权值key将树分成两段，x树中是权值小于等于key的，y树中是权值大于key的
 	//那么新建一个节点z，它的权值为key，那么先将x, z合并起来，再将x和y合并起来
-	inline void insert(int key) {
+	void insert(int key) {
 		int x, y;
 		split(rt, key, x, y); 
 		rt = merge(merge(x, newnode(key)), y); 
@@ -91,7 +91,7 @@ struct FHQ {
 	//先将整棵树以key为权值分裂成a, b两棵树，再将a树按照key - 1，分裂成c, d
 	//那么这个时候权值为key的点一定是d的根，那么相当于要删去d的根
 	//那么将d的两个子树merge起来当作新根，就相当于删去了根
-	inline void del(int key) {
+	void del(int key) {
 		int x, y, z;
 		split(rt, key, x, z); 
 		split(x, key - 1, x, y); 
@@ -100,7 +100,7 @@ struct FHQ {
 	}
 	//求key的前驱，即小于key并且最大的数
 	//按照key - 1的划分成x, y，那么小于key的数都在x中，直接输出x中最大的数即可　
-	inline int getpre(int key) {
+	int getpre(int key) {
 		int x, y;
 		split(rt, key - 1, x, y);
 		int res = t[getkth(x, t[x].sze)].key;
@@ -109,7 +109,7 @@ struct FHQ {
 	}
     //求key的后继，即大于key并且最小的数
 	//按照key划分成x, y，那么大于key的数都在y中，直接输出y中最小的数即可
-	inline int getnx(int key) {
+	int getnx(int key) {
 		int x, y;
 		split(rt, key, x, y);
 		int res = t[getkth(y, 1)].key;

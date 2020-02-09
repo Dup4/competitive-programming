@@ -1,19 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-/*
-	BZOJ 3237
-	每次操作删除k条边 k <= 4
-	输出每次操作后整张图是否连通
-*/
-
-#define N 1000010
-#define pii pair <int, int>
-#define fi first
-#define se second
-pii e[N];
+const int N = 2e5 + 10;
 int n, m, q;
-int used[N], res[N];
+int e[N][2], ans[N], used[N], t_used;
+
 struct qnode {
 	int id, c[10];  
 	void scan(int id) {
@@ -25,118 +15,99 @@ struct qnode {
 	} 
 }qrr[N];
 
-int pre[N], Top, tim;
-pii stk[N];
-int find(int x) {
-	if (pre[x] == 0) {
-		return x; 
+struct UFS {
+	struct node { int fa, sze; void init() { fa = 0; sze = 1; }}t[N];
+	struct BackNode { int who; node t; }Back[N];
+	int T;
+	void init(int n) { T = 0; for (int i = 1; i <= n; ++i) t[i].init(); }
+	int find(int x) { return t[x].fa == 0 ? x : find(t[x].fa); }
+	void merge(int x, int y) {
+		int fx = find(x), fy = find(y);
+		if (fx != fy) {
+			if (t[fx].sze > t[fy].sze) swap(fx, fy);
+			Back[++T] = {fx, t[fx]};
+			Back[++T] = {fy, t[fy]};
+			t[fx].fa = fy;
+			t[fy].sze += t[fx].sze;
+		}
+	}	
+	bool same(int x, int y) { return find(x) == find(y); }
+	void rollback(int _T) {
+		while (T != _T) {
+			BackNode tmp = Back[T];
+			t[tmp.who] = tmp.t;
+			--T;
+		}
 	}
-	int y = find(pre[x]);
-	if (pre[x] != y) {
-		//存下路径压缩的状态
-		stk[++Top] = pii(x, pre[x]); 
-	} 
-	return pre[x] = y; 
-}
-void join(int x, int y) {
-	int fx = find(x), fy = find(y);
-	if (fx != fy) {
-		stk[++Top] = pii(fx, pre[fx]);
-		pre[fx] = fy;
-	}
-}
-void rollback(int TOP) {
-	//回滚操作	
-	while (Top != TOP) {
-		int x = stk[Top].fi, y = stk[Top].se;
-		pre[x] = y;
-		--Top;
-	}
-}
+}ufs;
 
 void CDQ(int l, int r) {
-	//存下当前的栈顶状态 
-	int TOP = Top;
-	if (l > r) {
-		return;
-	}
+	int T = ufs.T;
+	if (l > r) return;
 	if (l == r) {
 		int id = qrr[l].id;
-		res[id] = 1;
+		ans[id] = 1;
 		for (int i = 1; i <= qrr[l].c[0]; ++i) {
 			int now = qrr[l].c[i];
-			res[id] &= find(e[now].fi) == find(e[now].se);  
+			ans[id] &= ufs.same(e[now][0], e[now][1]);
 		}
-		rollback(TOP);
 		return;
 	}
-
-	int mid = (l + r) >> 1;  ++tim;
-	//标记左区间中都不存在的边
+	int mid = (l + r) >> 1;  ++t_used;
+	//标记左区间中被删去的边
 	for (int i = l; i <= mid; ++i) {
 		for (int j = 1; j <= qrr[i].c[0]; ++j) {
-			used[qrr[i].c[j]] = tim;    
+			used[qrr[i].c[j]] = t_used; 
 		}
 	}
-
-	//从右区间找左区间中所有询问都存在的边 
+	//从右区间找左区间中所有询问都存在的边,将它们合并起来 
 	for (int i = mid + 1; i <= r; ++i) {
 		for (int j = 1; j <= qrr[i].c[0]; ++j) {
 			int now = qrr[i].c[j];
-			if (used[now] != tim) {
-				join(e[now].fi, e[now].se);
+			if (used[now] != t_used) {
+				ufs.merge(e[now][0], e[now][1]);
 			}
 		}	
 	}
-	CDQ(l, mid);
-	rollback(TOP);
-
-	++tim;
+	CDQ(l, mid); 
+	ufs.rollback(T);
+	++t_used;
 	for (int i = mid + 1; i <= r; ++i) {
 		for (int j = 1; j <= qrr[i].c[0]; ++j) {
-			used[qrr[i].c[j]] = tim;
+			used[qrr[i].c[j]] = t_used;
 		}
 	}
-
 	for (int i = l; i <= mid; ++i) {
 		for (int j = 1; j <= qrr[i].c[0]; ++j) {
 			int now = qrr[i].c[j];
-			if (used[now] != tim) {
-				join(e[now].fi, e[now].se);   
+			if (used[now] != t_used) {
+				ufs.merge(e[now][0], e[now][1]);
 			}
 		}
 	}
-	CDQ(mid + 1, r);
-	//rollback(TOP);
-	//这里不需要回滚操作
+	CDQ(mid + 1, r); 
 }
 
-void init() {
-	Top = 0; tim = 1; 
-	memset(used, 0, sizeof used);
-    memset(pre, 0, sizeof pre);	
-}
 int main() {
 	while (scanf("%d%d", &n, &m) != EOF) {
-		init();
+		ufs.init(n); t_used = 1;
 		for (int i = 1; i <= m; ++i) {
-			scanf("%d%d", &e[i].fi, &e[i].se);
+			used[i] = 0;
+			scanf("%d%d", e[i], e[i] + 1);
 		}
 		scanf("%d", &q);
 		for (int i = 1; i <= q; ++i) {
 			qrr[i].scan(i);  
-		}
-		for (int i = 1; i <= q; ++i) {
 			for (int j = 1; j <= qrr[i].c[0]; ++j) {
 				used[qrr[i].c[j]] = 1;
 			}
 		}
 		for (int i = 1; i <= m; ++i) if (!used[i]) {
-			join(e[i].fi, e[i].se);
+			ufs.merge(e[i][0], e[i][1]);
 		}
 		CDQ(1, q);
 		for (int i = 1; i <= q; ++i) {
-			if (!res[i]) {
+			if (!ans[i]) {
 				puts("Disconnected");
 			} else {
 				puts("Connected");

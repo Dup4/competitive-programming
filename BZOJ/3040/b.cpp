@@ -1,10 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
-
 #define ll long long
 #define INFLL 0x3f3f3f3f3f3f3f3f
-#define N 1000010
-#define M 10000010
+const int N = 1e6 + 10, M = 1e7 + 10; 
 int n, m, T, rxa, rxc, rya, ryc, rp;
 struct Graph {
 	struct node {
@@ -17,7 +15,7 @@ struct Graph {
 		memset(head, -1, sizeof head);
 		pos = 0;
 	}
-	inline void add(int u, int v, int w) {
+	void add(int u, int v, int w) {
 		a[pos] = node(v, head[u], w); head[u] = pos++; 
 	}
 }G;
@@ -27,64 +25,62 @@ struct Pairing_Heap {
 	//内存池
 	struct Stack {
 		int S[N], s, k;
-		Stack() {
-			s = 0;
-			k = 0;
-		}
+		Stack() {}
+		void init() { s = k = 0; }
 		int get() {
 			return s ? S[s--] : ++k;
 		}
 		void save(int index) {
-			S[++s] = index; 
+			if (index >= 1) {
+				S[++s] = index;
+			}
 		}
 	}Edge, Node;
 	//节点属性
 	struct node {
-		int fa, id; ll val;
-		node() {
-			fa = -1;
-		}
-		node(int fa, int id, ll val) : fa(fa), id(id), val(val) {}
+		int fa, id, fa_edge_id; ll val;
+		node() { fa = -1; fa_edge_id = -1; }
+		node(int fa, int id, int fa_edge_id, ll val) : fa(fa), id(id), fa_edge_id(fa_edge_id), val(val) {}
+		//小根堆
 		bool operator < (const node &other) const {
 			return val < other.val;
 		}
 	}a[N];
-	//链式前向星
+	//链式前向星 
 	struct Graph {
 		struct node {
-			int to, nx;
+			int to, nx; 
 			node() {}
 			node (int to, int nx) : to(to), nx(nx) {}
 		}a[N];
 		int head[N]; 
-		void init() {
+		void init() { 
 			memset(head, -1, sizeof head);
 		}
-		void save(int u) {
+		void save(int u) { 
 			head[u] = -1;
 		}
-		void add(int u, int v, int index) {
-			a[index] = node(v, head[u]); head[u] = index; 		
+		void add(int u, int v, int index) { 
+			a[index] = node(v, head[u]); head[u] = index; 	
 		}
 	}G;
-	int root, S[N << 1];
+	int root; 
 	void init() {
 		root = 0;
 		G.init();
-		Edge = Stack();
-		Node = Stack();
+		Edge.init();
+		Node.init();
 	}
 	int merge(int u, int v) {
-		if (a[v] < a[u]) {
-			swap(u, v);
-		}
+		if (a[v] < a[u]) swap(u, v);
 		a[v].fa = u;
-		G.add(u, v, Edge.get());
+		a[v].fa_edge_id = Edge.get();
+		G.add(u, v, a[v].fa_edge_id); 
 		return u;
 	}
 	int push(int id, ll val) {
 		int u = Node.get();
-		a[u] = node(-1, id, val);
+		a[u] = node(-1, id, -1, val);
 		root = root ? merge(root, u) : u;
 		return u;
 	}
@@ -92,30 +88,32 @@ struct Pairing_Heap {
 		return a[root].id;
 	}
 	void modify(int u, int id, ll val) {
-		a[u] = node(-1, id, val);
+		if (a[u].fa_edge_id != -1) {
+			Edge.save(a[u].fa_edge_id);
+		}
+		a[u] = node(-1, id, -1, val); 
 		if (u != root) {
 			root = merge(root, u);
 		} 
 	}
 	void pop() {
-		int p = 0, s = 0, u, v;
+		queue <int> que; 
 		for (int it = G.head[root], v = G.a[it].to; ~it; it = G.a[it].nx, v = G.a[it].to) {
-			Edge.save(it);
 			if (a[v].fa == root) {
+				Edge.save(it);
 				a[v].fa = 0;
-				S[++s] = v;
+				que.push(v);
 			}
 		}
 		G.save(root); Node.save(root); root = 0;
-		while (p < s) {
-			++p;
-			if (p == s) {
-				root = S[p];
+		while (!que.empty()) {
+			int u = que.front(); que.pop();
+			if (que.empty()) {
+				root = u;
 				return;
 			}
-			u = S[p];
-			v = S[++p];
-			S[++s] = merge(u, v);
+			int v = que.front(); que.pop();
+			que.push(merge(u, v));
 		}
 	}
 	bool empty() {
@@ -150,7 +148,7 @@ int main() {
 	while (scanf("%d%d", &n, &m) != EOF) {
 		scanf("%d%d%d%d%d%d", &T, &rxa, &rxc, &rya, &ryc, &rp);
 		G.init();
-		ll x = 0, y = 0, a, b;
+	//	ll x = 0, y = 0, a, b;
 	//	for (int i = 1; i <= T; ++i) {
 	//		x = (x * rxa + rxc) % rp;
 	//		y = (y * rya + ryc) % rp;

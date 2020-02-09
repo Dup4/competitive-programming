@@ -8,7 +8,7 @@ using namespace std;
 #define fi first
 #define se second
 const int N = 1e6 + 10, INF = 0x3f3f3f3f;
-ll L, R;
+ll L, R; 
 int scheck[N], check[N];
 ll pri[N]; int cp;
 void sieve() {
@@ -33,24 +33,24 @@ void sieve() {
 			pri[++cp] = i + L - 1;
 		}
 	}
-	if (cp <= 1) puts("There are no adjacent primes.");
-	else {
-		pLL ma = pLL(0, 0), mi = pLL(-INF, INF);
-		for (int i = 2; i <= cp; ++i) {
-			if (pri[i] - pri[i - 1] > ma.se - ma.fi) {
-				ma = pLL(pri[i - 1], pri[i]);
-			}
-			if (pri[i] - pri[i - 1] < mi.se - mi.fi) {
-				mi = pLL(pri[i - 1], pri[i]);
-			}
-		}
-		printf("%lld,%lld are closest, %lld,%lld are most distant.\n", mi.fi, mi.se, ma.fi, ma.se);
-	}
 }
 
 int main() {
 	while (scanf("%lld%lld", &L, &R) != EOF) {
 		sieve();
+		if (cp <= 1) puts("There are no adjacent primes.");
+		else {
+			pLL ma = pLL(0, 0), mi = pLL(-INF, INF);
+			for (int i = 2; i <= cp; ++i) {
+				if (pri[i] - pri[i - 1] > ma.se - ma.fi) {
+					ma = pLL(pri[i - 1], pri[i]);
+				}
+				if (pri[i] - pri[i - 1] < mi.se - mi.fi) {
+					mi = pLL(pri[i - 1], pri[i]);
+				}
+			}
+			printf("%lld,%lld are closest, %lld,%lld are most distant.\n", mi.fi, mi.se, ma.fi, ma.se);
+		}
 	}
 	return 0;
 }

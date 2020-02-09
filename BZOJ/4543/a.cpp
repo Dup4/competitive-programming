@@ -7,7 +7,6 @@ int n, fa[N], md[N], hson[N], deep[N];
 vector < vector <int> > G;
 #define erp(u) for (int o = 0, _sze = (int)G[u].size(); o < _sze; ++o)
 void pre(int u) {
-	md[u] = deep[u];
 	hson[u] = 0;
 	erp(u) {
 		int v = G[u][o];
