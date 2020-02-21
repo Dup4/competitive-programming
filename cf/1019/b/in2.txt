@@ -1,0 +1,13 @@
+6
+<span class="tex-span"></span>
+1
+<span class="tex-span"></span>
+2
+<span class="tex-span"></span>
+3 
+<span class="tex-span"></span>
+2
+<span class="tex-span"></span>
+1
+<span class="tex-span"></span>
+0

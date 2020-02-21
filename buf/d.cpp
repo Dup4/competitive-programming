@@ -1,178 +1,284 @@
 #include <bits/stdc++.h>
-using namespace std;
- 
-template <typename T>
-T inverse(T a, T m) {
-  T u = 0, v = 1;
-  while (a != 0) {
-    T t = m / a;
-    m -= t * a; swap(a, m);
-    u -= t * v; swap(u, v);
-  }
-  assert(m == 1);
-  return u;
-}
- 
-template <typename T>
-class Modular {
- public:
-  using Type = typename decay<decltype(T::value)>::type;
- 
-  constexpr Modular() : value() {}
-  template <typename U>
-  Modular(const U& x) {
-    value = normalize(x);
-  }
- 
-  template <typename U>
-  static Type normalize(const U& x) {
-    Type v;
-    if (-mod() <= x && x < mod()) v = static_cast<Type>(x);
-    else v = static_cast<Type>(x % mod());
-    if (v < 0) v += mod();
-    return v;
-  }
- 
-  const Type& operator()() const { return value; }
-  template <typename U>
-  explicit operator U() const { return static_cast<U>(value); }
-  constexpr static Type mod() { return T::value; }
- 
-  Modular& operator+=(const Modular& other) { if ((value += other.value) >= mod()) value -= mod(); return *this; }
-  Modular& operator-=(const Modular& other) { if ((value -= other.value) < 0) value += mod(); return *this; }
-  template <typename U> Modular& operator+=(const U& other) { return *this += Modular(other); }
-  template <typename U> Modular& operator-=(const U& other) { return *this -= Modular(other); }
-  Modular& operator++() { return *this += 1; }
-  Modular& operator--() { return *this -= 1; }
-  Modular operator++(int) { Modular result(*this); *this += 1; return result; }
-  Modular operator--(int) { Modular result(*this); *this -= 1; return result; }
-  Modular operator-() const { return Modular(-value); }
- 
-  template <typename U = T>
-  typename enable_if<is_same<typename Modular<U>::Type, int>::value, Modular>::type& operator*=(const Modular& rhs) {
-#ifdef _WIN32
-    uint64_t x = static_cast<int64_t>(value) * static_cast<int64_t>(rhs.value);
-    uint32_t xh = static_cast<uint32_t>(x >> 32), xl = static_cast<uint32_t>(x), d, m;
-    asm(
-      "divl %4; \n\t"
-      : "=a" (d), "=d" (m)
-      : "d" (xh), "a" (xl), "r" (mod())
-    );
-    value = m;
-#else
-    value = normalize(static_cast<int64_t>(value) * static_cast<int64_t>(rhs.value));
-#endif
-    return *this;
-  }
-  template <typename U = T>
-  typename enable_if<is_same<typename Modular<U>::Type, int64_t>::value, Modular>::type& operator*=(const Modular& rhs) {
-    int64_t q = static_cast<int64_t>(static_cast<long double>(value) * rhs.value / mod());
-    value = normalize(value * rhs.value - q * mod());
-    return *this;
-  }
-  template <typename U = T>
-  typename enable_if<!is_integral<typename Modular<U>::Type>::value, Modular>::type& operator*=(const Modular& rhs) {
-    value = normalize(value * rhs.value);
-    return *this;
-  }
- 
-  Modular& operator/=(const Modular& other) { return *this *= Modular(inverse(other.value, mod())); }
- 
-  template <typename U>
-  friend const Modular<U>& abs(const Modular<U>& v) { return v; }
- 
-  template <typename U>
-  friend bool operator==(const Modular<U>& lhs, const Modular<U>& rhs);
- 
-  template <typename U>
-  friend bool operator<(const Modular<U>& lhs, const Modular<U>& rhs);
- 
-  template <typename U>
-  friend std::istream& operator>>(std::istream& stream, Modular<U>& number);
- 
- private:
-  Type value;
-};
- 
-template <typename T> bool operator==(const Modular<T>& lhs, const Modular<T>& rhs) { return lhs.value == rhs.value; }
-template <typename T, typename U> bool operator==(const Modular<T>& lhs, U rhs) { return lhs == Modular<T>(rhs); }
-template <typename T, typename U> bool operator==(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) == rhs; }
- 
-template <typename T> bool operator!=(const Modular<T>& lhs, const Modular<T>& rhs) { return !(lhs == rhs); }
-template <typename T, typename U> bool operator!=(const Modular<T>& lhs, U rhs) { return !(lhs == rhs); }
-template <typename T, typename U> bool operator!=(U lhs, const Modular<T>& rhs) { return !(lhs == rhs); }
- 
-template <typename T> bool operator<(const Modular<T>& lhs, const Modular<T>& rhs) { return lhs.value < rhs.value; }
- 
-template <typename T> Modular<T> operator+(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) += rhs; }
-template <typename T, typename U> Modular<T> operator+(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) += rhs; }
-template <typename T, typename U> Modular<T> operator+(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) += rhs; }
- 
-template <typename T> Modular<T> operator-(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) -= rhs; }
-template <typename T, typename U> Modular<T> operator-(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) -= rhs; }
-template <typename T, typename U> Modular<T> operator-(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) -= rhs; }
- 
-template <typename T> Modular<T> operator*(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) *= rhs; }
-template <typename T, typename U> Modular<T> operator*(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) *= rhs; }
-template <typename T, typename U> Modular<T> operator*(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) *= rhs; }
- 
-template <typename T> Modular<T> operator/(const Modular<T>& lhs, const Modular<T>& rhs) { return Modular<T>(lhs) /= rhs; }
-template <typename T, typename U> Modular<T> operator/(const Modular<T>& lhs, U rhs) { return Modular<T>(lhs) /= rhs; }
-template <typename T, typename U> Modular<T> operator/(U lhs, const Modular<T>& rhs) { return Modular<T>(lhs) /= rhs; }
- 
-template<typename T, typename U>
-Modular<T> power(const Modular<T>& a, const U& b) {
-  assert(b >= 0);
-  Modular<T> x = a, res = 1;
-  U p = b;
-  while (p > 0) {
-    if (p & 1) res *= x;
-    x *= x;
-    p >>= 1;
-  }
-  return res;
-}
- 
-template <typename T>
-bool IsZero(const Modular<T>& number) {
-  return number() == 0;
-}
- 
-template <typename T>
-string to_string(const Modular<T>& number) {
-  return to_string(number());
-}
- 
-template <typename T>
-std::ostream& operator<<(std::ostream& stream, const Modular<T>& number) {
-  return stream << number();
-}
- 
-template <typename T>
-std::istream& operator>>(std::istream& stream, Modular<T>& number) {
-  typename common_type<typename Modular<T>::Type, int64_t>::type x;
-  stream >> x;
-  number.value = Modular<T>::normalize(x);
-  return stream;
-}
- 
-/*
-using ModType = int;
- 
-struct VarMod { static ModType value; };
-ModType VarMod::value;
-ModType& md = VarMod::value;
-using Mint = Modular<VarMod>;
-*/
- 
-constexpr int mod = 998244353;
-using Mint = Modular<std::integral_constant<decay<decltype(mod)>::type, mod>>;
+using namespace std;   
+  
+#define MAXN 9999  
+#define MAXSIZE 10  
+#define DLEN 4  
+  
+class BigNum {   
+	private:   
+	    int a[500];    //可以控制大数的位数   
+	    int len;       //大数长度  
+	public:   
+	    BigNum(){ len = 1;memset(a,0,sizeof(a)); }   //构造函数  
+	    BigNum(const int);       //将一个int类型的变量转化为大数  
+	    BigNum(const char*);     //将一个字符串类型的变量转化为大数  
+	    BigNum(const BigNum &);  //拷贝构造函数  
+	    BigNum &operator=(const BigNum &);   //重载赋值运算符，大数之间进行赋值运算  
+	  
+	    friend istream& operator>>(istream&,  BigNum&);   //重载输入运算符  
+	    friend ostream& operator<<(ostream&,  BigNum&);   //重载输出运算符  
+	  
+	    BigNum operator+(const BigNum &) const;   //重载加法运算符，两个大数之间的相加运算   
+	    BigNum operator-(const BigNum &) const;   //重载减法运算符，两个大数之间的相减运算   
+	    BigNum operator*(const BigNum &) const;   //重载乘法运算符，两个大数之间的相乘运算   
+	    BigNum operator/(const int   &) const;    //重载除法运算符，大数对一个整数进行相除运算  
+	  
+	    BigNum operator^(const int  &) const;    //大数的n次方运算  
+	    int    operator%(const int  &) const;    //大数对一个int类型的变量进行取模运算      
+	    bool   operator>(const BigNum & T)const;   //大数和另一个大数的大小比较  
+	    bool   operator>(const int & t)const;      //大数和一个int类型的变量的大小比较  
+	  
+	    void print();       //输出大数  
+};   
+//将一个int类型的变量转化为大数  
+BigNum::BigNum(const int b) {   
+    int c,d = b;  
+    len = 0;  
+    memset(a,0,sizeof(a));  
+    while(d > MAXN) {  
+        c = d - (d / (MAXN + 1)) * (MAXN + 1);   
+        d = d / (MAXN + 1);  
+        a[len++] = c;  
+    }  
+    a[len++] = d;  
+}  
+//将一个字符串类型的变量转化为大数  
+BigNum::BigNum(const char*s) {  
+    int t,k,index,l,i;  
+    memset(a,0,sizeof(a));  
+    l=strlen(s);     
+    len=l/DLEN;  
+    if(l%DLEN)  
+        len++;  
+    index=0;  
+    for(i=l-1;i>=0;i-=DLEN) {  
+        t=0;  
+        k=i-DLEN+1;  
+        if(k<0)  
+            k=0;  
+        for(int j=k;j<=i;j++)  
+            t=t*10+s[j]-'0';  
+        a[index++]=t;  
+    }  
+}  
+//拷贝构造函数  
+BigNum::BigNum(const BigNum & T) : len(T.len) {   
+    int i;   
+    memset(a,0,sizeof(a));   
+    for(i = 0 ; i < len ; i++)  
+        a[i] = T.a[i];   
+}   
+//重载赋值运算符，大数之间进行赋值运算  
+BigNum & BigNum::operator=(const BigNum & n) {  
+    int i;  
+    len = n.len;  
+    memset(a,0,sizeof(a));   
+    for(i = 0 ; i < len ; i++)   
+        a[i] = n.a[i];   
+    return *this;   
+}  
+//重载输入运算符  
+istream& operator>>(istream & in,  BigNum & b) {  
+    char ch[MAXSIZE*4];  
+    int i = -1;  
+    in>>ch;  
+    int l=strlen(ch);  
+    int count=0,sum=0;  
+    for(i=l-1;i>=0;) {  
+        sum = 0;  
+        int t=1;  
+        for(int j=0;j<4&&i>=0;j++,i--,t*=10) {  
+	            sum+=(ch[i]-'0')*t;  
+	        }  
+	        b.a[count]=sum;  
+	        count++;  
+	    }  
+	    b.len =count++;  
+	    return in;  
+}  
+//重载输出运算符  
+ostream& operator<<(ostream& out,  BigNum& b) {  
+    int i;    
+    cout << b.a[b.len - 1];   
+    for(i = b.len - 2 ; i >= 0 ; i--) {   
+        cout.width(DLEN);   
+        cout.fill('0');   
+        cout << b.a[i];   
+    }   
+    return out;  
+}   
+//两个大数之间的相加运算  
+BigNum BigNum::operator+(const BigNum & T) const {  
+    BigNum t(*this);  
+    int i,big;      //位数     
+    big = T.len > len ? T.len : len;   
+    for(i = 0 ; i < big ; i++) {   
+        t.a[i] +=T.a[i];   
+        if(t.a[i] > MAXN) {   
+            t.a[i + 1]++;   
+            t.a[i] -=MAXN+1;   
+        }   
+    }   
+    if(t.a[big] != 0)  
+        t.len = big + 1;   
+    else  
+        t.len = big;     
+    return t;  
+}  
+//两个大数之间的相减运算   
+BigNum BigNum::operator-(const BigNum & T) const {    
+    int i,j,big;  
+    bool flag;  
+    BigNum t1,t2;  
+    if(*this>T) {  
+        t1=*this;  
+        t2=T;  
+        flag=0;  
+    } else {  
+        t1=T;  
+        t2=*this;  
+        flag=1;  
+    }  
+    big=t1.len;  
+    for(i = 0 ; i < big ; i++) {  
+        if(t1.a[i] < t2.a[i]) {   
+            j = i + 1;   
+            while(t1.a[j] == 0)  
+                j++;   
+            t1.a[j--]--;   
+            while(j > i)  
+                t1.a[j--] += MAXN;  
+            t1.a[i] += MAXN + 1 - t2.a[i];   
+        } else  
+            t1.a[i] -= t2.a[i];  
+    }  
+    t1.len = big;  
+    while(t1.a[t1.len - 1] == 0 && t1.len > 1) {  
+        t1.len--;   
+        big--;  
+    }  
+    if(flag)  
+        t1.a[big-1]=0-t1.a[big-1];  
+    return t1;   
+}   
+//两个大数之间的相乘运算   
+BigNum BigNum::operator*(const BigNum & T) const {   
+    BigNum ret;   
+    int i = 0, j = 0, up;   
+    int temp,temp1;     
+    for(i = 0 ; i < len ; i++) {   
+        up = 0;   
+        for(j = 0 ; j < T.len ; j++) {   
+            temp = a[i] * T.a[j] + ret.a[i + j] + up;   
+            if(temp > MAXN) {   
+                temp1 = temp - temp / (MAXN + 1) * (MAXN + 1);   
+                up = temp / (MAXN + 1);   
+                ret.a[i + j] = temp1;   
+            } else {   
+                up = 0;   
+                ret.a[i + j] = temp;   
+            }   
+        }   
+        if(up != 0)   
+            ret.a[i + j] = up;   
+    }   
+    ret.len = i + j;   
+    while(ret.a[ret.len - 1] == 0 && ret.len > 1)  
+        ret.len--;   
+    return ret;   
+}   
+//大数对一个整数进行相除运算  
+BigNum BigNum::operator/(const int & b) const {   
+    BigNum ret;   
+    int i,down = 0;     
+    for(i = len - 1 ; i >= 0 ; i--)  
+    {   
+        ret.a[i] = (a[i] + down * (MAXN + 1)) / b;   
+        down = a[i] + down * (MAXN + 1) - ret.a[i] * b;   
+    }   
+    ret.len = len;   
+    while(ret.a[ret.len - 1] == 0 && ret.len > 1)  
+        ret.len--;   
+    return ret;   
+}  
+//大数对一个int类型的变量进行取模运算      
+int BigNum::operator %(const int & b) const {  
+    int i,d=0;  
+    for (i = len-1; i>=0; i--) {  
+        d = ((d * (MAXN+1))% b + a[i])% b;    
+    }  
+    return d;  
+}  
+//大数的n次方运算  
+BigNum BigNum::operator^(const int & n) const {  
+    BigNum t,ret(1);  
+    int i;  
+    if(n<0)  
+        exit(-1);  
+    if(n==0)  
+        return 1;  
+    if(n==1)  
+        return *this;  
+    int m=n;  
+    while(m>1) {  
+        t=*this;  
+        for( i=1;i<<1<=m;i<<=1) {  
+            t=t*t;  
+        }  
+        m-=i;  
+        ret=ret*t;  
+        if(m==1)  
+            ret=ret*(*this);  
+    }  
+    return ret;  
+}  
+//大数和另一个大数的大小比较  
+bool BigNum::operator>(const BigNum & T) const {   
+    int ln;   
+    if(len > T.len)  
+        return true;   
+    else if(len == T.len) {   
+        ln = len - 1;   
+        while(a[ln] == T.a[ln] && ln >= 0)  
+            ln--;   
+        if(ln >= 0 && a[ln] > T.a[ln])  
+            return true;   
+        else  
+            return false;   
+    }   
+    else  
+        return false;   
+}  
+//大数和一个int类型的变量的大小比较  
+bool BigNum::operator >(const int & t) const {  
+    BigNum b(t);  
+    return *this>b;  
+}  
+//输出大数  
+void BigNum::print() {   
+    int i;     
+    cout << a[len - 1];   
+    for(i = len - 2 ; i >= 0 ; i--) {   
+        cout.width(DLEN);   
+        cout.fill('0');   
+        cout << a[i];   
+    }   
+    cout << endl;  
+}  
+char s[100010];
 
-int main() {
-	Mint res = 0;
-	for (Mint i = 1; i != (Mint)10000000; ++i) {
-		res += i * i * i * i * i;
-	}
-	cout << res << endl;
+int main(void) { 
+   	BigNum zero("0");
+	int T; scanf("%d", &T);
+	while (T--) {
+		scanf("%s", s);
+		BigNum num(s), ans("0");
+		while (num > zero) {
+			num = num / 2;
+			ans = ans + num;
+		}
+		ans.print();
+	}	
 	return 0;
-}
+}  

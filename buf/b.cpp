@@ -1,32 +1,44 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
+typedef long long ll;
+typedef pair <int,int> pr;
+const int maxn = 1e6 + 10;
+const ll inf = 1e18;
 
-struct Heap {
-	//默认大根堆
-	priority_queue <int, vector<int>, less<int> > q, d; 
-	void clear() {
-		while (!q.empty()) q.pop();
-		while (!d.empty()) d.pop();
+//get the maximum
+struct Line {
+	mutable ll k, m, p;
+	bool operator<(const Line& o) const { return k < o.k; }
+	bool operator<(ll x) const { return p < x; }
+};
+ 
+struct LineContainer : multiset<Line, less<>> {
+	ll div(ll a, ll b) { return a / b - ((a ^ b) < 0 && a % b); }
+	bool isect(iterator x, iterator y) {
+		if (y == end()) { x->p = inf; return false; }
+		if (x->k == y->k) x->p = x->m > y->m ? inf : -inf;
+		else x->p = div(y->m - x->m, x->k - y->k);
+		return x->p >= y->p;
 	}
-	void push(int x) { q.push(x); }
-	void del(int x) { d.push(x); }
-	void pop() {
-		while (!d.empty() && d.top() == q.top()) d.pop(), q.pop();
-		q.pop();
+	void add(ll k, ll m) {
+		auto z = insert({k, m, 0}), y = z++, x = y;
+		while (isect(y, z)) z = erase(z);
+		if (x != begin() && isect(--x, y)) isect(x, y = erase(y));
+		while ((y = x) != begin() && (--x)->p >= y->p)
+			isect(x, erase(y));
 	}
-	int top() {
-		while (!d.empty() && d.top() == q.top()) d.pop(), q.pop();
-		return q.top();
+	ll query(ll x) {
+		if ( empty() ) return 0;
+		auto it = lower_bound(x);
+		assert(it != end());
+		return (*it).k * x + (*it).m;
 	}
-	int size() { return q.size() - d.size(); }
-}heap;
+};
 
 int main() {
-	heap.clear();
-	heap.push(2);
-	heap.push(3);
-	cout << heap.top() << endl;
-	heap.pop();
-	cout << heap.top() << endl;
+	LineContainer lc;
+	lc.add(3, 100);
+	lc.add(6, 2);
+	cout << lc.query(4) << endl;
 	return 0;
 }

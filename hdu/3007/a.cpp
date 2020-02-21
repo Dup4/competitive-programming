@@ -1,8 +1,5 @@
-#include <cstdio>
-#include <cmath>
-#include <algorithm>
+#include <bits/stdc++.h>
 using namespace std;
-
 typedef double db;
 const int N = 510;
 struct Point {
@@ -15,12 +12,14 @@ struct Point {
 int n;
 	
 void gao() {
-	db t = 100, pd = 0.98, eps = 1e-7;
-	db res = 0x3f3f3f3f3f3f3f3f * 1.0;
+	//pd越高, eps越高 炼的越久 pd < 1
+	db t = 100, pd = 0.95, eps = 1e-7;
+	db res = 1e18;
 	Point now = arr[1]; int tmp = 1;
-	while (t > eps)
-	{
-		for (int i = 1; i <= n; ++i) if (now.dis(arr[tmp]) < now.dis(arr[i])) tmp = i;
+	while (t > eps) {
+		for (int i = 1; i <= n; ++i) 
+			if (now.dis(arr[tmp]) < now.dis(arr[i])) 
+				tmp = i;
 		db dis = now.dis(arr[tmp]);
 		res = min(res, dis);
 		now.x += (arr[tmp].x - now.x) / dis * t;

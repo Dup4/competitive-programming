@@ -1,102 +1,135 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 using namespace std;
-const int N = 1e5 + 10, M = 20, INF = 0x3f3f3f3f;
-int n, m, q; 
-
-struct E { int to, nx, w; }e[N << 1]; int h[N]; 
-void initE(int n) { for (int i = 0; i <= n; ++i) h[i] = 0; }
-void addedge(int u, int v, int w) { e[++*h] = { v, h[u], w }; h[u] = *h;}
-
-struct LCA {
-	int fa[N][M], dis[N][M]; 
-	int deep[N]; 
-	void BFS(int rt) {
-		queue <int> q; 
-		deep[rt] = 0; fa[rt][0] = rt; dis[rt][0] = 0; q.emplace(rt); 
-		while (!q.empty()) {
-			int u = q.front(); q.pop();  
-			for (int i = 1; i < M; ++i) { 
-				dis[u][i] = dis[u][i - 1] + dis[fa[u][i - 1]][i - 1];   
-				fa[u][i] = fa[fa[u][i - 1]][i - 1]; 
-			} 
-			for (int i = h[u]; i; i = e[i].nx) {
-				int v = e[i].to, w = e[i].w;
-				if (v == fa[u][0]) continue;
-				deep[v] = deep[u] + 1;   
-				fa[v][0] = u; dis[v][0] = w;   
-				q.emplace(v);   
-			} 
-		}
+#define PB push_back
+#define lowbit(x) (x&(-x))
+#define MP make_pair
+#define fi first
+#define se second
+#define ls(x) (x << 1)
+#define rs(x) ((x << 1) | 1)
+#define rep(i,l,r) for (int i = l ; i <= r ; i++)
+#define down(i,r,l) for (int i = r ; i >= l ; i--)
+#define fore(i,x) for (int i = head[x] ; i ; i = e[i].next)
+#define SZ(v) (int)v.size()
+ 
+typedef long long ll;
+typedef pair <int,int> pr;
+const int maxn = 1e6 + 10;
+const ll inf = 1e18;
+ 
+//get the maximum
+struct Line {
+	mutable ll k, m, p;
+	bool operator < (const Line& o) const { return k < o.k; }
+	bool operator < (ll x) const { return p < x; }
+};
+ 
+struct LineContainer : multiset<Line, less<>> {
+	// (for doubles, use inf = 1/.0, div(a,b) = a/b)
+	
+	ll div(ll a, ll b) { // floored division
+		return a / b - ((a ^ b) < 0 && a % b); }
+	bool isect(iterator x, iterator y) {
+		if (y == end()) { x->p = inf; return false; }
+		if (x->k == y->k) x->p = x->m > y->m ? inf : -inf;
+		else x->p = div(y->m - x->m, x->k - y->k);
+		return x->p >= y->p;
 	}
-	int querylca(int u, int v) {
-		if (u == v) return u;
-		if (deep[u] > deep[v]) swap(u, v);
-		int hu = deep[u], hv = deep[v], tu = u, tv = v;
-		for (int det = hv - hu, i = 0; det; det >>= 1, ++i) {
-			if (det & 1) {
-				tv = fa[tv][i];
-			}
-		}	
-		if (tu == tv) return tu;
-		for (int i = M - 1; i >= 0; --i) {
-			if (fa[tu][i] == fa[tv][i]) continue;
-			tu = fa[tu][i];
-			tv = fa[tv][i];
-		}
-		return tu;
+	void add(ll k, ll m) {
+		auto z = insert({k, m, 0}), y = z++, x = y;
+		while (isect(y, z)) z = erase(z);
+		if (x != begin() && isect(--x, y)) isect(x, y = erase(y));
+		while ((y = x) != begin() && (--x)->p >= y->p)
+			isect(x, erase(y));
 	}
-	int querydis(int u, int v) {
-		if (u == v) return 0; 
-		if (deep[u] > deep[v]) swap(u, v); 
-		int res = 0, hu = deep[u], hv = deep[v], tu = u, tv = v;
-		for (int det = hv - hu, i = 0; det; det >>= 1, ++i) {
-			if (det & 1) {
-				res += dis[tv][i];    
-				tv = fa[tv][i];  
-			}
-		}
-		if (tu == tv) return res;    
-		for (int i = M - 1; i >= 0; --i) {
-			if (fa[tu][i] == fa[tv][i]) continue;
-			res += dis[tu][i] + dis[tv][i];  
-			tu = fa[tu][i]; tv = fa[tv][i];  
-		}
-		return res + dis[tu][0] + dis[tv][0];   
+	ll query(ll x) {
+		if ( empty() ) return 0;
+		auto it = lower_bound(x);
+		assert(it != end());
+		return (*it).k * x + (*it).m;
 	}
-}lca;
-
-struct node {
-	vector <int> v; int len;  
-	inline void scan() {
-		scanf("%d", &len); v.clear();   
-		for (int i = 1, u; i <= len; ++i) {
-			scanf("%d", &u);   
-			v.emplace_back(u);   
-		} 
+};
+struct DT{
+	ll l,v,s;
+};
+ll ans = 0; int rt,tot,n;
+vector <int> edge[maxn];
+int sz[maxn],vis[maxn],mx[maxn],a[maxn];
+ 
+void getsize(int x,int fa){
+	sz[x] = 1 , mx[x] = 0;
+	for (auto y : edge[x]){
+		if ( y == fa || vis[y] ) continue;
+		getsize(y,x);
+		sz[x] += sz[y];
+		mx[x] = max(mx[x],sz[y]);
 	}
-}arr[N];
-
-int main() {
-	int _T; scanf("%d", &_T);
-	while (_T--) {
-		scanf("%d%d", &n, &m); 
-		initE(n);
-		for (int i = 1, u, v, w; i < n; ++i) {
-			scanf("%d%d%d", &u, &v, &w); 
-			addedge(u, v, w);  
-			addedge(v, u, w);
-		}	
-		lca.BFS(1);
-		for (int i = 1; i <= m; ++i) arr[i].scan(); 
-		scanf("%d", &q);     
-		for (int i = 1, u, v; i <= q; ++i) {
-			scanf("%d%d", &u, &v);
-			int ans = INF; 
-			for (auto it : arr[u].v) 
-				for (auto it2 : arr[v].v) 
-					ans = min(ans, lca.querydis(it, it2)); 
-			printf("%d\n", ans);  
-		}
+}
+void getcenter(int x,int fa){
+	for (auto y : edge[x]){
+		if ( y == fa || vis[y] ) continue;
+		getcenter(y,x);
 	}
-	return 0;
+	if ( rt == -1 || max(tot - sz[rt],mx[rt]) > max(tot - sz[x],mx[x]) ) rt = x;
+}
+DT merge(DT a,DT b){
+	return {a.l + b.l,a.v + b.v + a.l * b.s,a.s + b.s};
+}
+void dfs(int x,int fa,LineContainer &chull1,LineContainer &chull2,DT cur,vector <DT> &rec,int flag){
+	if ( flag == 1 ){
+		cur = merge({1,a[x],a[x]},cur);
+		ans = max(ans,chull2.query(cur.l) + cur.v);
+	}
+	else {
+		cur = merge(cur,{1,a[x],a[x]});
+		ans = max(ans,chull1.query(cur.s) + cur.v);
+	}
+	rec.PB(cur);
+	for (auto y : edge[x]){
+		if ( y == fa || vis[y] ) continue;
+		dfs(y,x,chull1,chull2,cur,rec,flag);
+	}
+}
+void getans(){
+	LineContainer chull1,chull2;
+	for (auto x : edge[rt]){
+		if ( vis[x] ) continue;
+		vector <DT> rec1,rec2;
+		//1 : down , 2 : up
+		dfs(x,rt,chull1,chull2,{1,a[rt],a[rt]},rec1,1);
+		dfs(x,rt,chull1,chull2,{0,0,0},rec2,2);		
+		//cerr<<"getans : "<<x<<endl;
+		//cerr<<"down\n";
+		for (auto cur : rec1) chull1.add(cur.l,cur.v) ; //cout<<"l : "<<cur.l<<" v : "<<cur.v<<" s : "<<cur.s<<endl;
+		//cerr<<"up\n";
+		for (auto cur : rec2) chull2.add(cur.s,cur.v) ; //cout<<"l : "<<cur.l<<" v : "<<cur.v<<" s : "<<cur.s<<endl;
+	}
+}
+void dianfen(int x){
+	getsize(x,0);
+	tot = sz[x] , rt = x,  getcenter(x,0);
+	//cerr<<rt<<endl;
+	getans();
+	vis[rt] = 1;
+	int t = rt;
+	for (auto x : edge[t]){
+		if ( vis[x] ) continue;
+		dianfen(x);
+	}
+}
+void solve(){
+	cin>>n;
+	rep(i,1,n - 1){
+		int x,y;
+		cin>>x>>y;
+		edge[x].PB(y), edge[y].PB(x);
+	}
+	rep(i,1,n) cin>>a[i];
+	dianfen(1);
+	cout<<ans<<endl;
+}
+int main(){
+	//freopen("input.txt","r",stdin);
+	ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+	solve();
 }
