@@ -30,43 +30,123 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 2e5 + 10;
-int n, sze[N], fa[N]; ll res, f[N], g[N], a[N];
-vector <vector<int>> G;
+constexpr ll INF = 1e18;
+int n; ll a[N];
 
-void dfs(int u) {
-	f[u] = 1;
-	sze[u] = 1;
-	for (auto &v : G[u]) if (v != fa[u]) {
-		fa[v] = u;
-		dfs(v);
-		sze[u] += sze[v];
-		res += a[u] * (f[v] + sze[v]) * (n - sze[v]);
-		f[u] += f[v] + sze[v];
+struct Line {
+	mutable ll k, m, p;
+	bool operator < (const Line& o) const { return k < o.k; }
+	bool operator < (ll x) const { return p < x; }
+};
+
+struct LineContainer : multiset<Line, less<>> {
+	ll div(ll a, ll b) { return a / b - ((a ^ b) < 0 && a % b); }
+	bool isect(iterator x, iterator y) {
+		if (y == end()) { x->p = INF; return false; }
+		if (x->k == y->k) x->p = x->m > y->m ? INF : -INF;
+		else x->p = div(y->m - x->m, x->k - y->k);
+		return x->p >= y->p;
 	}
-}
+	void add(ll k, ll m) {
+		auto z = insert({k, m, 0}), y = z++, x = y;
+		while (isect(y, z)) z = erase(z);
+		if (x != begin() && isect(--x, y)) isect(x, y = erase(y));
+		while ((y = x) != begin() && (--x)->p >= y->p)
+			isect(x, erase(y));
+	}
+	ll query(ll x) {
+		if (empty()) return 0;
+		auto it = lower_bound(x);
+		assert(it != end());
+		return (*it).k * x + (*it).m;
+	}
+};
 
-void dfs1(int u) {
-	for (auto &v : G[u]) if (v != fa[u]) {
-		res += a[v] * sze[v] * (g[u] + f[u] - f[v] - sze[v] + n - sze[v]);
-		g[v] += g[u] + f[u] - f[v] - sze[v] + n - sze[v];
-		dfs1(v);
-	}	
-}
+vector <vector<int>> G;
+namespace DCTree {
+	int all, rt, vis[N];
+	int sze[N], f[N];
+	ll deep[N], sum[N], tot[N], res;
+	LineContainer lc;
+	void getrt(int u, int fa) {
+		f[u] = 0, sze[u] = 1;
+		for (auto &v : G[u]) {
+		 	if (v == fa || vis[v]) continue;	
+			getrt(v, u);
+			sze[u] += sze[v];
+			f[u] = max(f[u], sze[v]);
+		}
+		f[u] = max(f[u], all - sze[u]);
+		if (f[u] < f[rt]) rt = u;
+	}
+	void getdeep(int u, int fa) {
+		chmax(res, lc.query(deep[u]) + tot[u]);
+		for (auto &v : G[u]) {
+			if (v == fa || vis[v]) continue;
+			deep[v] = deep[u] + 1;
+			sum[v] = sum[u] + a[v];
+			tot[v] = tot[u] + sum[v];
+			getdeep(v, u);  
+		}
+	}
+	void add(int u, int fa) {
+		chmax(res, tot[u]);
+		lc.add(sum[u], tot[u]);
+		for (auto &v : G[u]) {
+		 	if (v == fa || vis[v]) continue;
+			deep[v] = deep[u] + 1;
+			sum[v] = sum[u] + a[v];
+			tot[v] = tot[u] + a[v] * deep[v];	
+			add(v, u); 
+		} 
+	}
+	void calc(int u) {
+		deep[u] = 0;
+		tot[u] = sum[u] = a[u];
+		lc.clear(); lc.add(a[u], a[u]);
+		for (auto &v : G[u]) {
+			if (vis[v]) continue; 
+			deep[v] = 1;
+			sum[v] = a[v]; 
+			tot[v] = a[v];
+			getdeep(v, u); 
+			deep[v] = 2;
+			sum[v] = sum[u] + a[v];
+			tot[v] = tot[u] + a[v] * deep[v]; 
+			add(v, u);
+		}
+	} 
+	void solve(int u) {
+		vis[u] = 1;
+	    calc(u);	
+		reverse(G[u].begin(), G[u].end());
+		calc(u);
+		for (auto &v : G[u]) {
+		 	if (vis[v]) continue;	
+			all = f[0] = sze[v]; rt = 0;
+			getrt(v, 0);
+			solve(rt);
+		}
+	}
+	void gao() {
+		res = *max_element(a + 1, a + 1 + n);
+		memset(vis, 0, sizeof vis);
+		all = f[0] = n; rt = 0;
+		getrt(1, 0);
+		solve(rt);
+		pt(res);
+	}
+};
 
 void run() {
-	G.resize(n + 1);
+	G.clear(); G.resize(n + 1);
 	for (int i = 1, u, v; i < n; ++i) {
 		cin >> u >> v;
 		G[u].push_back(v);
 		G[v].push_back(u);
 	}
-	res = 0;
-	for (int i = 1; i <= n; ++i) cin >> a[i], res += a[i];
-	fa[1] = 0;
-	dfs(1);
-	g[1] = 0;
-	dfs1(1);
-	pt(res);
+	for (int i = 1; i <= n; ++i) rd(a[i]);
+	DCTree::gao(); 
 }	
 
 int main() {

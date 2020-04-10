@@ -1,13 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-#define N 1000010
+using ll = long long;
+const int N = 2e7 + 10;
 char s[N], t[N];
 
 struct ExKMP {
-	int Next[N];
-	int extend[N];
-	//下标从1开始
+	int Next[N], extend[N];
+	//1-index
 	void get_Next(char *s) {
 		int lens = strlen(s + 1), p = 1, pos;
 		//Next[1]要特殊考虑
@@ -29,7 +28,6 @@ struct ExKMP {
 			}
 		}
 	}
-
 	void work(char *s, char *t) {
 		get_Next(t);
 		int lens = strlen(s + 1), lent = strlen(t + 1), p = 1, pos;
@@ -52,10 +50,14 @@ int main() {
 		exkmp.work(s, t);
 		int lens = strlen(s + 1);
 		int lent = strlen(t + 1);
-		for (int i = 1; i <= lent; ++i) 
+		ll z = 0, p = 0;
+		for (int i = 1; i <= lent; ++i)
 			printf("%d%c", exkmp.Next[i], " \n"[i == lent]);
-		for (int i = 1; i <= lens; ++i) 
+		for (int i = 1; i <= lens; ++i)
 			printf("%d%c", exkmp.extend[i], " \n"[i == lens]);
+	//	for (int i = 1; i <= lent; ++i) z ^= 1ll * i * (exkmp.Next[i] + 1);
+	//	for (int i = 1; i <= lens; ++i) p ^= 1ll * i * (exkmp.extend[i] + 1);
+	//	printf("%lld\n%lld\n", z, p);
 	}
 	return 0;
 }

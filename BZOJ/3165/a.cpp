@@ -1,74 +1,71 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-#define db double
-#define N 100010
-const db eps = 1e-7;
+typedef double db;
+const int N = 1e5 + 10;
+const db eps = 1e-8;
+int sgn(db x) { if (fabs(x) < eps) return 0; return x < 0 ? -1 : 1; }
 int q, ans, tot;
 db K[N], B[N];
-struct SEG {
+struct SEG { 
 	struct node {
+		db k, b; int pos; 
 		bool F;
-		int pos; 
-		db k, b;
-		node() {}
-		void set(int pos, db k, db b) {
-			this->pos = pos;
-			this->k = k;
-			this->b = b;
-		}
+		node(db k = 0, db b = 0, int pos = 0, bool F = 0) : k(k), b(b), pos(pos), F(F) {}
+		db calc(db x) { return k * x + b; }
 	}t[N << 2];
-	void init() {
-		memset(t, 0, sizeof t);
+	void build(int id, int l, int r) {
+		t[id] = node();
+		if (l == r) return;
+		int mid = (l + r) >> 1;
+		build(id << 1, l, mid);
+		build(id << 1 | 1, mid + 1, r);
 	}
-	void update(int id, int l, int r, int pos, db k, db b) {
-		if (!t[id].F) {
-			t[id].F = 1;
-			t[id].set(pos, k, b);
+	db div(db a, db b) { return a / b; }
+//	db div(db a, db b) { return a / b - ((a ^ b) < 0 && a % b); }
+	void update(int id, int l, int r, node tmp) { 
+		if (t[id].F == 0) {
+			t[id] = tmp;
 			return;
 		}
 		int mid = (l + r) >> 1;
-		db kk = t[id].k, bb = t[id].b;
-		db l1 = l * kk + bb, r1 = r * kk + bb;
-		db l2 = l * k + b, r2 = r * k + b;
-		if (l1 >= l2 && r1 >= r2) return;
-		if (l2 > l1 && r2 > r1) {
-			t[id].set(pos, k, b);
+		db preL = t[id].calc(l), preR = t[id].calc(r);
+		db newL = tmp.calc(l), newR = tmp.calc(r);
+		if (sgn(preL - newL) >= 0 && sgn(preR - newR) >= 0) return;
+		if (newL > preL && newR > preR) {
+			t[id] = tmp;
 			return;
 		}
-		db x = (bb - b) / (k - kk);
-		//交点在左边
-		if (x <= mid) {
-			//原左端点高于新左端点, 那么原线的覆盖范围小，用新线覆盖当前区域，原线递归下去更新
-			if (l1 > l2) {
-				update(id << 1, l, mid, t[id].pos, t[id].k, t[id].b);
-				t[id].set(pos, k, b);
-			} else { //原线的覆盖范围大，直接用新线递归更新
-				update(id << 1, l, mid, pos, k, b);
+		db x = div(tmp.b - t[id].b, t[id].k - tmp.k);
+		if (newL > preL) { 
+			if (x > mid) {
+				update(id << 1 | 1, mid + 1, r, t[id]); 
+				t[id] = tmp;
+			} else {
+				update(id << 1, l, mid, tmp); 
 			}
-		} else { //交点在右边
-			if (l1 > l2) { //原线的覆盖范围大
-				update(id << 1 | 1, mid + 1, r, pos, k, b);
-			} else { //原线的覆盖范围小
-				update(id << 1 | 1, mid + 1, r, t[id].pos, t[id].k, t[id].b);
-				t[id].set(pos, k, b);
+		} else {
+			if (x > mid) {
+				update(id << 1 | 1, mid + 1, r, tmp);
+			} else {
+				update(id << 1, l, mid, t[id]);
+				t[id] = tmp;
 			}
 		}
 	}
-	//找到线段所管辖的区域
-	void update(int id, int l, int r, int ql, int qr, int pos, db k, db b) {
+	void update(int id, int l, int r, int ql, int qr, node tmp) {
 		if (l >= ql && r <= qr) {
-			update(id, l, r, pos, k, b);
+			update(id, l, r, tmp);
 			return;
 		}
 		int mid = (l + r) >> 1;
-		if (ql <= mid) update(id << 1, l, mid, ql, qr, pos, k, b);
-		if (qr > mid) update(id << 1 | 1, mid + 1, r, ql, qr, pos, k, b);
+		if (ql <= mid) update(id << 1, l, mid, ql, qr, tmp);
+		if (qr > mid) update(id << 1 | 1, mid + 1, r, ql, qr, tmp);
 	}
-	void Cmax(int &a, int b, int x) {
+	void update(int id, int l, int r, int ql, int qr, db k, db b, int pos) { update(id, l, r, ql, qr, node(k, b, pos, 1)); }
+	void Cmax(int &a, int b, int x) { 
 		db ya = K[a] * x + B[a];
 		db yb = K[b] * x + B[b];
-		if (ya < yb || (fabs(ya - yb) < eps && a > b)) a = b;
+		if (ya < yb || (fabs(ya - yb) < eps && a > b)) a = b; 
 	}
 	int query(int id, int l, int r, int x) {
 		if (l == r) return t[id].pos;
@@ -83,6 +80,7 @@ struct SEG {
 int main() {
 	while(scanf("%d", &q) != EOF) {
 		int n = 100000;
+		seg.build(1, 1, n);
 		int op, x[2], y[2];
 		int mod = 39989;
 		ans = 0;
@@ -107,7 +105,7 @@ int main() {
 					++tot;
 					K[tot] = 1.0 * (y[0] - y[1]) / (x[0] - x[1]);
 					B[tot] = y[0] - K[tot] * x[0];
-					seg.update(1, 1, n, x[0], x[1], tot, K[tot], B[tot]);
+					seg.update(1, 1, n, x[0], x[1], K[tot], B[tot], tot);
 					break;
 			}
 		}

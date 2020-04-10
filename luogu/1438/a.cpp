@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-#define ll long long
-#define N 100010
+typedef long long ll;
+const int N = 1e5 + 10;
 int n, q, arr[N];
 struct SEG {
 	struct node {
@@ -39,9 +38,7 @@ struct SEG {
 	}	
 	void pushdown(int id) {
 		ll &a = t[id].a, &b = t[id].b;
-		if (a == 0 && b == 0) {
-			return;
-		}
+		if (a == 0 && b == 0) return;
 		t[id << 1].add(a, b);
 		a += b * (t[id << 1].sze); 
 		t[id << 1 | 1].add(a, b);
@@ -54,33 +51,22 @@ struct SEG {
 		}
 		int mid = (l + r) >> 1;
 		pushdown(id);
-		if (ql <= mid) {
-			update(id << 1, l, mid, ql, qr, a, b); 
-		} 
-		if (qr > mid) {
-			update(id << 1 | 1, mid + 1, r, ql, qr, a, b);
-		}
+		if (ql <= mid) update(id << 1, l, mid, ql, qr, a, b); 
+		if (qr > mid) update(id << 1 | 1, mid + 1, r, ql, qr, a, b);
 		t[id] = t[id << 1] + t[id << 1 | 1]; 
 	}
 	ll query(int id, int l, int r, int pos) {
-		if (l == r) {
-			return t[id].sum;
-		}
+		if (l == r) return t[id].sum;
 		int mid = (l + r) >> 1;
 		pushdown(id);
-		if (pos <= mid) {
-			return query(id << 1, l, mid, pos);
-		} else {
-			return query(id << 1 | 1, mid + 1, r, pos);
-		}
+		if (pos <= mid) return query(id << 1, l, mid, pos);
+		else return query(id << 1 | 1, mid + 1, r, pos);
 	}
 }seg;
 
 int main() {
 	while (scanf("%d%d", &n, &q) != EOF) {
-		for (int i = 1; i <= n; ++i) {
-			scanf("%d", arr + i);
-		}
+		for (int i = 1; i <= n; ++i) scanf("%d", arr + i);
 		seg.build(1, 1, n);
 		int op, l, r, k, d, p;
 		while (q--) {
@@ -94,8 +80,6 @@ int main() {
 					scanf("%d", &p);
 					printf("%lld\n", seg.query(1, 1, n, p));
 					break;
-				default :
-					assert(0);
 			}
 		}
 	}

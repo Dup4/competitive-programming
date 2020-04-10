@@ -357,7 +357,7 @@ struct Polygon {
 
 namespace PolyUnion {
 	Point dir(Line ln) { return ln.e - ln.s; }
-	db pos(Point p, Line ln){ return ((p - ln.s) * dir(ln)) / dir(ln).len(); } 
+	db pos(Point p, Line ln){ return ((p - ln.s) * dir(ln)) / dir(ln).len2(); } 
 	db gao(vector <Polygon> &po) {
 		int n = po.size();
 		db res = 0;

@@ -5,11 +5,6 @@ const int N = 1e6 + 10;
 const int ALP = 26;
 int n, q, trie_pos[N]; char s[N];
 struct SAM {
-	//空间开两倍，节点个数是两倍字符串长度
-	//maxlen 表示节点i表示的最大后缀长度, nx[j]表示节点i加一个字符j所表示的字符串对应的节点
-	//minlen 表示节点i表示的最小后缀长度，其等于t[t[i].fa].maxlen + 1 
-	//fa 表示节点i的后缀链接 cnt 表示节点i的enspos集合大小 
-	//c[]表示拓扑排序辅助数组,　rk[]表示拓扑序，rk[i],i小的节点所表示的后缀长度也小
 	struct node {
 		int maxlen, cnt, fa, nx[ALP];
 		void init() { maxlen = cnt = fa = 0; memset(nx, 0, sizeof nx); }

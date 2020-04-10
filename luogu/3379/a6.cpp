@@ -6,9 +6,11 @@ using pII = pair<int, int>;
 const int N = 1e6 + 10, M = 20, INF = 0x3f3f3f3f; 
 int n, q, rt; 
 
-struct E { int to, nx, w; }e[N << 1]; int h[N]; 
-void initE(int n) { for (int i = 0; i <= n; ++i) h[i] = 0; }
-void addedge(int u, int v, int w = 0) { e[++*h] = { v, h[u], w }; h[u] = *h;} 
+struct Graph {
+	struct E { int to, nx, w; }e[N << 1]; int h[N], cnt;
+	void init(int n) { for (int i = 0; i <= n; ++i) h[i] = -1; cnt = -1; }
+	void addedge(int u, int v, int w = 0) { e[++cnt] = { v, h[u], w}; h[u] = cnt; } 
+}G;
 
 struct RMQ {
 	const static int B = 10;  
@@ -66,32 +68,35 @@ struct RMQ {
 
 struct LCA {
 	pII rmq[N << 1];
-	int low[N], cnt;
+	int low[N], cnt, dis[N];
 	void dfs(int u, int fa, int dep) {
 		rmq[++cnt] = pII(dep, u);
 		low[u] = cnt;
-		for (int i = h[u]; i; i = e[i].nx) {
-			int v = e[i].to;   
+		for (int i = G.h[u]; ~i; i = G.e[i].nx) {
+			int v = G.e[i].to, w = G.e[i].w;   
 			if (v == fa) continue;	
+			dis[v] = dis[u] + w;
 			dfs(v, u, dep + 1);
 			rmq[++cnt] = pII(dep, u);
 		}
 	}
 	void init(int rt, int n) {
 		cnt = 0;
+		dis[rt] = 0;
 		dfs(rt, rt, 0);
 		st.build(2 * n - 1, rmq);
 	}
 	int querylca(int u, int v) { return st.queryMin(low[u], low[v]).se; }
+	int querydis(int u, int v) { return dis[u] + dis[v] - 2 * dis[querylca(u, v)]; }
 }lca;
 
 int main() {
 	scanf("%d%d%d", &n, &q, &rt);
-	initE(n);
+	G.init(n);
 	for (int i = 1, u, v; i < n; ++i) {
 		scanf("%d%d", &u, &v);
-		addedge(u, v);
-		addedge(v, u);
+		G.addedge(u, v);
+		G.addedge(v, u);
 	}
 	lca.init(rt, n);
 	for (int i = 1, u, v; i <= q; ++i) {

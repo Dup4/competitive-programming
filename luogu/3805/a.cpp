@@ -1,12 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define ll long long
-#define N 11000010
+const int N = 1.1e7 + 5;
+char s[N];
+
 struct Manacher {
 	int len, l;
 	char Ma[N << 1];
 	int Mp[N << 1];
-	//字符串从0开始
+	//0-index
 	void work(char *s) {
 		len = strlen(s);
 		l = 0;
@@ -42,13 +43,11 @@ struct Manacher {
 		return res;
 	}
 }man;
-char s[N];
 
 int main() {
-	while (scanf("%s", s) != EOF) {
-		man.work(s);
-		printf("%d\n", man.Max());
-	}
+	scanf("%s", s);
+	man.work(s);
+	printf("%d\n", man.Max());
 	return 0;
 }
 

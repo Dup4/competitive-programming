@@ -2,18 +2,16 @@
 using namespace std;
 typedef double db;
 const db eps = 1e-10;
-const db PI = acos(-1.0); 
 int sgn(db x) { if (fabs(x) < eps) return 0; return x < 0 ? -1 : 1; }
-db sqr(db x) { return x * x; }
-db fixOut(db x) { if (sgn(x) == 0) return 0; return x; }
-db toRad(db angle) { return angle / 180 * PI; }
 
 struct LP {
     int m, n;
     vector<int> B, N;
     vector<vector<db> > D;
-    LP(const vector<vector<db> > &A, const vector<db> &b, const vector<db> &c) :
-        m(b.size()), n(c.size()), N(n + 1), B(m), D(m + 2, vector<db>(n + 2)) {
+	LP() {}
+    LP(const vector<vector<db> > &A, const vector<db> &b, const vector<db> &c) {
+		m = (int)b.size(); n = (int)c.size(); N = vector<int>(n + 1); B = vector<int>(m + 1);
+		D = vector <vector<db> >(m + 2, vector<db>(n + 2));
         for (int i = 0; i < m; i++) for (int j = 0; j < n; j++) D[i][j] = A[i][j];
         for (int i = 0; i < m; i++) { B[i] = n + i; D[i][n] = -1; D[i][n + 1] = b[i]; }
         for (int j = 0; j < n; j++) { N[j] = j; D[m][j] = -c[j]; }

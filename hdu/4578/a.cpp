@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-const int N = 1e5 + 10, MOD = 1e4 + 7;
+const int N = 1e5 + 10, mod = 1e4 + 7;
 int n, q;
 struct SEG {
 	struct node {
@@ -15,38 +15,34 @@ struct SEG {
 	}t[N << 2];
 	void pushup(int id) {
 		for (int i = 0; i < 3; ++i) {
-			t[id].sum[i] = (t[id << 1].sum[i] + t[id << 1 | 1].sum[i]) % MOD;
+			t[id].sum[i] = (t[id << 1].sum[i] + t[id << 1 | 1].sum[i]) % mod;
 		}
 	}
-	
 	//add
 	void work1(node &r, int b) {
 		int len = r.r - r.l + 1;  
-		r.sum[2] = (r.sum[2] + (len * b % MOD * b % MOD * b % MOD) + (3 * b % MOD * b % MOD * r.sum[0] % MOD) + (3 * b % MOD * r.sum[1] % MOD)) % MOD;
-		r.sum[1] = (r.sum[1] + (2 * b % MOD * r.sum[0] % MOD) + (len * b % MOD * b % MOD)) % MOD;
-		r.sum[0] = (r.sum[0] + len * b % MOD) % MOD;
-		r.lazy[0] = (r.lazy[0] + b) % MOD; 
+		r.sum[2] = (r.sum[2] + (len * b % mod * b % mod * b % mod) + (3 * b % mod * b % mod * r.sum[0] % mod) + (3 * b % mod * r.sum[1] % mod)) % mod;
+		r.sum[1] = (r.sum[1] + (2 * b % mod * r.sum[0] % mod) + (len * b % mod * b % mod)) % mod;
+		r.sum[0] = (r.sum[0] + len * b % mod) % mod;
+		r.lazy[0] = (r.lazy[0] + b) % mod; 
 	} 
-	
 	//mul
 	void work2(node &r, int b) {
-		r.sum[0] = (r.sum[0] * b) % MOD;
-		r.sum[1] = (r.sum[1] * b % MOD * b) % MOD;
-		r.sum[2] = (r.sum[2] * b % MOD * b % MOD * b) % MOD;
-		r.lazy[0] = r.lazy[0] * b % MOD;
-		r.lazy[1] = r.lazy[1] * b % MOD;
+		r.sum[0] = (r.sum[0] * b) % mod;
+		r.sum[1] = (r.sum[1] * b % mod * b) % mod;
+		r.sum[2] = (r.sum[2] * b % mod * b % mod * b) % mod;
+		r.lazy[0] = r.lazy[0] * b % mod;
+		r.lazy[1] = r.lazy[1] * b % mod;
 	} 
-	
 	//change
 	void work3(node &r, int b) {
 		int len = r.r - r.l + 1;
-		r.sum[0] = len * b % MOD;
-		r.sum[1] = r.sum[0] * b % MOD;
-		r.sum[2] = r.sum[1] * b % MOD; 
+		r.sum[0] = len * b % mod;
+		r.sum[1] = r.sum[0] * b % mod;
+		r.sum[2] = r.sum[1] * b % mod; 
 		r.lazy[0] = 0; r.lazy[1] = 1;  
 		r.lazy[2] = b;   
 	} 
-	
 	void pushdown(int id) {
 		if (t[id].l >= t[id].r) return; 
 		if (~t[id].lazy[2]) {
@@ -65,7 +61,6 @@ struct SEG {
 			t[id].lazy[0] = 0; 
 		}
 	}
-	
 	void build(int id, int l, int r) {
 		t[id] = node(l, r);
 		if (l == r) return;
@@ -73,7 +68,6 @@ struct SEG {
 		build(id << 1, l, mid);
 		build(id << 1 | 1, mid + 1, r);
 	}
-	
 	void update(int id, int l, int r, int vis, int val) {
 		if (t[id].l >= l && t[id].r <= r) {
 			if (vis == 1) work1(t[id], val); 
@@ -87,17 +81,15 @@ struct SEG {
 		if (r > mid) update(id << 1 | 1, l, r, vis, val);  
 		pushup(id);
 	}
-	
 	int query(int id, int l, int r, int p) {
 		if (t[id].l >= l && t[id].r <= r) return t[id].sum[p]; 
 		int res = 0;
 		pushdown(id); 
 		int mid = (t[id].l + t[id].r) >> 1;
-		if (l <= mid) res = (res + query(id << 1, l, r, p)) % MOD; 
-		if (r > mid) res = (res + query(id << 1 | 1, l, r, p)) % MOD; 
+		if (l <= mid) res = (res + query(id << 1, l, r, p)) % mod; 
+		if (r > mid) res = (res + query(id << 1 | 1, l, r, p)) % mod; 
 		return res;
 	}
-
 }seg;
 
 int main() {

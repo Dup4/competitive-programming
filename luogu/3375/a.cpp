@@ -1,12 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-#define N 1000010
+const int N = 1e6 + 10;
 char s[N], t[N];
 
 struct KMP {
 	int Next[N];
-	//下标从0开始
+	//0-index
 	void get_Next(char *s) {
 		int len = strlen(s);
 		int i, j;
@@ -42,7 +41,6 @@ int main() {
 	while (scanf("%s%s", s, t) != EOF) {
 		kmp.work(s, t);
 		int lent = strlen(t);
-		//输出模式串t的Next数组
 		for (int i = 1; i <= lent; ++i) printf("%d%c", kmp.Next[i], " \n"[i == lent]);
 	}	
 	return 0;

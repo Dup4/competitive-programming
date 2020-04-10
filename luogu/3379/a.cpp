@@ -3,9 +3,11 @@ using namespace std;
 const int N = 5e5 + 10, M = 20, INF = 0x3f3f3f3f;
 int n, q, rt; 
 
-struct E { int to, nx, w; }e[N << 1]; int h[N]; 
-void initE(int n) { for (int i = 0; i <= n; ++i) h[i] = 0; }
-void addedge(int u, int v, int w = 0) { e[++*h] = { v, h[u], w }; h[u] = *h;}
+struct Graph {
+	struct E { int to, nx, w; }e[N << 1]; int h[N], cnt;
+	void init(int n) { for (int i = 1; i <= n; ++i) h[i] = -1; cnt = -1; }
+	void addedge(int u, int v, int w = 0) { e[++cnt] = { v, h[u], w}; h[u] = cnt; } 
+}G;
 
 struct LCA {
 	int fa[N][M], dis[N][M]; 
@@ -18,9 +20,9 @@ struct LCA {
 			for (int i = 1; i < M; ++i) { 
 				dis[u][i] = dis[u][i - 1] + dis[fa[u][i - 1]][i - 1];   
 				fa[u][i] = fa[fa[u][i - 1]][i - 1]; 
-			} 
-			for (int i = h[u]; i; i = e[i].nx) {
-				int v = e[i].to, w = e[i].w;
+			}
+		    for (int i = G.h[u]; ~i; i = G.e[i].nx) {
+				int v = G.e[i].to, w = G.e[i].w;
 				if (v == fa[u][0]) continue;
 				deep[v] = deep[u] + 1;   
 				fa[v][0] = u; 
@@ -29,6 +31,7 @@ struct LCA {
 			} 
 		}
 	}
+	void init(int rt) { bfs(rt); }
 	int querylca(int u, int v) {
 		if (deep[u] > deep[v]) swap(u, v);
 		for (int det = deep[v] - deep[u], i = 0; det; det >>= 1, ++i) {
@@ -62,13 +65,13 @@ struct LCA {
 
 int main() {
 	while (scanf("%d%d%d", &n, &q, &rt) != EOF) {
-		initE(n);
+		G.init(n);
 		for (int i = 1, u, v; i < n; ++i) {
 			scanf("%d%d", &u, &v);
-			addedge(u, v);
-			addedge(v, u);
+			G.addedge(u, v);
+			G.addedge(v, u);
 		}
-		lca.bfs(rt);
+		lca.init(rt);
 		for (int i = 1, u, v; i <= q; ++i) {
 			scanf("%d%d", &u, &v);
 			printf("%d\n", lca.querylca(u, v));

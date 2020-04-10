@@ -1,45 +1,29 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define N 200010
-#define M 2000010  
-#define ALP 26
-string t[200010];
-char s[M];
-int n;
+const int N = 2e5 + 10, M = 2e6 + 10, ALP = 26;
+int n, acamPos[N]; char s[M], t[N];
 
 struct ACAM { 
 	struct node {
 		int nx[ALP], fail;
 		int cnt, num; 
-		node() {
-			memset(nx, -1, sizeof nx);
-			cnt = 0; 
-		    num = 0;
-		}
+		void init() { memset(nx, -1, sizeof nx); cnt = num = 0; }
 	}t[N];
 	vector <vector<int>> G; 
 	int root, tot; 
 	int que[N], ql, qr;
-	//节点从1开始
-	int newnode() {
-		++tot;
-		t[tot] = node();
-		return tot;
-	}
-	void init() { 
-		tot = 0;
-		root = newnode();
-	}
-	void insert(string s) {
-		int len = s.size(); 
+	int newnode() { ++tot; t[tot].init(); return tot; }
+	void init() { tot = 0; root = newnode(); } 
+	//0-index
+	int insert(char *s) {
 		int now = root;
-		for (int i = 0; i < len; ++i) {
+		for (int i = 0; s[i]; ++i) {
 			if (t[now].nx[s[i] - 'a'] == -1)
 				t[now].nx[s[i] - 'a'] = newnode();
 			now = t[now].nx[s[i] - 'a'];
 		}
-		//表示以该结点结尾的模式串数量
 		++t[now].cnt;
+		return now;
 	}
 	void build() {
 		ql = 1, qr = 0;
@@ -71,53 +55,36 @@ struct ACAM {
 			}
 		}
 	}
-	void DFS(int u) {
+	void dfs(int u) {
 		for (auto v : G[u]) {
-			DFS(v);
+			dfs(v);
 			t[u].num += t[v].num;
 		}
 	}
 	void gao(char *s) {
-		int len = strlen(s);
 		int now = root;
-		for (int i = 0; i < len; ++i) {
-			//查找以s[i]结尾的模式串数量
+		for (int i = 0; s[i]; ++i) {
 			now = t[now].nx[s[i] - 'a'];
 			++t[now].num;
 		}
-		G.clear(); G.resize(tot + 10);
+		G.clear(); G.resize(tot + 5);
 		for (int i = 2; i <= tot; ++i) {
 			G[t[i].fail].push_back(i);
 		}	
-		DFS(1);
+		dfs(1);
 	}
-	int query(string s) {
-		int len = s.size();
-		int now = root;
-		for (int i = 0; i < len; ++i) {
-			now = t[now].nx[s[i] - 'a'];
-		}
-		return t[now].num;
-	}
-}ac;
+}acam;
 
-//给定n个模式串和1一个文本串
-//求有多少个模式串在文本串中出现过
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(0); cout.tie(0); 
-	while (cin >> n) {
-		ac.init();
-		for (int i = 1; i <= n; ++i) {
-			cin >> t[i];
-			ac.insert(t[i]);
-		}
-		ac.build();
-		cin >> s;
-		ac.gao(s);
-		for (int i = 1; i <= n; ++i) {
-			cout << ac.query(t[i]) << "\n";
-		}
+	scanf("%d", &n);
+	acam.init();
+	for (int i = 1; i <= n; ++i) {
+		scanf("%s", t);
+		acamPos[i] = acam.insert(t);
 	}
+	acam.build();
+	scanf("%s", s);
+	acam.gao(s);
+	for (int i = 1; i <= n; ++i) printf("%d\n", acam.t[acamPos[i]].num);
 	return 0;
 }

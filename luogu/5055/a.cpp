@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-
 typedef long long ll;
 const int N = 2e5 + 10;
 int q; ll lst;
+
 struct FHQ {
 	#define ls t[x].son[0]
 	#define rs t[x].son[1]
@@ -12,12 +12,12 @@ struct FHQ {
 		ll key, sum;
 	}t[N * 150];
 	int rt[N], tot;
-	inline void init() { rt[0] = tot = 0; }
-	inline int random() {
+	void init() { rt[0] = tot = 0; }
+	int random() {
 		static int seed = 703;
 		return seed = int(seed * 482147ll % 2147483647);
 	}
-	inline int newnode(ll key = 0) {
+	int newnode(ll key = 0) {
 		++tot;
 		t[tot].key = t[tot].sum = key;
 		t[tot].son[0] = t[tot].son[1] = t[tot].rev = 0;
@@ -25,16 +25,16 @@ struct FHQ {
 		t[tot].rnd = random();
 		return tot;
 	}
-	inline int Copy(int x) {
+	int Copy(int x) {
 		int y = ++tot;
 		t[y] = t[x];
 		return y;
 	}
-	inline void pushup(int x) {
+	void pushup(int x) {
 		t[x].sze = t[ls].sze + t[rs].sze + 1;
 		t[x].sum = t[ls].sum + t[rs].sum + t[x].key;
 	}
-	inline void pushdown(int x) {
+	void pushdown(int x) {
 		if (!t[x].rev) return;
 		if (ls) ls = Copy(ls);
 		if (rs) rs = Copy(rs);
@@ -73,18 +73,18 @@ struct FHQ {
 			return y; 
 		}
 	}
-	inline void insert(int &rt, int p, int key) {
+	void insert(int &rt, int p, int key) {
 		int x, y;
 		split(rt, p, x, y);
 		rt = merge(merge(x, newnode(key)), y);
 	}
-	inline void del(int &rt, int p) {
+	void del(int &rt, int p) {
 		int x, y, z;
 		split(rt, p, x, z);
 		split(x, p - 1, x, y);
 		rt = merge(x, z);
 	}
-	inline void rev(int &rt, int l, int r) {
+	void rev(int &rt, int l, int r) {
 		int x, y, z;
 		split(rt, l - 1, x, y);
 	   	split(y, r - l + 1, y, z);
@@ -92,7 +92,7 @@ struct FHQ {
 		rt = merge(merge(x, y), z);
 	}
 	//将l~r这一段拆下来，输出树根的和，然后合并回去
-	inline ll querysum(int &rt, int l, int r) {
+	ll querysum(int &rt, int l, int r) {
 		int x, y, z; 
 		split(rt, l - 1, x, y);
 		split(y, r - l + 1, y, z);

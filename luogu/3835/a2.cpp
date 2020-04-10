@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
-
 const int N = 5e5 + 10;
+
 struct FHQ {
 	#define ls t[x].son[0]
 	#define rs t[x].son[1]
@@ -9,13 +9,13 @@ struct FHQ {
 		int son[2], key, sze, rnd;
 	}t[N * 50];
 	int rt[N], tot;
-	inline void init() { tot = rt[0] = 0; }
-	inline int random() {
+	void init() { tot = rt[0] = 0; }
+	int random() {
 		static int seed = 703;
 		return seed = int(seed * 48271ll % 2147483647);
 	}
-	inline void pushup(int x) { t[x].sze = t[ls].sze + t[rs].sze + 1; }
-	inline int newnode(int key) {
+	void pushup(int x) { t[x].sze = t[ls].sze + t[rs].sze + 1; }
+	int newnode(int key) {
 		++tot;
 		t[tot].key = key;
 		t[tot].sze = 1;
@@ -23,7 +23,7 @@ struct FHQ {
 		t[tot].son[0] = t[tot].son[1] = 0;
 		return tot;
 	}
-	inline int Copy(int x) {
+	int Copy(int x) {
 		int y = ++tot;
 		t[y] = t[x];
 		return y;
@@ -58,19 +58,19 @@ struct FHQ {
 			}
 		}
 	}
-	inline void del(int &rt, int key) {
+	void del(int &rt, int key) {
 		int x, y, z;
 		split(rt, key, x, z);
 		split(x, key - 1, x, y);
 		y = merge(t[y].son[0], t[y].son[1]);	
 		rt = merge(merge(x, y), z);
 	}
-	inline void insert(int &rt, int key) {
+	void insert(int &rt, int key) {
 		int x, y;
 		split(rt, key, x, y);
 		rt = merge(merge(x, newnode(key)), y);
 	}
-	inline int getkth(int x, int k) {
+	int getkth(int x, int k) {
 		while (1) {
 			if (k <= t[ls].sze) x = ls;
 			else {
@@ -82,14 +82,14 @@ struct FHQ {
 			}
 		}
 	}
-	inline int getRank(int &rt, int key) {
+	int getRank(int &rt, int key) {
 		int x, y;
 		split(rt, key - 1, x, y);
 		int res = t[x].sze + 1;
 		rt = merge(x, y);
 		return res;
 	}
-	inline int getpre(int &rt, int key) {
+	int getPre(int &rt, int key) {
 		int x, y, res;
 		split(rt, key - 1, x, y);
 		if (!x) return -2147483647;
@@ -97,7 +97,7 @@ struct FHQ {
 		rt = merge(x, y);
 		return res;
 	}
-	inline int getnx(int &rt, int key) {
+	int getNx(int &rt, int key) {
 		int x, y, res;
 		split(rt, key, x, y);
 		if (!y) return 2147483647;
@@ -130,10 +130,10 @@ int main() {
 				printf("%d\n", fhq.t[fhq.getkth(rt, x)].key);
 				break;
 			case 5 :
-				printf("%d\n", fhq.getpre(rt, x));
+				printf("%d\n", fhq.getPre(rt, x));
 				break;
 			case 6 :
-				printf("%d\n", fhq.getnx(rt, x));
+				printf("%d\n", fhq.getNx(rt, x));
 				break;
 		}
 	}

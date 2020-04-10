@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 #include <cstring>
-#include <complex>
 using namespace std;
 typedef double db;
 const db eps = 1e-10;
@@ -29,9 +28,9 @@ struct Point {
 	Point operator / (const db &b) const { return Point(x / b, y / b); }
 	db operator ^ (const Point &b) const { return x * b.y - y * b.x; }
 	db operator * (const Point &b) const { return x * b.x + y * b.y; }
-	db len() { return norm(complex<db>(x, y)); }
+	db len() { return hypot(x, y); }
 	db len2() { return x * x + y * y; }
-	db dis(Point b) { return norm(complex<db>(x - b.x, y - b.y)); }
+	db dis(Point b) { return hypot(x - b.x, y - b.y); }
 	db dis2(Point b) { return (x - b.x) * (x - b.x) + (y - b.y) * (y - b.y); }
 	int quad() {
 		int _x = sgn(x), _y = sgn(y);
@@ -540,6 +539,7 @@ struct Polygon {
 	}
 	//计算有向面积
 	//顺时针 负 逆时针 正
+	//POJ 3348
 	db getArea() {
 		db res = 0;
 		for (int i = 0; i < sze(); ++i) {

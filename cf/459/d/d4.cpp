@@ -22,14 +22,14 @@ struct map_node_update {
     void operator() (Node_Itr it, Node_CItr end_it) {
         Node_Itr l = it.get_l_child();
         Node_Itr r = it.get_r_child();
-        int left = 0, right = 0;
+        metadata_type left = 0, right = 0;
         if(l != end_it) left = l.get_metadata();
         if(r != end_it) right = r.get_metadata();
         const_cast<metadata_type &>(it.get_metadata()) = 
 			left + right + (*it)->second; 
     }
-	int querysum(pII x) {
-		int ans = 0;
+	metadata_type querysum(pII x) {
+		metadata_type ans = 0;
         Node_CItr it = node_begin();
 		while (it != node_end()) {
 			Node_CItr l = it.get_l_child();
@@ -47,7 +47,7 @@ struct map_node_update {
 		return ans;
 	}
 	//[l, r]范围内的权值
-	int querysum(int l, int r) { 
+	metadata_type querysum(int l, int r) { 
 		if (l > r) return 0;
 		return querysum(pII(r, INF)) - querysum(pII(l, -INF)); 
 	}

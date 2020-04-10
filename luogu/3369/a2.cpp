@@ -1,3 +1,8 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int N = 1e5 + 10, INF = 0x3f3f3f3f;
+
 struct Splay {
 	int root, tot;
 	struct node {
@@ -12,15 +17,13 @@ struct Splay {
 		int ls = t[u].son[0], rs = t[u].son[1];
 		t[u].sze = t[ls].sze + t[rs].sze + t[u].cnt;
 	}
-	/*
-		旋转操作
-		假设z->y->x
-		X变到Y原来的位置
-		我们令X为Y的第p个儿子，那么q = p ^ 1
-		Y变成了 X的第q个儿子
-		Y的第q个儿子不变 X的第p个儿子不变
-		X的第q个儿子变成了Y的第p个儿子
-	*/
+	//  旋转操作
+	//  假设z->y->x
+	//  X变到Y原来的位置
+	//  我们令X为Y的第p个儿子，那么q = p ^ 1
+	//  Y变成了 X的第q个儿子
+	//  Y的第q个儿子不变 X的第p个儿子不变
+	//  X的第q个儿子变成了Y的第p个儿子
 	void rotate(int x) {
 		int y = t[x].fa;
 		int z = t[y].fa;
@@ -33,14 +36,12 @@ struct Splay {
 		t[y].fa = x;
 		pushup(y); pushup(x); 				//先更新儿子的子树大小，再更新当前点的子树大小 
 	}
-	/*
-	   splay操作
-	   第一种：X和Y分别是Y和Z的同一个儿子
-	   先旋转Y再旋转X
-	   第二种：X和Y分别是Y和Z不同的儿子
-	   X旋转两次
-	*/
-	void splay(int x, int tar) {  //旋转到tar的儿子处 
+	//  splay操作
+	//  第一种：X和Y分别是Y和Z的同一个儿子
+	//  先旋转Y再旋转X
+	//  第二种：X和Y分别是Y和Z不同的儿子
+	//  X旋转两次
+	void splay(int x, int tar) {  //旋转到tar的儿子处 如果tar = 0 即旋转到根
 		while (t[x].fa != tar) {
 			int y = t[x].fa;
 			int z = t[y].fa;
@@ -51,12 +52,10 @@ struct Splay {
 		if (tar == 0)
 			root = x;
 	}
-	/*
-		插入操作
-		递归查找，splay本质是二叉搜索树
-	    如果存在，直接计数	
-		如果不存在，找到父节点位置新增节点
-	*/
+	//  插入操作
+	//  递归查找，splay本质是二叉搜索树
+	//  如果存在，直接计数	
+	//  如果不存在，找到父节点位置新增节点
 	void insert(ll x) {
 		int u = root, fa = 0;
 		while (u && t[u].val != x) {
@@ -76,12 +75,10 @@ struct Splay {
 		pushup(u); //防止u已经处于根节点，而使得它的子树大小没有更新
 		splay(u, 0);
 	}
-	/*
-		递归查找，并且将找到的节点旋转到根
-	    方便下一步的操作
-		但是，要注意如果找不到，则会找到它的前驱或者后继
-		要进行特判	
-	*/
+	//	递归查找，并且将找到的节点旋转到根
+	//  方便下一步的操作
+	//	但是，要注意如果找不到，则会找到它的前驱或者后继
+	//	要进行特判	
 	void find(ll x) {
 		int u = root;
 		if (!u) return;
@@ -89,11 +86,9 @@ struct Splay {
 			u = t[u].son[x > t[u].val];
 		splay(u, 0);
 	}
-	/*
-		前驱(0)，后继(1)
-		前驱：小于X并且最大的值
-		后继：大于X并且最小的值
-	*/
+	//  前驱(0)，后继(1)
+	//  前驱：小于X并且最大的值
+	//  后继：大于X并且最小的值
 	int Next(ll x, int f) {
 		find(x);
 		int u = root;                    //根节点，此时X的父节点(存在的话)就是根节点
@@ -104,50 +99,99 @@ struct Splay {
 		splay(u, 0);
 		return u;
 	}
-	/*
-		找到前驱，splay到根节点
-	    找到后继，splay到前驱的底下
-		那么所有小于X的都在根节点以及它的左子树中
-		那么所有大于X的都在根节点的右儿子以及它的右子树中
-		那么如果X存在，那么它必然在根节点的右儿子的左儿子
-		并且左儿子是叶子节点	
-	*/
-	void Delete(ll x) {
+	//  找到前驱，splay到根节点
+	//  找到后继，splay到前驱的底下
+	//  那么所有小于X的都在根节点以及它的左子树中
+	//  那么所有大于X的都在根节点的右儿子以及它的右子树中
+	//  那么如果X存在，那么它必然在根节点的右儿子的左儿子
+	//  并且左儿子是叶子节点	
+	void del(ll x) {
 		int last = Next(x, 0);
 		int nx = Next(x, 1);
 		splay(last, 0); splay(nx, last);
 		int del = t[nx].son[0];
 	    if (del == 0) return; //防止要删除的节点不存在	
-		if (t[del].cnt > 1) 
-		{
+		if (t[del].cnt > 1) {
 			--t[del].cnt; 
 			splay(del, 0); 
-		} 
-		else
-		{
+		} else {
 			t[nx].son[0] = 0;  
 			splay(nx, 0);    
 		}
 	}
-	/*
-		左子树子树大小>=K,递归左子树
-	   	否则K- 左子树大小，递归右子树	
-	*/
-	ll kth(int k) {
+	//得到比x小的数的个数+1
+	int getRank(ll x) {
 		int u = root;
-		if (t[u].sze < k)
-			return -INF;
+		int res = 0;
 		while (1) {
-			int y = t[u].son[0];
-			if (k > t[y].sze + t[u].cnt) {
-				k -= t[y].sze + t[u].cnt;
-				u = t[u].son[1];
-			} else {
-				if (t[y].sze >= k)
-					u = y;
-				else
-					return t[u].val;
+			int ls = t[u].son[0], rs = t[u].son[1];
+			if (t[u].val == x) {
+				res += t[ls].sze;
+				break;
+			}
+			if (!u) break;
+			if (x < t[u].val) u = ls;
+			else {
+				res += t[ls].sze + t[u].cnt;
+				u = rs;
 			}
 		}
+		if (u) splay(u, 0);
+		return res + 1;
 	}
-}sp;
+	//  左子树子树大小 >= K,递归左子树
+	//  否则K - 左子树大小，递归右子树	
+	ll findKth(int k) {
+		int u = root;
+		if (t[u].sze < k)
+			return INF; 
+		int v = 0;
+		while (1) {
+			int ls = t[u].son[0], rs = t[u].son[1];
+			if (k > t[ls].sze + t[u].cnt) {
+				k -= t[ls].sze + t[u].cnt;
+				u = rs;
+			} else {
+				if (t[ls].sze >= k) {
+					u = ls; 
+				} else {
+					v = u;
+					break;
+				}
+			}
+		}
+		if (v) splay(v, 0);
+		return t[v].val;	
+	}
+}splay;
+
+int main() {
+	splay.init();
+	splay.insert(-INF); splay.insert(INF);
+	int q; scanf("%d", &q);
+	int op, x;
+	while (q--) {
+		scanf("%d%d", &op, &x);
+		switch (op) {
+			case 1 :
+				splay.insert(x);
+				break;
+			case 2 :
+				splay.del(x);
+				break;
+			case 3 :
+				printf("%d\n", splay.getRank(x) - 1);
+				break;
+			case 4 :
+				printf("%lld\n", splay.findKth(x + 1));
+				break;
+			case 5 :
+				printf("%lld\n", splay.t[splay.Next(x, 0)].val);
+				break;
+			case 6 :
+				printf("%lld\n", splay.t[splay.Next(x, 1)].val);
+				break;
+		}
+	}
+	return 0;
+}

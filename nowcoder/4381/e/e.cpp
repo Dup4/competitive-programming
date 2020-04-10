@@ -61,7 +61,7 @@ struct Tree {
 	int newnode() { ++cnt; t[cnt].init(); return cnt; } 
 	void up(int id) {
 		int ls = t[id].ls, rs = t[id].rs;
-		t[id].sumD = t[id].dep;
+		t[id].sumD = t[id].dep; 
 		t[id].sze = 1;
 		if (ls) {
 			t[id].sumD += t[ls].sumD;
@@ -101,7 +101,6 @@ struct Tree {
 					t[rt].ls = 0;
 				}	
 				t[rt].up(1);
-				up(rt);
 			} else {
 				t[now].ls = rt;
 				if (t[rt].rs) {
@@ -109,7 +108,6 @@ struct Tree {
 					t[rt].rs = 0;
 				}
 				t[rt].up(1);
-				up(rt);
 			}
 			rt = now;
 		}
@@ -123,14 +121,16 @@ struct Tree {
 			if (t[ls].id > t[rs].id) {
 				rt = ls;
 				t[rs].up(1);
+				down(rs);
 				if (t[rs].rk < t[ls].rk) {
 					merge(t[ls].ls, t[ls].ls, rs);
 				} else {
-					merge(t[ls].rs, t[ls].rs, rs);
+					merge(t[ls].rs, t[ls].rs, rs); 
 				}
 			} else {
 				rt = rs;
 				t[ls].up(1);
+				down(ls);
 				if (t[ls].rk < t[rs].rk) {
 					merge(t[rs].ls, t[rs].ls, ls);
 				} else {
@@ -143,7 +143,7 @@ struct Tree {
 	void del(int &rt, int rk) {
 		down(rt); 
 		if (t[rt].rk == rk) { 
-			int ls = t[rt].ls, rs = t[rt].rs;
+			int ls = t[rt].ls, rs = t[rt].rs; 
 			if (ls == 0 && rs == 0) {
 				rt = 0;
 			} else if (ls == 0) {
@@ -151,6 +151,7 @@ struct Tree {
 				rt = rs;
 			} else if (rs == 0) {
 				t[ls].up(-1);
+				dbg(t[ls].id, t[ls].sumD);
 				rt = ls;
 			} else {
 				if (t[ls].id > t[rs].id) {
@@ -166,14 +167,15 @@ struct Tree {
 		} else {
 			if (rk > t[rt].rk) del(t[rt].rs, rk);
 			else del(t[rt].ls, rk);
+			up(rt);
 		}
-		up(rt);
+		dbg(rt, t[rt].rk, t[rt].id, t[rt].sumD, t[t[rt].ls].id, t[t[rt].rs].id, t[t[rt].ls].sumD, t[t[rt].rs].sumD); 
 	}
 	void print(int rt) {
 		if (!rt) return;
 		down(rt);
 		print(t[rt].ls);
-		pt(t[rt].id, t[rt].rk, t[rt].dep, t[rt].sze);
+	//	dbg(t[rt].id, t[rt].rk, t[rt].dep, t[rt].sze, t[t[rt].ls].id, t[t[rt].rs].id);
 		print(t[rt].rs);
 		up(rt);
 	}
