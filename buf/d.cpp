@@ -24,15 +24,24 @@ using hash_map = __gnu_pbds::gp_hash_table<K, V, Hash>;
 template <typename K, typename Hash = splitmix64_hash>
 using hash_set = hash_map<K, __gnu_pbds::null_type, Hash>;
 
+using ll = long long;
+
+//string to_string(ll x) {
+//	string res = "";
+//	while (x) {
+//		res += x % 10 + '0';
+//		x /= 10;
+//	}
+//	reverse(res.begin(), res.end());
+//	return res;
+//}
+
 int main() {
-	hash_map<int64_t, int> mp;
-	int n = 1e7;
-	for (int i = 1; i <= n; ++i) {
-		mp[i] = 1;
+	ll a[] = {83160, 720720, 8648640, 73513440, 735134400, 6983776800, 97772875200, 963761198400, 9316358251200, 97821761637600, 866421317361600, 8086598962041600, 74801040398884800};
+	ll b[] = {128, 240, 448, 768, 1344, 2304, 4032, 6720, 10752, 17280, 26880, 41472, 64512};
+	int x = 5;
+	for (int i = 0; i < 13; ++i) {
+		cout << "\\item $10^{" << to_string(x + i) << "}$内, 拥有最大因子个数的数是$" << to_string(a[i]) << "$, 有$" << to_string(b[i]) << "$个因子\n";	
 	}
-	long long res = 0;
-	for (auto &it : mp)
-		res += it.fi;
-	cout << res << endl;
 	return 0;
 }
