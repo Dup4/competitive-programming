@@ -2,7 +2,9 @@
 using namespace std;
 #define fi first
 #define se second
-#define SZ(x) int((x).size())
+#define SZ(x) ((int)(x).size())
+#define mkp make_pair
+#define all(x) (x).begin(), (x).end()
 #define endl "\n" 
 using db = double;
 using ll = long long;
@@ -41,11 +43,12 @@ int main() {
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
 	int _T = nextInt();
-//	while (_T--) run(); 
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+//	run();
 	return 0;
 }
