@@ -1,12 +1,17 @@
 #include <bits/stdc++.h>
+#include <bits/extc++.h>
 using namespace std;
+using namespace __gnu_pbds;
 #define fi first
 #define se second
-const int N = 1.1e6 + 10;
+const int N = 1048576 + 10;
 int n; 
 string s;
 
 typedef unsigned int ull;
+
+//map<ull, int> mp, id;
+
 struct Hash {
 	static ull base[N]; 
 	static void init() {
@@ -30,7 +35,7 @@ struct Hash {
 }hs;
 ull Hash::base[N] = {0};
 
-unordered_map <ull, int> mp, id; 
+unordered_map <ull, int> mp;
 
 int main() {
 	Hash::init();
@@ -40,21 +45,21 @@ int main() {
 	getline(cin, s);
 	getline(cin, s);
 	hs.gao(s);
-	int Max = 0;
+	int Max = 0, pos = -1;
 	int len = s.size();
 	for (int i = 0; i + n - 1 < len; ++i) {
 		ull val = hs.get(i, i + n - 1);
 		++mp[val];
-		id[val] = i;
-		Max = max(Max, mp[val]);
-	}
-	vector <int> vec;
-	for (auto &it : mp) {
-		if (it.se == Max) {
-			vec.push_back(id[it.fi]);
-			break;
+		if (mp[val] > Max) {
+			Max = mp[val];
+			pos = i;
+		} else if (mp[val] == Max) {
+			for (int j = 0; j < n; ++j) if (s[pos + j] != s[i + j]) {
+				if (s[pos + j] > s[i + j]) pos = i;
+				break;
+			}
 		}
 	}
-	cout << s.substr(vec[0], n) << " " << Max << "\n";
+	cout << s.substr(pos, n) << " " << Max << "\n";
 	return 0;
 }
