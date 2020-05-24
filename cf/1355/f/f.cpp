@@ -159,6 +159,9 @@ int main() {
 	sieve();
 	get(2, 507, A);
 	get(509, 1000, B);
+	get(1, 700, A);
+	pt(SZ(A));
+	return 0;
 //	pt(SZ(A));
 //	pt(SZ(B));
 //	return 0;
