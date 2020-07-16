@@ -2,6 +2,9 @@
 using namespace std;
 
 int main() {
-	float f = 123.456;
-	printf("%12f\n", f);
+  regex e("abc*");
+  bool m = regex_search("abccc", e);
+
+  // 输出 yes
+  cout << (m ? "yes" : "no") << endl;
 }
