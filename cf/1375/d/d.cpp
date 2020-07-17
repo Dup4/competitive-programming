@@ -31,30 +31,43 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 3e5 + 10; 
-int n, a[N]; 
-set <pII> se;
+constexpr int N = 1e3 + 10; 
+int n, a[N], cnt[N]; 
+
+int get() {
+	memset(cnt, 0, sizeof (cnt[0]) * (n + 5));
+	for (int j = 0; j < n; ++j) ++cnt[a[j]];
+	for (int j = 0; j <= n; ++j) if (cnt[j] == 0) return j;
+	assert(false);
+}
 
 void run() {
 	rd(n);
-	se.clear();
-	for (int i = 1; i <= n; ++i) {
-		rd(a[i]);
-		se.insert(pII(a[i], i));
-	}
-	int l = 1;
-	while (SZ(se) > 1) {
-		auto pos = se.end();
-		--pos;
-		if (pos->se == l) return pt("NO");
-		for (int i = l; i <= pos->se; ++i) {
-			se.erase(se.lower_bound(pII(a[i], i)));
+	for (int i = 0; i < n; ++i) rd(a[i]);
+	vector <int> vec;
+	int i = 0, pos = -1; 
+	while (i < n) {
+		if (a[i] == pos || a[i] == pos + 1 || (i == n - 1 && a[i] >= a[i - 1])) {
+			pos = a[i];
+			++i;
+			continue;
 		}
-		swap(a[pos->se], a[l]);
-		l = pos->se;
-		se.insert(pII(a[l], l));
+		int Mex = get();
+		if (Mex == pos + 1) { 
+			++pos;
+			vec.push_back(i + 1);
+			a[i] = Mex; ++i;
+		} else {
+			int ix = i;
+			for (int j = i + 1; j < n; ++j) {
+				if (a[j] <= a[ix]) ix = j;
+			}
+			vec.push_back(ix + 1);
+			a[ix] = Mex;
+		}
 	}
-	pt("YES");
+	pt(SZ(vec));
+	pt(vec);
 }
 
 int main() {

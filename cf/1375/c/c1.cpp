@@ -33,26 +33,34 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 //head
 constexpr int N = 3e5 + 10; 
 int n, a[N]; 
-set <pII> se;
 
 void run() {
 	rd(n);
-	se.clear();
+	map <int, int> mp;
 	for (int i = 1; i <= n; ++i) {
 		rd(a[i]);
-		se.insert(pII(a[i], i));
+		mp[a[i]] = i;
 	}
+//	for (auto &it : mp) dbg(it.fi, it.se);
 	int l = 1;
-	while (SZ(se) > 1) {
-		auto pos = se.end();
-		--pos;
-		if (pos->se == l) return pt("NO");
-		for (int i = l; i <= pos->se; ++i) {
-			se.erase(se.lower_bound(pII(a[i], i)));
+	while (SZ(mp) > 1) {
+		auto pos = --mp.end();
+		int ix = pos->se;
+		if (ix == l) return pt("NO");
+		for (int i = l; i <= ix; ++i) {
+			mp.erase(a[i]);
 		}
-		swap(a[pos->se], a[l]);
-		l = pos->se;
-		se.insert(pII(a[l], l));
+		swap(a[ix], a[l]);
+		l = ix;
+		mp[a[l]] = l;
+	//	--pos;
+	//	if (pos->se == l) return pt("NO");
+	//	for (int i = l; i <= pos->se; ++i) {
+	//		se.erase(se.lower_bound(pII(a[i], i)));
+	//	}
+	//	swap(a[pos->se], a[l]);
+	//	l = pos->se;
+	//	se.insert(pII(a[l], l));
 	}
 	pt("YES");
 }
