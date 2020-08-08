@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
+#define endl "\n" 
 #define fi first
 #define se second
 #define SZ(x) ((int)(x).size())
 #define mkp make_pair
 #define all(x) (x).begin(), (x).end()
-#define endl "\n" 
 using db = double;
 using ll = long long;
 using ull = unsigned long long; 
