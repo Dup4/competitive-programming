@@ -34,8 +34,36 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 //int n; 
 
+string Invert(string &s) {
+	string res = "";
+	for (auto &ch : s) {
+		res += ((ch - '0') ^ 1) + '0';
+	}
+	return res;
+}
+
+class Solution {
+public:
+    char findKthBit(int n, int k) {
+		string s = "0";
+		for (int i = 2; i <= n; ++i) {
+			string t = "";
+			t = s;
+		    t += "1";
+			string tmp = Invert(s);
+			reverse(all(tmp));
+			t += tmp;
+		  //  t += reverse(all(Invert(s)));
+			s = t;
+		}
+		return s[k - 1];
+    }
+};
+
 void run() {
-	pt((new Solution())->)
+	int n, k;
+	rd(n, k);
+	pt((new Solution())->findKthBit(n, k));
 }
 
 int main() {

@@ -31,11 +31,49 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10; 
-//int n; 
+constexpr int N = 1e3 + 10; 
+constexpr ll INFLL = 0x3f3f3f3f3f3f3f3f;
+int n, m, a[N];
+ll f[N][N];
+
+
+ll dfs(int l, int r) {
+	if (f[l][r] != -1) return f[l][r];
+	if (l >= r) return 0ll;
+	if (l + 1 == r) return f[l][r] = a[l] + a[r];
+	ll res = INFLL;
+	ll tot = 0;
+	for (int i = l; i <= r; ++i) {
+		if (i < r) chmin(res, dfs(l, i) + dfs(i + 1, r));
+		tot += a[i];
+	}
+	return f[l][r] = res + tot;
+}
+
+class Solution {
+public:
+    int minCost(int _n, vector<int>& cuts) {
+		n = _n;
+	   //	m = SZ(cuts);
+		memset(f, -1, sizeof f);
+		int pre = 0;
+		m = 0;
+		sort(all(cuts));
+		for (auto &it : cuts) {
+			a[++m] = it - pre;
+			pre = it;
+		}
+		a[++m] = n - pre;
+		return dfs(1, m);
+    }
+};
 
 void run() {
-	pt((new Solution())->)
+	int n, m;
+	rd(n, m);
+	vector <int> vec(m);
+	for (auto &it : vec) rd(it);
+	pt((new Solution())->minCost(n, vec));
 }
 
 int main() {

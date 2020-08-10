@@ -32,10 +32,40 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-//int n; 
+int f[N];
+map <int, int> g;
+
+class Solution {
+public:
+    int maxNonOverlapping(vector<int>& nums, int target) {
+		g.clear();
+		int n = SZ(nums);
+		g[0] = 0;
+		int Max = 0;
+		for (int i = 0; i < n; ++i) {
+			f[i + 1] = f[i] + nums[i];
+			int dif = f[i + 1] - target;
+			int now = 0;
+			if (g.count(dif)) {
+				now += g[dif] + 1;
+			}
+			chmax(Max, now);
+			g[f[i + 1]] = Max;
+			//max({Max, g[f[i + 1]], now});
+		}
+		int res = 0;
+		for (auto &it : g) {
+			chmax(res, it.se);
+		}
+		return res;
+    }
+};
 
 void run() {
-	pt((new Solution())->)
+	int n, target; rd(n, target);
+	vector <int> vec(n);
+	for (auto &it : vec) rd(it);
+	pt((new Solution())->maxNonOverlapping(vec, target));
 }
 
 int main() {

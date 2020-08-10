@@ -32,10 +32,28 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-//int n; 
+char sta[N]; int top;
+
+class Solution {
+public:
+    string makeGood(string s) {
+		top = 0;
+		for (auto &ch : s) {
+			sta[++top] = ch;
+			while (top >= 2 && (sta[top] - 'A' == sta[top - 1] - 'a' || sta[top] - 'a' == sta[top - 1] - 'A')) {
+				top -= 2;
+			}
+		}
+    	string res = "";
+		for (int i = 1; i <= top; ++i) res += sta[i];
+		return res;
+	}
+};
 
 void run() {
-	pt((new Solution())->)
+	string s;
+	rd(s);
+	pt((new Solution())->makeGood(s));
 }
 
 int main() {
