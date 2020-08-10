@@ -11,6 +11,7 @@ using ll = long long;
 using ull = unsigned long long; 
 using pII = pair <int, int>;
 using pLL = pair <ll, ll>;
+using pLI = pair<ll, int>;
 constexpr int mod = 1e9 + 7;
 template <class T1, class T2> inline void chadd(T1 &x, T2 y, int Mod = mod) { x += y; while (x >= Mod) x -= Mod; while (x < 0) x += Mod; } 
 template <class T1, class T2> inline void chmax(T1 &x, T2 y) { if (x < y) x = y; }
@@ -31,55 +32,71 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 6e3 + 10; 
-int n, m, f[N][N]; bool has[N][N]; 
-pII a[N];
+constexpr int N = 1e5 + 10; 
+constexpr ll INF = 0x3f3f3f3f3f3f3f3f;
+int n;
 
-struct Hash {
-	vector <int> a;
-	int& operator[](int x) { return a[x - 1]; }
-	int size() { return a.size(); }
-	void init() { a.clear(); }
-	void add(int x) { a.push_back(x); }
-	void gao() { sort(a.begin(), a.end()); a.erase(unique(a.begin(), a.end()), a.end()); }
-	int get(int x) { return lower_bound(a.begin(), a.end(), x) - a.begin() + 1; }	
-}hs;
+vector <vector<pII>> G;
+
+int fa[N];
+pLI f[N], g[N];
+pLI h[N], l[N];
+
+void dfs(int u) {
+	f[u] = pLI(0, u);
+	g[u] = pLI(0, u);
+	
+	for (auto &it : G[u]) {
+		int v = it.fi, w = it.se;
+		if (v == fa[u]) continue;
+		fa[v] = u;
+		dfs(v);
+		if (f[v].fi + w >= f[u].fi) {
+			g[u] = f[u];
+			f[u] = pLI(f[v].fi + w, f[v].se);
+		} else if (
+		
+	}
+}
+
+class Solution {
+public:
+    /**
+     * @param edge: edge[i][0] [1] [2]  start point,end point,value
+     * @return: return the second diameter length of the tree
+     */
+    long long getSecondDiameter(vector<vector<int>> &edge) {
+        // write your code here
+		n = SZ(edge) + 1;
+		G.clear(); G.resize(n + 1);
+		for (auto &it : edge) {
+			int u = it[0], v = it[1], w = it[2];
+			G[u].push_back(pII(v, w));
+			G[v].push_back(pII(u, w));
+		}
+		dfs(1);
+    	
+	}
+};
 
 void run() {
+	int n;
 	rd(n);
-	for (int i = 1; i <= n; ++i) {
-		rd(a[i].fi, a[i].se);
-		hs.add(a[i].fi);
-		hs.add(a[i].se);
+	vector <vector<int>> edge;
+	for (int i = 1, u, v, w; i < n; ++i) {
+		rd(u, v, w);
+		vector <int> vec{u, v, w};
+		edge.push_back(vec);
 	}
-	hs.gao();
-	m = hs.size();
-	vector <vector<int>> vec(m + 5);
-	for (int i = 0; i <= m; ++i) for (int j = 0; j <= m; ++j) f[i][j] = has[i][j] = 0;
-	for (int i = 1; i <= n; ++i) {
-		a[i].fi = hs.get(a[i].fi);
-		a[i].se = hs.get(a[i].se);
-		f[a[i].fi][a[i].se] = has[a[i].fi][a[i].se] = 1;
-		vec[a[i].fi].push_back(a[i].se);
-	}
-	for (int i = m; i >= 1; --i) {
-		for (int j = i + 1; j <= m; ++j) {
-			f[i][j] = 0;
-			chmax(f[i][j], max(f[i + 1][j], f[i][j - 1]));
-			for (auto &k: vec[i]) {
-				if (k < j) chmax(f[i][j], f[i][k] + f[k + 1][j]);
-			}
-			if (has[i][j]) ++f[i][j];
-		}
-	}
-	pt(f[1][m]);
+	pt((new Solution)->getSecondDiameter(edge));
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
+	int _T = 1;
+	//nextInt();
 	while (_T--) run(); 
 //    for (int kase = 1; kase <= _T; ++kase) {
 //        cout << "Case #" << kase << ": ";

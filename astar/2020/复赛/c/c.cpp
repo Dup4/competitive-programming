@@ -31,48 +31,60 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 6e3 + 10; 
-int n, m, f[N][N]; bool has[N][N]; 
-pII a[N];
+constexpr int N = 1e5 + 10; 
+int n, l, k, a[N]; 
 
-struct Hash {
-	vector <int> a;
-	int& operator[](int x) { return a[x - 1]; }
-	int size() { return a.size(); }
-	void init() { a.clear(); }
-	void add(int x) { a.push_back(x); }
-	void gao() { sort(a.begin(), a.end()); a.erase(unique(a.begin(), a.end()), a.end()); }
-	int get(int x) { return lower_bound(a.begin(), a.end(), x) - a.begin() + 1; }	
-}hs;
+int gao(vector <int> vec) {
+	vector <int> now(vec);
+	sort(all(now));
+	return now.end()[-k];
+}
+
+int get() {
+	vector <int> vec;
+	int tot = 0;
+	for (int i = 1; i <= n; ++i) {
+		if (SZ(vec) >= l) vec.erase(vec.begin());
+		vec.push_back(a[i]);
+		if (SZ(vec) >= l) tot += gao(vec);
+	}
+	return tot;
+}
 
 void run() {
-	rd(n);
-	for (int i = 1; i <= n; ++i) {
-		rd(a[i].fi, a[i].se);
-		hs.add(a[i].fi);
-		hs.add(a[i].se);
-	}
-	hs.gao();
-	m = hs.size();
-	vector <vector<int>> vec(m + 5);
-	for (int i = 0; i <= m; ++i) for (int j = 0; j <= m; ++j) f[i][j] = has[i][j] = 0;
-	for (int i = 1; i <= n; ++i) {
-		a[i].fi = hs.get(a[i].fi);
-		a[i].se = hs.get(a[i].se);
-		f[a[i].fi][a[i].se] = has[a[i].fi][a[i].se] = 1;
-		vec[a[i].fi].push_back(a[i].se);
-	}
-	for (int i = m; i >= 1; --i) {
-		for (int j = i + 1; j <= m; ++j) {
-			f[i][j] = 0;
-			chmax(f[i][j], max(f[i + 1][j], f[i][j - 1]));
-			for (auto &k: vec[i]) {
-				if (k < j) chmax(f[i][j], f[i][k] + f[k + 1][j]);
-			}
-			if (has[i][j]) ++f[i][j];
+	rd(n, l, k);
+	for (int i = 1; i <= n; ++i) rd(a[i]);
+	vector <vector<int>> res, _res;
+//	vector <int> res, _res;
+	int Max = 0;
+	int Min = 1e9; 
+	do {
+		int now = get();
+		vector <int> vec;
+		for (int i = 1; i <= n; ++i) vec.push_back(a[i]); 
+		if (now > Max) {
+			Max = now;
+			res.clear();
+			res.push_back(vec);
+		//	res = vec;
+		} else if (now == Max) {
+	//		res.push_back(vec);
 		}
-	}
-	pt(f[1][m]);
+		if (now < Min) {
+			Min = now;
+			_res.clear();
+			_res.push_back(vec);
+		   //	= vec;
+		} else if (now == Min) {
+		//	_res.push_back(vec);
+		}
+	} while (next_permutation(a + 1, a + 1 + n));
+	pt(Max);
+	for (auto &it : res) pt(it);
+//	pt(res);
+	pt(Min);
+	for (auto &it : _res) pt(it);
+//	pt(_res);
 }
 
 int main() {

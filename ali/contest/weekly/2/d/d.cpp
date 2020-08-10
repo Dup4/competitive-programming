@@ -31,55 +31,61 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 6e3 + 10; 
-int n, m, f[N][N]; bool has[N][N]; 
-pII a[N];
+constexpr int N = 1e5 + 10; 
+int n; 
 
-struct Hash {
-	vector <int> a;
-	int& operator[](int x) { return a[x - 1]; }
-	int size() { return a.size(); }
-	void init() { a.clear(); }
-	void add(int x) { a.push_back(x); }
-	void gao() { sort(a.begin(), a.end()); a.erase(unique(a.begin(), a.end()), a.end()); }
-	int get(int x) { return lower_bound(a.begin(), a.end(), x) - a.begin() + 1; }	
-}hs;
+struct BIT {
+    int a[N];
+	void init() { memset(a, 0, sizeof a); }
+    int lowbit(int x) { return x & -x; }
+    void add(int x, ll v) {
+        for (int i = x; i < N; i += lowbit(i))
+            a[i] += v;
+    }
+    ll query(int x) {
+        ll ret = 0;
+        for (int i = x; i > 0; i -= lowbit(i))
+            ret += a[i];
+        return ret;
+    }
+    ll query(int l, int r) { if (l > r) return 0; return query(r) - query(l - 1); }
+}bit;
+
+class Solution {
+public:
+    /**
+     * @param nums: the array of elements to be inserted.
+     * @return: return the least operation number.
+     */
+    long long sortedArrangement(vector<int> &nums) {
+        // write your code here
+		bit.init();
+		ll res = 0;
+		int n = SZ(nums);
+		for (auto &it : nums) {
+			++res;
+			int a = bit.query(1, it - 1);
+			int b = bit.query(it + 1, n);	
+			res += min(a, b) * 2;
+			bit.add(it, 1);
+		}
+		return res;
+    }
+};
 
 void run() {
 	rd(n);
-	for (int i = 1; i <= n; ++i) {
-		rd(a[i].fi, a[i].se);
-		hs.add(a[i].fi);
-		hs.add(a[i].se);
-	}
-	hs.gao();
-	m = hs.size();
-	vector <vector<int>> vec(m + 5);
-	for (int i = 0; i <= m; ++i) for (int j = 0; j <= m; ++j) f[i][j] = has[i][j] = 0;
-	for (int i = 1; i <= n; ++i) {
-		a[i].fi = hs.get(a[i].fi);
-		a[i].se = hs.get(a[i].se);
-		f[a[i].fi][a[i].se] = has[a[i].fi][a[i].se] = 1;
-		vec[a[i].fi].push_back(a[i].se);
-	}
-	for (int i = m; i >= 1; --i) {
-		for (int j = i + 1; j <= m; ++j) {
-			f[i][j] = 0;
-			chmax(f[i][j], max(f[i + 1][j], f[i][j - 1]));
-			for (auto &k: vec[i]) {
-				if (k < j) chmax(f[i][j], f[i][k] + f[k + 1][j]);
-			}
-			if (has[i][j]) ++f[i][j];
-		}
-	}
-	pt(f[1][m]);
+	vector <int> vec(n);
+	for (auto &it : vec) rd(it);
+	pt((new Solution)->sortedArrangement(vec));
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
+	int _T = 1;
+	//nextInt();
 	while (_T--) run(); 
 //    for (int kase = 1; kase <= _T; ++kase) {
 //        cout << "Case #" << kase << ": ";

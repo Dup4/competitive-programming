@@ -31,55 +31,83 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 6e3 + 10; 
-int n, m, f[N][N]; bool has[N][N]; 
-pII a[N];
+constexpr int N = 2e5 + 10; 
+int n, k; 
+char s[N];
 
-struct Hash {
-	vector <int> a;
-	int& operator[](int x) { return a[x - 1]; }
-	int size() { return a.size(); }
-	void init() { a.clear(); }
-	void add(int x) { a.push_back(x); }
-	void gao() { sort(a.begin(), a.end()); a.erase(unique(a.begin(), a.end()), a.end()); }
-	int get(int x) { return lower_bound(a.begin(), a.end(), x) - a.begin() + 1; }	
-}hs;
-
-void run() {
-	rd(n);
+pII get() {
+	int now = 0, res = 0, tot = 0;;
 	for (int i = 1; i <= n; ++i) {
-		rd(a[i].fi, a[i].se);
-		hs.add(a[i].fi);
-		hs.add(a[i].se);
-	}
-	hs.gao();
-	m = hs.size();
-	vector <vector<int>> vec(m + 5);
-	for (int i = 0; i <= m; ++i) for (int j = 0; j <= m; ++j) f[i][j] = has[i][j] = 0;
-	for (int i = 1; i <= n; ++i) {
-		a[i].fi = hs.get(a[i].fi);
-		a[i].se = hs.get(a[i].se);
-		f[a[i].fi][a[i].se] = has[a[i].fi][a[i].se] = 1;
-		vec[a[i].fi].push_back(a[i].se);
-	}
-	for (int i = m; i >= 1; --i) {
-		for (int j = i + 1; j <= m; ++j) {
-			f[i][j] = 0;
-			chmax(f[i][j], max(f[i + 1][j], f[i][j - 1]));
-			for (auto &k: vec[i]) {
-				if (k < j) chmax(f[i][j], f[i][k] + f[k + 1][j]);
-			}
-			if (has[i][j]) ++f[i][j];
+		if (i == n || s[i] == '>') {
+			chmax(res, now);
+			now = 0;
+		} else {
+			++now;
+			++tot; 
 		}
 	}
-	pt(f[1][m]);
+	return pII(tot, res);
+}
+
+int back(vector<int> &vec) {
+	int t = vec.back();
+	vec.pop_back();
+	return t;
+}
+
+void run() {
+	rd(n, k);
+	cin >> (s + 1);
+	int all, Max;
+	tie(all, Max) = get();
+	if (all + 1 < k || Max + 1 > k) return pt("NO");
+	int di = 0;
+	for (int i = 1; i < n; ++i) {
+		if (s[i] == '>' && (i == n - 1 || s[i + 1] == '<')) {
+			++di;
+		}
+	}
+	vector <int> hvec;
+	for (int i = n; i > n - k; --i) hvec.push_back(i);
+	int fini = 0;
+	vector <int> res;
+	res.push_back(back(hvec));
+	int _i = 0, _u = n - k;
+   //	_d = 1;
+	while (1) {
+		int up = 0, down = 0;
+		while (_i + 1 < n && s[_i + 1] == '<') ++up, ++_i;
+		while (_i + 1 < n && s[_i + 1] == '>') ++down, ++_i;
+		if (up <= SZ(hvec)) {
+			for (int i = 1; i <= up; ++i) res.push_back(back(hvec));
+		} else {
+			if (fini) {
+				for (int i = _u - up + 1; i <= _u; ++i)
+					res.push_back(i);
+				_u = _u - up;
+			} else {
+				for (int i = _u - up + 1 + SZ(hvec); i <= _u; ++i) res.push_back(i);
+				_u = _u - up + SZ(hvec);
+				while (!hvec.empty()) res.push_back(back(hvec));
+				fini = 1;
+			}
+		}
+		if (down) {
+			for (int i = _u; i > _u - down + 1; --i) res.push_back(i);
+			res.push_back(di); --di;
+			_u = _u - down + 1;	
+		}
+		if (_i + 1 == n) break;
+	}
+	pt("YES");
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
+	int _T = 1;
 	while (_T--) run(); 
 //    for (int kase = 1; kase <= _T; ++kase) {
 //        cout << "Case #" << kase << ": ";

@@ -31,9 +31,8 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 6e3 + 10; 
-int n, m, f[N][N]; bool has[N][N]; 
-pII a[N];
+constexpr int N = 3e3 + 10; 
+int n, a[N], f[N][N]; 
 
 struct Hash {
 	vector <int> a;
@@ -47,32 +46,34 @@ struct Hash {
 
 void run() {
 	rd(n);
-	for (int i = 1; i <= n; ++i) {
-		rd(a[i].fi, a[i].se);
-		hs.add(a[i].fi);
-		hs.add(a[i].se);
-	}
+	hs.init();
+	for (int i = 1; i <= n; ++i) rd(a[i]), hs.add(a[i]);
 	hs.gao();
-	m = hs.size();
-	vector <vector<int>> vec(m + 5);
-	for (int i = 0; i <= m; ++i) for (int j = 0; j <= m; ++j) f[i][j] = has[i][j] = 0;
-	for (int i = 1; i <= n; ++i) {
-		a[i].fi = hs.get(a[i].fi);
-		a[i].se = hs.get(a[i].se);
-		f[a[i].fi][a[i].se] = has[a[i].fi][a[i].se] = 1;
-		vec[a[i].fi].push_back(a[i].se);
-	}
-	for (int i = m; i >= 1; --i) {
-		for (int j = i + 1; j <= m; ++j) {
-			f[i][j] = 0;
-			chmax(f[i][j], max(f[i + 1][j], f[i][j - 1]));
-			for (auto &k: vec[i]) {
-				if (k < j) chmax(f[i][j], f[i][k] + f[k + 1][j]);
+	for (int i = 1; i <= n; ++i) a[i] = hs.get(a[i]);
+	memset(f, 0, sizeof f);
+	for (int i = 1; i <= a[1]; ++i) f[1][i] = 1; 
+	int m = SZ(hs.a);
+	f[1][m + 1] = hs[a[1]] - a[1]; 
+   	for (int i = 2; i <= n; ++i) {
+		int up = min(a[i], a[i - 1]);
+		for (int j = 1; j <= up; ++j) {
+			if (j != a[i]) chadd(f[i][j], f[i - 1][a[i]]); 
+			else {
+				int _up = i == 2 ? a[i - 1] : min(a[i - 2], a[i - 1]);
+				for (int k = 1; k <= _up; ++k) chadd(f[i][j], f[i - 1][k]); 
+				chadd(f[i][j], f[i - 1][m + 1]);
 			}
-			if (has[i][j]) ++f[i][j];
 		}
-	}
-	pt(f[1][m]);
+		chadd(f[i][m + 1], f[i - 1][m + 1]);
+		int _up = i == 2 ? a[i - 1] : min(a[i - 2], a[i - 1]);
+		for (int j = 1; j <= _up; ++j) if (j != a[i - 1]) {
+			chadd(f[i][m + 1], f[i - 1][j]);
+		}
+	}	
+	int res = 0;
+	for (int i = 1; i < N; ++i) chadd(res, f[n][i]);
+	pt(res);
+	
 }
 
 int main() {
