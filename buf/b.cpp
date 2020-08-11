@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 const int maxn=5e4+10;
+//
 struct data{
     int x,y,z,f[2];double g[2];
     data(){x=y=z=f[1]=f[0]=0;g[0]=g[1]=0;}
