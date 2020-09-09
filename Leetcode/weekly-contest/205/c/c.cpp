@@ -33,6 +33,31 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 //head
 constexpr int N = 1e5 + 10; 
 int n; 
+int f[N][30];
+
+class Solution {
+public:
+    int minCost(string s, vector<int>& cost) {
+		n = SZ(s);
+		memset(f, 0x3f, sizeof f);
+		memset(f[0], 0, sizeof f[0]);
+		for (int i = 1; i <= n; ++i) {
+			int ch = s[i - 1] - 'a';
+			int fee = cost[i - 1];
+			for (int j = 0; j < 26; ++j) {
+				if (j != ch) {
+					chmin(f[i][ch], f[i - 1][j]);
+					chmin(f[i][j], f[i - 1][j] + fee);
+				} else {
+					chmin(f[i][j], f[i - 1][j] + fee);
+				}
+			}
+		}
+		int res = 2e9;
+		for (int i = 0; i < 26; ++i) chmin(res, f[n][i]);
+		return res;
+    }
+};
 
 void run() {
 

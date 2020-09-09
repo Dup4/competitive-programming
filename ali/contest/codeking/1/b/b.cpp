@@ -34,6 +34,28 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+class Solution {
+public:
+    /**
+     * @param lengths: the lengths of sticks at the beginning.
+     * @return: return the minimum number of cuts.
+     */
+    int makeEquilateralTriangle(vector<int> &lengths) {
+        // write your code here.
+		n = SZ(lengths);
+		sort(all(lengths));
+		map <int, int> mp;
+		for (auto &it : lengths) ++mp[it];
+		int res = 2;
+		for (auto &it : mp) {
+			if (it.se >= 3) return 0;
+			if (it.se >= 2) chmin(res, 1);
+			if (mp.count(it.fi * 2)) chmin(res, 1);
+		}
+		return res;
+    }
+};
+
 void run() {
 
 }

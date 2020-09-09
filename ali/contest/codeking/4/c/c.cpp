@@ -34,6 +34,29 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+class Solution {
+public:
+    /**
+     * @param s1: the string 1
+     * @param s2: the string 2
+     * @return: judge can s1 change to s2
+     */
+    bool judge(string &s1, string &s2) {
+        // write your code here
+		int n = SZ(s1);
+		string _s1 = s1;
+		_s1 = _s1.insert(SZ(_s1), s1);
+		string __s1 = s1;
+		reverse(all(__s1));
+		__s1 = __s1.insert(SZ(__s1), s1);
+		for (int i = 0; i < n; ++i) {
+			if (s2 == _s1.substr(i, n) || s2 == __s1.substr(i, n))
+				return true;
+		}	
+		return false;
+    }
+};
+
 void run() {
 
 }

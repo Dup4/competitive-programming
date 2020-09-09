@@ -32,22 +32,48 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+int n, d;
+ll m, a[N];
 
 void run() {
-
+	rd(n, d, m);
+	for (int i = 1; i <= n; ++i) rd(a[i]);
+	vector <ll> vec[2];
+	for (int i = 1; i <= n; ++i) {
+		vec[a[i] > m].push_back(a[i]);		
+	}
+	for (auto &it : {0, 1}) if (SZ(vec[it])) {	
+		sort(all(vec[it]));
+		reverse(all(vec[it]));
+		for (int i = 1; i < SZ(vec[it]); ++i)
+			vec[it][i] += vec[it][i - 1];
+	}
+	ll res = 0;
+	if (SZ(vec[0])) res = vec[0].back();
+	for (int i = 0; i < SZ(vec[1]); ++i) {
+		ll useD = 1ll * i * (d + 1) + 1;
+		ll now = 0;
+		if (SZ(vec[0]) && useD < n) {
+			now += vec[0][min(1ll * SZ(vec[0]), n - useD) - 1];
+		}
+		if (useD <= n) {
+			now += vec[1][i];
+			chmax(res, now);
+		}
+	}
+	pt(res);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

@@ -32,22 +32,71 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+
+ll calc(int n) {
+	if (n == 0) return 1;
+	ll res = 1; 
+	for (int i = 1; i <= n; ++i) {
+		res *= 2;
+		if (res >= 1e18) break;
+	}
+	return res;
+}
+
+class Solution {
+public:
+    /**
+     * @param n: the length of the string.
+     * @param k: the kth Lexicographically smallest that result should be.
+     * @return: return the kth Lexicographically smallest string.
+     */
+    string kthString(int n, long long k) {
+        // write your code here.
+		if (3ll * calc(n - 1) < k) return "";
+		string s = "", t = "";
+		for (int i = 1; i <= n; ++i) {
+			if (i == 1) t = "def"; 
+			else {
+				t = "";
+				string tmp = "def";
+				for (auto &it : tmp) {
+			//		dbg(s.back(), it);
+					if (s.back() != it) t += it;
+				}
+			//	dbg(t);
+			}
+		//	reverse(all(t));
+			int sz = SZ(t);
+			for (int j = sz - 1; j >= 0; --j) {
+				ll f = 1ll * j * calc(n - i);
+				if (k > f || !j) {
+					k -= f;
+					s += t[j];
+					break;
+				}
+			}
+		}
+		return s;
+    }
+};
 
 void run() {
-
+	int n; ll k;
+	rd(n, k);
+	pt((new Solution())->kthString(n, k));
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	//nextInt();
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

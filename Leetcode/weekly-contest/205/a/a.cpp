@@ -34,6 +34,24 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+
+class Solution {
+public:
+    string modifyString(string s) {
+		n = SZ(s);
+		for (int i = 0; i < n; ++i) {
+			if (s[i] == '?') {
+				for (int j = 0; j < 26; ++j) {
+					if (i && j == s[i - 1] - 'a') continue;
+					if (i < n - 1 && j == s[i + 1] - 'a') continue;
+					s[i] = j + 'a';
+				}
+			}
+		}
+		return s;
+    }
+};
+
 void run() {
 
 }

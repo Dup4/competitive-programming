@@ -33,6 +33,64 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 //head
 constexpr int N = 1e5 + 10; 
 int n; 
+vector <vector<int>> edges;
+
+struct UFS {
+	int fa[N], rk[N];
+	void init(int n) {
+		memset(fa, 0, sizeof (fa[0]) * (n + 5));
+		memset(rk, 0, sizeof (rk[0]) * (n + 5));
+	}
+	int find(int x) { return fa[x] == 0 ? x : fa[x] = find(fa[x]); }
+	bool merge(int x, int y) {
+		int fx = find(x), fy = find(y);
+		if (fx != fy) {
+			if (rk[fx] > rk[fy]) swap(fx, fy);
+			fa[fx] = fy;
+			if (rk[fx] == rk[fy]) ++rk[fy];
+			return true;
+		}
+		return false;
+	}
+	bool same(int x, int y) { return find(x) == find(y); }
+}ufs[3];
+
+int gao() {
+	ufs[0].init(n);
+	ufs[1].init(n);
+	ufs[2].init(n);
+	int res = 0;
+	for (auto &it : edges) {
+		int tp = it[0], u = it[1], v = it[2];
+		if (tp == 3) {
+			res += ufs[0].merge(u, v) ^ 1;
+		}
+	}
+	ufs[1] = ufs[2] = ufs[0];
+	for (int i = 1; i <= 2; ++i) {
+		for (auto &it : edges) {
+			int tp = it[0], u = it[1], v = it[2];
+			if (tp == i) {
+				res += ufs[i].merge(u, v) ^ 1;
+			}
+		}
+		int cnt = 0;
+		for (int j = 1; j <= n; ++j) {
+			cnt += ufs[i].fa[j] == 0;
+		}
+		if (cnt > 1) return -1;
+	}
+	return res;
+}
+
+class Solution {
+public:
+    int maxNumEdgesToRemove(int _n, vector<vector<int>>& _edges) {
+		n = _n;
+		edges = _edges;
+		return gao();	
+    }
+};
 
 void run() {
 

@@ -34,6 +34,19 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+class Solution {
+public:
+    /**
+     * @param rowInfo: row information
+     * @param colInfo: col information
+     * @return: return the printed picture
+     */
+    vector<string> crossStitch(vector<vector<int>> &rowInfo, vector<vector<int>> &colInfo) {
+        // write your code here
+
+    }
+};
+
 void run() {
 
 }

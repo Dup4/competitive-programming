@@ -31,8 +31,37 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10; 
-int n; 
+constexpr int N = 2e2 + 10; 
+int n;
+int f[N][N];
+int dis[N][N];
+
+class Solution {
+public:
+    int countRoutes(vector<int>& locations, int start, int finish, int _fuel) {
+		int fuel = _fuel;
+		n = SZ(locations);
+		memset(f, 0, sizeof f);
+		f[0][start] = 1;
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) if (j != i) {
+				dis[i][j] = abs(locations[i]- locations[j]);
+			}
+		}
+		for (int i = 0; i <= fuel; ++i) {
+			for (int j = 0; j < n; ++j) if (f[i][j]) {
+				for (int k = 0; k < n; ++k) if (j != k && i + dis[j][k] <= fuel) {
+					chadd(f[i + dis[j][k]][k], f[i][j]);
+				}
+			}
+		}
+		ll res = 0;
+		for (int i = 0; i <= fuel; ++i) {
+			chadd(res, f[i][finish]);
+		}
+		return res;
+    }
+};
 
 void run() {
 

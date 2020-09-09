@@ -32,22 +32,58 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+int n, m, a[N]; 
+
+bool ok(int x) {
+	if (m == 1) return true;
+	int remind = m - 1;
+	int pre = a[1];
+	for (int i = 2; i <= n; ++i) {
+		if (a[i] - pre >= x) {
+			pre = a[i];
+			--remind;
+			if (!remind) return true;
+		}
+	}
+	return false;
+}
+
+class Solution {
+public:
+    int maxDistance(vector<int>& position, int _m) {
+		m = _m;
+		sort(all(position));
+		n = SZ(position);
+		for (int i = 1; i <= n; ++i) a[i] = position[i - 1];
+		int l = 0, r = 1e9, res = 0;
+		while (r - l >= 0) {
+			int mid = (l + r) >> 1;
+			if (ok(mid)) {
+				l = mid + 1;
+				res = mid;
+			} else {
+				r = mid - 1;
+			}
+		}
+		return res;
+    }
+};
 
 void run() {
-
+	pt((new Solution())->);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	//nextInt();
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

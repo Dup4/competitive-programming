@@ -32,22 +32,38 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+//int n; 
+int d[N];
+
+class Solution {
+public:
+    vector<int> findSmallestSetOfVertices(int n, vector<vector<int>>& edges) {
+		for (int i = 0; i <= n; ++i) d[i] = 0;
+		for (auto &it : edges) {
+			int u = it[0], v = it[1];
+			++d[v];
+		}
+		vector <int> res;
+		for (int i = 0; i < n; ++i) if (!d[i]) res.push_back(i);
+		return res;
+    }
+};
 
 void run() {
-
+	pt((new Solution)->);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	//nextInt();
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

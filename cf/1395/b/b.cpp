@@ -32,22 +32,42 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+int n, m, Sx, Sy; 
+vector <pII> res;
+
+void gao(int x, int pre) {
+	int now = pre == 1 ? m : 1;
+	res.push_back(pII(x, pre));
+	for (int i = 2; i < m; ++i) {
+		if ((x != Sx || (x == Sx && i != Sy))) {
+			res.push_back(pII(x, i));		
+		}
+	}
+	res.push_back(pII(x, now));
+}
 
 void run() {
-
+	rd(n, m, Sx, Sy);
+	res.push_back(pII(Sx, Sy));
+	gao(Sx, 1);
+	int pre = m;
+	for (int i = 1; i <= n; ++i) if (i != Sx) {
+		gao(i, pre);
+		pre = pre == 1 ? m : 1;
+	}
+	for (auto &it : res) pt(it.fi, it.se);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

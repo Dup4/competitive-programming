@@ -34,6 +34,22 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+class Solution {
+public:
+    int diagonalSum(vector<vector<int>>& mat) {
+		int n = SZ(mat);
+		int res = 0;
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < n; ++j) {
+				if (i - j == 0 || i + j == n - 1) {
+					res += mat[i][j];
+				}
+			}
+		}
+		return res;
+    }
+};
+
 void run() {
 
 }

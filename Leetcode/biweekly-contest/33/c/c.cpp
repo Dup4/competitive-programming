@@ -32,22 +32,45 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+//int n;
+
+class Solution {
+public:
+    int minOperations(vector<int>& nums) {
+		ll res = 0;
+		int Max = 0;
+		for (auto &it : nums) {
+			int now = 0;
+			while (it) {
+				if (it % 2 == 0) {
+					++now;
+					it /= 2;
+				} else {
+					++res;
+					--it;
+				}
+			}
+			chmax(Max, now);
+		}
+		return res + Max;
+    }
+};
 
 void run() {
-
+	pt((new Solution)->);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	//nextInt();
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

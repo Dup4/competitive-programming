@@ -32,7 +32,58 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+int n;
+
+int mon[2][13] = {
+	0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31,
+	0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31
+};
+
+int calc(int t, int m1, int d1, int m2, int d2) {
+	int res = 0;
+	while (m1 != m2 || d1 != d2) {
+		++res;
+		++d1;
+		if (d1 > mon[t][m1]) {
+			d1 = 1;
+			++m1;
+		}
+		if (m1 > 12) m1 = 1;
+	}
+	return res;
+}
+
+string gao(int m1, int d1, int m2, int d2, int x) {
+	if (m1 == 2 && d1 == 29) return "R";
+	if (m2 == 2 && d2 == 29) {
+		if (m1 > m2) return "P";
+		else return "R";
+	}
+	int f[2] = {0, 0};
+	for (int i = 0; i < 2; ++i) {
+		if (calc(i, m1, d1, m2, d2) == x) f[i] = 1;
+	}
+	if (f[0] == f[1]) return "?";
+	if (f[1]) return "R";
+	return "P";
+}
+
+class Solution {
+public:
+    /**
+     * @param inputQueries: input Queries, means [[m1, d1, m2, d2, x], [m1, d1, m2, d2, x],...]
+     * @return: guess whether y1 is leep year
+     */
+    string guessYear(vector<vector<int>> &inputQueries) {
+        // write your code here
+		string res = "";
+		for (auto &vec: inputQueries) {
+			int m1 = vec[0], d1 = vec[1], m2 = vec[2], d2 = vec[3], x = vec[4];
+			res += gao(m1, d1, m2, d2, x);
+		}
+		return res;
+    }
+};
 
 void run() {
 

@@ -34,8 +34,19 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
-void run() {
+bool ok(ll r, ll g, ll b, ll w) {
+	int cnt = 0;
+	for (auto &it : {r, g, b, w}) {
+		cnt += it % 2;
+	}
+	return cnt <= 1;
+}
 
+void run() {
+	ll r, g, b, w;
+	rd(r, g, b, w);
+	if (ok(r, g, b, w) || (r && g && b && ok(r - 1, g - 1, b - 1, w + 3))) pt("Yes");
+	else pt("No");
 }
 
 int main() {
@@ -43,11 +54,11 @@ int main() {
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
 	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

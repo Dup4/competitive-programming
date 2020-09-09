@@ -34,6 +34,37 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+class Solution {
+public:
+    int findLengthOfShortestSubarray(vector<int>& arr) {
+		n = SZ(arr);
+		int l = 0, r = n - 1;
+		for (int i = 1; i < n; ++i) {
+			if (arr[i] >= arr[i - 1]) {
+				l = i;
+			} else {
+				break;
+			}
+		}
+		for (int i = n - 2; i >= 0; --i) {
+			if (arr[i] <= arr[i + 1]) {
+				r = i;
+			} else {
+				break;
+			}
+		}
+		if (l == n - 1) return 0;
+		int res = max(l + 1, n - 1 - r + 1);
+		
+		for (int i = 0; i <= l; ++i) {
+			while (r <= n - 1 && arr[r] < arr[i]) ++r;
+			if (r > n - 1) break;
+			chmax(res, i + 1 + n - 1 - r + 1);	
+		}
+		return n - res;
+    }
+};
+
 void run() {
 
 }

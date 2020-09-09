@@ -32,22 +32,53 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+constexpr ll INFLL = 0x3f3f3f3f3f3f3f3f;
+int n, a[N]; 
+ll f[N];
+
+class Solution {
+public:
+    /**
+     * @param heights: the heights of buildings.
+     * @param k: the vision.
+     * @param x: the energy to spend of the first action.
+     * @param y: the energy to spend of the second action.
+     * @return: the minimal energy to spend.
+     */
+    long long shuttleInBuildings(vector<int> &heights, int k, int x, int y) {
+        // write your code here.
+		n = SZ(heights);
+		int que[N]; int head = 1, tail = 0;
+		for (int i = 1; i <= n; ++i) a[i] = heights[i - 1], f[i] = INFLL;
+		f[n] = 0;
+		que[++tail] = n;
+		for (int i = n - 1; i >= 1; --i) {
+			f[i] = f[i + 1] + y;
+			if (i < n - 1) chmin(f[i], f[i + 2] + y);
+			while (head <= tail && que[head] - k > i) ++head;
+			while (head <= tail && a[que[tail]] < a[i]) --tail;
+			if (head <= tail) chmin(f[i], f[que[tail]] + x);
+			que[++tail] = i;
+		}
+		return f[1];
+    }
+};
 
 void run() {
-
+	int n, k, x, y;
+	rd(n, k, x, y);
+	vector <int> vec(n);
+	for (auto &it : vec) rd(it);
+	pt((new Solution)->shuttleInBuildings(vec, k, x, y));
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+//	nextInt();
+	while (_T--) run(); 
 //	while (cin >> n) run();
 //	run();
 	return 0;

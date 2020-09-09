@@ -31,23 +31,50 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10; 
-int n; 
+constexpr int N = 5e2 + 10; 
+int n, m, a[N], b[N]; 
+
+bool ok(int x) {
+	for (int i = 1; i <= n; ++i) {
+		int ok = 0;
+		for (int j = 1; j <= m; ++j) {
+			int num = a[i] & b[j];
+			int _ok = 1;
+			for (int k = 0; k < 9; ++k) {
+				int _i = (num >> k) & 1;
+				int _j = (x >> k) & 1;
+				if (_i > _j) {
+					_ok = 0;
+					break;
+				}
+			}
+			if (_ok) {
+				ok = 1;
+				break;
+			}		
+		}
+		if (!ok) return false;
+	}
+	return true;
+}
 
 void run() {
-
+	rd(n, m);
+	for (int i = 1; i <= n; ++i) rd(a[i]);
+	for (int i = 1; i <= m; ++i) rd(b[i]);
+	for (int i = 0; i < 1 << 9; ++i) if (ok(i)) return pt(i);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

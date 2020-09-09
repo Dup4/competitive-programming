@@ -31,23 +31,108 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10; 
-int n; 
+constexpr int N = 500 * 500 + 10; 
+int n, m; 
+vector <vector<int>> G;
+int Move[4][2] = {
+	-1, 0,
+	1, 0,
+	0, 1,
+	0, -1
+};
+int vis[N], fa[N], g[510][510];
+int has;
+
+void dfs(int u) {
+	vis[u] = 1;
+	for (auto &v : G[u]) if (v != fa[u]) {
+		fa[v] = u;
+		if (vis[v]) {
+			has = 1;
+			return;
+		}
+		dfs(v);
+		if (has) return;
+	}
+}
+
+bool valid(int x, int y) {
+	if (x < 0 || x > n || y < 0 || y > m) return false;
+	return true;
+}
+
+bool ok(vector <pII> &vec) {
+	int _n = SZ(vec);
+	G.clear(); G.resize(_n + 1);
+	for (int i = 0; i < _n; ++i) {
+		g[vec[i].fi][vec[i].se] = i + 1;
+		vis[i + 1] = 0;
+		fa[i + 1] = 0;
+	}
+	has = 0;
+//	pt("-----");
+	for (int i = 0; i < _n; ++i) {
+		int x = vec[i].fi, y = vec[i].se, u = i + 1;
+		for (int j = 0; j < 4; ++j) {
+			int nx = x + Move[j][0];
+			int ny = y + Move[j][1];
+			if (valid(nx, ny) && g[nx][ny]) {
+				int v = g[nx][ny];
+				G[u].push_back(v);
+			//	pt(u, v);
+			}
+		}
+	}
+//	pt("-----------");
+	for (int i = 0; i < _n; ++i) {
+		g[vec[i].fi][vec[i].se] = 0;
+	}
+	for (int i = 1; i <= _n; ++i) {
+		if (!vis[i]) {
+			dfs(i);
+		//	if (has) pt(i);
+			if (has) return true;
+		}
+	}
+	return false;
+}
+
+class Solution {
+public:
+    bool containsCycle(vector<vector<char>>& grid) {
+		n = SZ(grid);
+		m = SZ(grid[0]);
+		for (int i = 0; i <= n; ++i)
+			for (int j = 0; j <= m; ++j)
+				g[i][j] = 0;
+		vector <pII> vec[30];
+		for (int i = 0; i < n; ++i) {
+			for (int j = 0; j < m; ++j) {
+				vec[grid[i][j] - 'a'].push_back(pII(i, j));
+			}
+		}
+		for (int i = 0; i < 26; ++i) {
+			if (SZ(vec[i]) && ok(vec[i])) return true;
+		}
+		return false;
+    }
+};
 
 void run() {
-
+	//pt((new Solution)->);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	//nextInt();
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

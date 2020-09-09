@@ -32,22 +32,60 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+//int n; 
+int cnt[N];
+
+
+class Solution {
+public:
+    int findLatestStep(vector<int>& arr, int m) {
+		set <pII> se;
+		int n = SZ(arr);
+		for (int i = 0; i <= n; ++i) cnt[i] = 0;
+		int res = -1;
+		for (int i = 0; i < n; ++i) {
+			int x = arr[i];
+			if (se.empty()) {
+				se.insert(pII(x, x));
+				++cnt[1];
+			} else {
+				auto pos = se.lower_bound(pII(x, x));
+				auto pre = prev(pos);
+				int l = x, r = x;
+				if (pre != se.end() && pre->se == x - 1) {
+					--cnt[pre->se - pre->fi + 1];
+					l = pre->fi;
+					se.erase(pre);
+				}
+				if (pos != se.end() && pos->fi == x + 1) {
+					--cnt[pos->se - pos->fi + 1];
+					r = pos->se;
+					se.erase(pos);
+				}
+				++cnt[r - l + 1];
+				se.insert(pII(l, r));
+			}
+			if (cnt[m]) res = i + 1;
+		}
+		return res;
+    }
+};
 
 void run() {
-
+//	pt((new Solution)->);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	//nextInt();
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

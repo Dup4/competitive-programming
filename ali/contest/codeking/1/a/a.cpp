@@ -32,17 +32,45 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+int n, d, f[N], a[N]; 
+
+class Solution {
+public:
+    /**
+     * @param trees: the positions of trees.
+     * @param d: the minimum beautiful interval.
+     * @return: the minimum number of trees to remove to make trees beautiful.
+     */
+    int treePlanning(vector<int> &trees, int d) {
+        // write your code here.
+		n = SZ(trees);
+		for (int i = 0; i <= n; ++i) f[i] = 0;
+		for (int i = 1; i <= n; ++i) a[i] = trees[i - 1];
+		for (int i = 1; i <= n; ++i) {
+			int pos = upper_bound(a + 1, a + 1 + n, a[i] - d) - a;
+			f[i] = f[i - 1];
+			if (pos) {
+				chmax(f[i], f[pos - 1] + 1);
+			}
+		//	dbg(i, pos, f[i]);
+		}
+		return n - f[n];
+    }
+};
 
 void run() {
-
+	rd(n, d);
+	vector <int> vec(n);
+	for (auto &it : vec) rd(it);
+	pt((new Solution())->treePlanning(vec, d));
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
+	int _T = 1;
+//	nextInt();
 //	while (_T--) run(); 
     for (int kase = 1; kase <= _T; ++kase) {
         cout << "Case #" << kase << ": ";

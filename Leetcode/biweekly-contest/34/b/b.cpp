@@ -34,6 +34,36 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+class Solution {
+public:
+    int numWays(string s) {
+		n = SZ(s);
+		int res = 0;
+		int cnt = 0;
+		for (auto &ch : s) cnt += (ch - '0');
+		if (cnt % 3) return res;
+		if (cnt == 0) {
+			ll res = 1ll * (n - 1) * (n - 2) / 2;
+			res %= mod;
+			return res;
+		}
+		ll x = 0, y = 0;
+		int num = 0, tar = cnt / 3;
+		for (int i = 0; i < SZ(s); ++i) {
+			num += (s[i] - '0');
+			if (num > tar) break;
+			x += num == tar;
+		}
+		num = 0;
+		for (int i = SZ(s) - 1; i >= 0; --i) {
+			num += (s[i] - '0');
+			if (num > tar) break;
+			y += num == tar;
+		}
+		return x * y % mod;
+    }
+};
+
 void run() {
 
 }

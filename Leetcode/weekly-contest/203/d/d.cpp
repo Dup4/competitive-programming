@@ -31,23 +31,60 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10; 
-int n; 
+constexpr int N = 5e2 + 10; 
+//int n; 
+int a[N], sum[N], f[N][N];
+
+int dfs(int l, int r) {
+	if (l >= r) return 0;
+	if (f[l][r] != -1) return f[l][r];
+	int tot = sum[r] - sum[l - 1];
+	int now = 0;
+	int Max = 0;
+	for (int i = l; i <= r; ++i) {
+		now += a[i];
+		int oth = tot - now;
+		if (now < oth) {
+			chmax(Max, dfs(l, i) + now);
+		} else if (now == oth) {
+			chmax(Max, dfs(l, i) + now);
+			chmax(Max, dfs(i + 1, r) + oth);
+		} else {
+			chmax(Max, dfs(i + 1, r) + oth);
+		}
+	}
+	return f[l][r] = Max;
+	
+}
+
+class Solution {
+public:
+    int stoneGameV(vector<int>& stoneValue) {
+		int n = SZ(stoneValue);
+		for (int i = 0; i < n; ++i) {
+			a[i + 1] = stoneValue[i];
+			sum[i + 1] = sum[i] + a[i + 1];
+		}
+		memset(f, -1, sizeof f);
+		return dfs(1, n);
+    }
+};
 
 void run() {
-
+//	pt((new Solution)->);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-//	while (_T--) run(); 
-    for (int kase = 1; kase <= _T; ++kase) {
-        cout << "Case #" << kase << ": ";
-        run();
-    }
+	int _T = 1;
+	//nextInt();
+	while (_T--) run(); 
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;
