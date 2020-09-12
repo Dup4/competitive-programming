@@ -31,18 +31,61 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 1e5 + 10; 
-int n; 
+constexpr int N = 3e5 + 10; 
+int n, m;
+ll b[N], w[N], f[N], Sb[N], Sw[N];
+
+struct E {
+	int t, l, r; ll c;
+	E() {}
+	void scan() { rd(t, l, r, c); }
+	bool operator < (const E &other) const { 
+		return r < other.r;
+	}
+}e[N];
 
 void run() {
-
+	rd(n, m);
+	for (int i = 1; i <= n; ++i) rd(b[i]), Sb[i] = Sb[i - 1] + b[i];
+	for (int i = 1; i <= n; ++i) rd(w[i]), Sw[i] = Sw[i - 1] + w[i];
+	vector <E> vec[2];
+	for (int i = 1; i <= m; ++i) {
+		e[i].scan();
+		e[i].t -= 1;
+		vec[e[i].t].push_back(e[i]);
+	}
+	sort(e + 1, e + 1 + m);
+	for (int i = 0; i < 2; ++i) {
+		sort(all(vec[i]), [&](E a, E b) { return a.l > b.l; });
+	}
+	memset(f, 0, sizeof f);
+	int pos = 1;
+	for (int i = 1; i <= n; ++i) {
+		f[i] = max(b[i], w[i]) + f[i - 1];
+		while (pos <= m && e[pos].r == i) {
+			int t = e[pos].t, l = i + 1, r = i;
+			ll c = 0;
+			for (auto &it : vec[t]) {
+				if (it.r <= i) {
+					c += it.c;
+					chmin(l, it.l);
+				}
+				ll sum = 0;
+				if (t == 0) sum = Sb[r] - Sb[l - 1];
+				else sum = Sw[r] - Sw[l - 1];
+				chmax(f[i], f[l - 1] + c + sum);
+			}
+			++pos;		
+		}
+	}
+	pt(f[n]);
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
+	int _T = 1;
 	while (_T--) run(); 
 //    for (int kase = 1; kase <= _T; ++kase) {
 //        cout << "Case #" << kase << ": ";
