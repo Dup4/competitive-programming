@@ -22,7 +22,7 @@ struct KMP {
 		getNext(t);
 		while (i < lens) {
 			while (-1 != j && s[i] != t[j]) j = Next[j];
-			++i; ++j;
+			++i, ++j;
 			if (j >= lent) {
 				printf("%d\n", i - lent + 1);
 				j = Next[j];

@@ -2,48 +2,34 @@
 using namespace std;
 
 
-struct TreeNode {
-	int val;
-	struct TreeNode *left;
-	struct TreeNode *right;
-	TreeNode(int x) :
-			val(x), left(NULL), right(NULL) {
-	}
-};
-
-class Solution {
+class Finder {
 public:
-    TreeNode* pre;
-    void dfs(TreeNode* rt) {
-        if (!rt) return;
-        dfs(rt->left);
-        rt->left = pre;
-        if (pre) pre->right = rt;
-        pre = rt;
-        dfs(rt->right);
+    vector <int> vec;
+    int Partition(int l, int r, int k) {
+//		cout << l << " " << r << " " << k << endl; 
+        if (l == r) return vec[l];
+        int _l = l, _r = r;
+        int pivot = vec[l];
+        while (l < r) {
+            while (l < r && vec[r] >= pivot) --r;
+            vec[l] = vec[r];
+            while (l < r && vec[l] <= pivot) ++l;
+            vec[r] = vec[l];
+        }
+        vec[l] = pivot;
+        if (l - _l + 1 == k) return vec[l];
+        if (l - _l + 1 > k) return Partition(_l, l, k);
+        return Partition(l + 1, _r, k - (l - _l + 1));
     }
-    
-    TreeNode* Convert(TreeNode* pRootOfTree) {
-        pre = nullptr;
-        dfs(pRootOfTree);
-        return pRootOfTree;
+    int findKth(vector<int> a, int n, int K) {
+        // write code here
+        vec = a;
+        return Partition(0, n - 1, n - K + 1);
     }
 };
 
 int main() {
-	vector <TreeNode> vec;
-	for (int i = 0; i <= 7; ++i) vec.push_back(TreeNode(i));
-	vec[4].left = &vec[2];
-	vec[4].right = &vec[6];
-	vec[2].left = &vec[1];
-	vec[2].right = &vec[3];
-	vec[6].left = &vec[5];
-	vec[6].right = &vec[7];
-	TreeNode* rt;
-	rt = (new Solution())->Convert(&vec[4]);
-	while (rt) {
-		cout << rt->val << endl;
-		rt = rt->right;
-	}
+	vector <int> vec({1, 2, 3, 4, 5, 6, 7});
+	cout << ((new Finder())->findKth(vec, vec.size(), 1)) << endl;	
 	return 0;
 }
