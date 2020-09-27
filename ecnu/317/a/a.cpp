@@ -31,88 +31,19 @@ template <template<typename...> class T, typename t, typename... A>
 void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
-constexpr int N = 2e5 + 10; 
-constexpr int S = 450;
-int n, m, q, a[N], f[N], id[N], fid[N], sze[N]; 
-bool isBig[N];
-vector <vector<int>> G, T, H;
-bitset <N> b[N / S + 10];
+constexpr int N = 1e5 + 10; 
+int n; 
 
 void run() {
-	rd(n, m);
-	memset(isBig, 0, sizeof isBig);
-	G.clear(); G.resize(n + 1);
-	T.clear(); T.resize(n + 1);
-	for (int i = 1; i <= n; ++i) rd(a[i]);
-	for (int i = 1, u, v; i <= m; ++i) {
-		rd(u, v);
-		G[u].push_back(v);
-		G[v].push_back(u);
-	}
-	vector <int> big;
-	*id = 0;
-	H.clear();
-	for (int i = 1; i <= n; ++i) {
-		if (SZ(G[i]) > S) {
-			big.push_back(i);
-			isBig[i] = 1;
-			id[i] = ++*id;
-			fid[*id] = i;
-			sze[*id] = SZ(G[i]) + 5;
-			b[*id].set();
-			H.push_back(vector<int>(sze[*id]));
-		}
-	}
-	for (int u = 1; u <= n; ++u) {
-		for (auto &v : G[u]) {
-			if (isBig[v]) {
-				T[u].push_back(id[v]);
-			}
-		}
-	}
-	rd(q);
-	for (int i = 1, op, u, x; i <= q; ++i) {
-		rd(op, u);
-		if (op == 1) {
-			rd(x);
-			int pre = a[u];
-			a[u] = x;
-			for (auto &it : T[u]) {
-				if (x <= sze[it]) {
-					--H[it][pre];
-					if (H[it][pre] == 0) b[it][pre] = 1;
-					++H[it][x];
-					if (H[it][x] == 1) b[it][x] = 0;
-				}
-			}
-		} else {
-			int res = n + 1;
-			if (isBig[u]) {
-				res = b[id[u]]._Find_first();
-			} else {
-				int _sze = SZ(G[u]) + 1;
-				for (int i = 0; i <= _sze; ++i) f[i] = 0;
-				for (auto &v : G[u]) {
-					if (a[v] <= _sze) {
-						++f[a[v]];
-					}
-				}
-				for (int i = 0; i <= _sze; ++i) if (!f[i]) {
-					res = i;
-					break;
-				}
-			}	
-			pt(res);
-		}	
-	} 
+	
+
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = 1;
-	//nextInt();
+	int _T = nextInt();
 	while (_T--) run(); 
 //    for (int kase = 1; kase <= _T; ++kase) {
 //        cout << "Case #" << kase << ": ";

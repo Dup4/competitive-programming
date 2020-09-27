@@ -32,79 +32,129 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 2e5 + 10; 
-constexpr int S = 450;
-int n, m, q, a[N], f[N], id[N], fid[N], sze[N]; 
-bool isBig[N];
-vector <vector<int>> G, T, H;
-bitset <N> b[N / S + 10];
+constexpr int S = 600;
+int q, n, f[N], in[N], out[N], fin[N], vis[N]; 
+vector <vector<pII>> G;
+
+struct Query {
+	int op, x, y;
+	void scan() {
+		string _op;
+		rd(_op, x, y);
+		if (_op == "A") op = 0;
+		else op = 1;
+	}
+}qnode[N];
+
+void dfs(int u) {
+	in[u] = ++*in;
+	fin[*in] = u;
+	for (auto &it : G[u]) {
+		int v = it.fi, w = it.se;
+		f[v] = f[u] ^ w;
+		dfs(v);
+	}
+	out[u] = *in;
+}
+
+int rt[N];
+struct Trie {
+	struct node {
+		int son[2], cnt;
+		node() { son[0] = son[1] = cnt = 0; }
+	}t[N * 32];
+	int tot;
+	void init() { tot = 0; t[0] = node(); }
+	int newnode() { ++tot; t[tot] = node(); return tot; }
+	void insert(int x, int id) {
+		int _rt = newnode();
+		rt[id] = _rt;
+		t[_rt] = t[rt[id - 1]];
+		for (int i = 30; i >= 0; --i) {
+			int ix = ((x >> i) & 1);
+			int now = newnode();
+			t[now] = t[t[_rt].son[ix]];
+			++t[now].cnt;
+			t[_rt].son[ix] = now;
+			_rt = now;
+		}
+	}
+	int query(int x, int l_rt, int r_rt) {
+		int ans = 0;
+		l_rt = rt[l_rt], r_rt = rt[r_rt];
+		for (int i = 30; i >= 0; --i) {
+			int ix = ((x >> i) & 1) ^ 1;
+			int ok = 1;
+			if (t[t[r_rt].son[ix]].cnt - t[t[l_rt].son[ix]].cnt <= 0) {
+				ix ^= 1;
+				ok = 0;
+			}
+			if (ok) ans |= 1 << i;
+			r_rt = t[r_rt].son[ix];
+			l_rt = t[l_rt].son[ix];
+		}
+		return ans;
+	}
+}trie;
+
+void rebuild(int pre) {
+	int gao = 0;
+	for (int i = 1; i <= n; ++i) {
+		if (!gao && fin[i] >= pre) {
+			trie.tot = rt[i] + 100; 
+			gao = 1;
+		}
+		if (gao) {
+			if (vis[fin[i]] == 0) {
+				rt[i] = rt[i - 1];
+			} else {
+				trie.insert(f[fin[i]], i);
+			}
+		}
+	}
+}
 
 void run() {
-	rd(n, m);
-	memset(isBig, 0, sizeof isBig);
-	G.clear(); G.resize(n + 1);
-	T.clear(); T.resize(n + 1);
-	for (int i = 1; i <= n; ++i) rd(a[i]);
-	for (int i = 1, u, v; i <= m; ++i) {
-		rd(u, v);
-		G[u].push_back(v);
-		G[v].push_back(u);
-	}
-	vector <int> big;
-	*id = 0;
-	H.clear();
-	for (int i = 1; i <= n; ++i) {
-		if (SZ(G[i]) > S) {
-			big.push_back(i);
-			isBig[i] = 1;
-			id[i] = ++*id;
-			fid[*id] = i;
-			sze[*id] = SZ(G[i]) + 5;
-			b[*id].set();
-			H.push_back(vector<int>(sze[*id]));
-		}
-	}
-	for (int u = 1; u <= n; ++u) {
-		for (auto &v : G[u]) {
-			if (isBig[v]) {
-				T[u].push_back(id[v]);
-			}
-		}
-	}
 	rd(q);
-	for (int i = 1, op, u, x; i <= q; ++i) {
-		rd(op, u);
-		if (op == 1) {
-			rd(x);
-			int pre = a[u];
-			a[u] = x;
-			for (auto &it : T[u]) {
-				if (x <= sze[it]) {
-					--H[it][pre];
-					if (H[it][pre] == 0) b[it][pre] = 1;
-					++H[it][x];
-					if (H[it][x] == 1) b[it][x] = 0;
+	for (int i = 1; i <= q; ++i) qnode[i].scan();
+	memset(f, 0, sizeof f);
+	memset(vis, 0, sizeof vis);
+	rt[0] = 0;
+	vis[1] = 1;
+	G.clear(); G.resize(N);
+	n = 1;
+	for (int i = 1; i <= q; ++i) {
+		Query it = qnode[i];
+		if (it.op == 0) {
+			G[it.x].push_back(pII(++n, it.y));
+		}
+	}
+	f[1] = 0; *in = 0;
+	dfs(1);
+	vector <int> vec;
+	int _n = 1;
+	rebuild(1);
+	for (int i = 1; i <= q; ++i) {
+		Query it = qnode[i];
+		if (it.op == 0) {
+			vec.push_back(++_n);
+		} else {
+			if (SZ(vec) > S) {
+				int pre = vec[0];
+				for (auto &it : vec) vis[it] = 1;
+				vec.clear();
+				rebuild(pre);
+			}
+			int u = it.x, v = it.y;
+			int res = trie.query(f[u], in[v] - 1, out[v]);
+			for (auto &it : vec) {
+				if (in[it] >= in[v] && in[it] <= out[v]) {
+					chmax(res, f[u] ^ f[it]);
 				}
 			}
-		} else {
-			int res = n + 1;
-			if (isBig[u]) {
-				res = b[id[u]]._Find_first();
-			} else {
-				int _sze = SZ(G[u]) + 1;
-				for (int i = 0; i <= _sze; ++i) f[i] = 0;
-				for (auto &v : G[u]) {
-					if (a[v] <= _sze) {
-						++f[a[v]];
-					}
-				}
-				for (int i = 0; i <= _sze; ++i) if (!f[i]) {
-					res = i;
-					break;
-				}
-			}	
 			pt(res);
-		}	
-	} 
+		}
+	}
 }
 
 int main() {
