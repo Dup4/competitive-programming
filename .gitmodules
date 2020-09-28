@@ -6,4 +6,4 @@
 	url = https://github.com/Dup4/PTA.git
 [submodule "TI1049-Code-Repo"]
 	path = TI1049-Code-Repo
-	url = ./TI1049-Code-Repo
+	url = https://github.com/Dup4/TI1049-Code-Repo.git
