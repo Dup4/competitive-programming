@@ -7,3 +7,6 @@
 [submodule "TI1049-Code-Repo"]
 	path = TI1049-Code-Repo
 	url = https://github.com/Dup4/TI1049-Code-Repo.git
+[submodule "Leetcode-Code-Repo"]
+	path = Leetcode-Code-Repo
+	url = https://github.com/Dup4/Leetcode-Code-Repo.git
