@@ -7,8 +7,7 @@ struct M {
 	char Ma[N << 1];
 	int Mp[N << 1];
 	int gao(char *s) {
-		int len = strlen(s);
-		int l = 0;
+		int len = strlen(s), l = 0;
 		Ma[l++] = '$';
 		Ma[l++] = '#';
 		for (int i = 0; i < len; ++i) {
@@ -26,8 +25,9 @@ struct M {
 			}
 		}
 		int res = 0;
-		for (int i = 0; i < l; ++i)
+		for (int i = 0; i < l; ++i) {
 			res = max(res, Mp[i] - 1);
+		}
 		return res;
 	}
 }m;

@@ -5,11 +5,11 @@ char s[N], t[N];
 
 struct KMP {
 	int Next[N];
-	void getNext(char *s) {
+	void get_Next(char *s) {
 		int len = strlen(s);
 		int i, j;
-		i = 0;
 		j = Next[0] = -1;
+		i = 0;
 		while (i < len) {
 			while (-1 != j && s[i] != s[j]) j = Next[j];
 			Next[++i] = ++j;
@@ -17,9 +17,9 @@ struct KMP {
 	}
 	void gao(char *s, char *t) {
 		int lens = strlen(s), lent = strlen(t);
-		int i, j;
+		int i, j, ans = 0;
+		get_Next(t);
 		i = j = 0;
-		getNext(t);
 		while (i < lens) {
 			while (-1 != j && s[i] != t[j]) j = Next[j];
 			++i, ++j;
