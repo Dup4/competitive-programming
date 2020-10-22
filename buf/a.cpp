@@ -34,6 +34,15 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
+bool IsBigEndian()
+{
+    int a =1 ; 
+    if(((char*)&a)[0] ==1)
+        return true ;
+    else
+        return false ;
+}
+
 void run() {
 	try {
 		cout << 1 / 0 << endl;
@@ -48,12 +57,13 @@ void run() {
 }
 
 int main() {
+	pt(IsBigEndian());
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = 1;
+//	int _T = 1;
 	//nextInt();
-	while (_T--) run(); 
+//	while (_T--) run(); 
 //    for (int kase = 1; kase <= _T; ++kase) {
 //        cout << "Case #" << kase << ": ";
 //        run();
