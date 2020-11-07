@@ -7,7 +7,8 @@ struct M {
 	char Ma[N << 1];
 	int Mp[N << 1];
 	int gao(char *s) {
-		int len = strlen(s), l = 0;
+		int len = strlen(s);
+		int l = 0;
 		Ma[l++] = '$';
 		Ma[l++] = '#';
 		for (int i = 0; i < len; ++i) {
@@ -18,9 +19,9 @@ struct M {
 		int mx = 0, id = 0;
 		for (int i = 0; i < l; ++i) {
 			Mp[i] = mx > i ? min(Mp[2 * id - i], mx - i) : 1;
-			while (Ma[i - Mp[i]] == Ma[i + Mp[i]]) ++Mp[i];
+			while (Ma[i + Mp[i]] == Ma[i - Mp[i]]) ++Mp[i];
 			if (i + Mp[i] > mx) {
-				mx = i + Mp[i];
+				mx = Mp[i] + i;
 				id = i;
 			}
 		}
