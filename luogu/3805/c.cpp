@@ -4,8 +4,8 @@ const int N = 1.1e7 + 10;
 char s[N];
 
 struct M {
-	char Ma[N << 1];
 	int Mp[N << 1];
+	char Ma[N << 1];
 	int gao(char *s) {
 		int len = strlen(s);
 		int l = 0;
@@ -21,7 +21,7 @@ struct M {
 			Mp[i] = mx > i ? min(Mp[2 * id - i], mx - i) : 1;
 			while (Ma[i + Mp[i]] == Ma[i - Mp[i]]) ++Mp[i];
 			if (i + Mp[i] > mx) {
-				mx = Mp[i] + i;
+				mx = i + Mp[i];
 				id = i;
 			}
 		}
