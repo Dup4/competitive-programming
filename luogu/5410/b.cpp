@@ -22,8 +22,8 @@ struct ExKMP {
 		}
 	}
 	void work(char *s, char *t) {
-		getNext(t);
 		int lens = strlen(s + 1), lent = strlen(t + 1), p = 1, pos;
+		getNext(t);
 		while (p <= lent && s[p] == t[p]) ++p;
 		p = extend[pos = 1] = p - 1;
 		for (int i = 2; i <= lens; ++i) {
@@ -31,7 +31,7 @@ struct ExKMP {
 			if (len + i < p + 1) extend[i] = len;
 			else {
 				int j = max(p - i + 1, 0);
-				while (i + j <= lens && j <= lent && t[j + 1] == s[i + j]) ++j;
+				while (i + j <= lens && t[j + 1] == s[i + j]) ++j;
 				p = i + (extend[pos = i] = j) - 1;
 			}
 		}
