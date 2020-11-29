@@ -19,7 +19,7 @@ struct M {
 		int mx = 0, id = 0;
 		for (int i = 0; i < l; ++i) {
 			Mp[i] = mx > i ? min(Mp[2 * id - i], mx - i) : 1;
-			while (Ma[i + Mp[i]] == Ma[i - Mp[i]]) ++Mp[i];
+			while (Ma[i - Mp[i]] == Ma[i + Mp[i]]) ++Mp[i];
 			if (i + Mp[i] > mx) {
 				mx = i + Mp[i];
 				id = i;

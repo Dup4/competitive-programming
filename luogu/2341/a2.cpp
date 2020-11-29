@@ -5,57 +5,61 @@ int n, m;
 vector <vector<int>> G;
 
 struct Tarjan {
-	int DFN[N], Low[N], Sta[N], InSta[N], Belong[N], num[N], cntSCC;
-	int Out[N];
+	int DFN[N], Low[N], Sta[N], InSta[N], Belong[N], num[N], Out[N];
+	int cntSCC;
 	void dfs(int u) {
-		DFN[u] = Low[u] = ++*DFN;
-		Sta[++*Sta] = u;
+		DFN[u] = Low[u] = ++*Low;
 		InSta[u] = 1;
+		Sta[++*Sta] = u;
 		for (auto &v : G[u]) {
 			if (!DFN[v]) {
 				dfs(v);
 				Low[u] = min(Low[u], Low[v]);
-			} else {
+			} else if (InSta[v]) {
 				Low[u] = min(Low[u], DFN[v]);
 			}
 		}
-		if (Low[u] == DFN[u]) {
-			int v;
+		if (DFN[u] == Low[u]) {
 			++cntSCC;
+			int v;
 			do {
 				v = Sta[(*Sta)--];
+				InSta[v] = 0;
 				Belong[v] = cntSCC;
 				++num[cntSCC];
-				InSta[v] = 0;
-			} while (u != v);
+			} while (v != u);
 		}
 	}
 	int gao() {
-		*DFN = *Sta = cntSCC = 0;
 		memset(DFN, 0, sizeof DFN);
+		memset(Low, 0, sizeof Low);
 		memset(InSta, 0, sizeof InSta);
-		memset(num, 0, sizeof num);
 		memset(Out, 0, sizeof Out);
-		for (int i = 1; i <= n; ++i) if (!DFN[i])
-			dfs(i);
+		cntSCC = *Sta = *Low = 0;
+		for (int i = 1; i <= n; ++i) {
+			if (!DFN[i]) {
+				dfs(i);
+			}
+		}
 		for (int u = 1; u <= n; ++u) {
 			for (auto &v : G[u]) {
 				if (Belong[u] != Belong[v]) {
 					++Out[Belong[u]];
 				}
 			}
-		}
-		int cnt = 0, Max = 0;
+		}	
+		int cnt = 0, res = 0;
 		for (int i = 1; i <= cntSCC; ++i) {
 			if (Out[i] == 0) {
 				++cnt;
-				Max = num[i];
+				res = num[i];
 			}
 		}
-		if (cnt > 1) return 0;
-		return Max;
+		if (cnt != 1) return 0;
+		return res;
 	}
 }tarjan;
+
 
 
 int main() {

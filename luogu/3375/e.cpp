@@ -8,8 +8,8 @@ struct KMP {
 	void getNext(char *s) {
 		int len = strlen(s);
 		int i, j;
-		j = Next[0] = -1;
 		i = 0;
+		j = Next[0] = -1;
 		while (i < len) {
 			while (-1 != j && s[i] != s[j]) j = Next[j];
 			Next[++i] = ++j;
@@ -17,8 +17,8 @@ struct KMP {
 	}
 	void gao(char *s, char *t) {
 		int lens = strlen(s), lent = strlen(t);
-		int i, j;
 		getNext(t);
+		int i, j;
 		i = j = 0;
 		while (i < lens) {
 			while (-1 != j && s[i] != t[j]) j = Next[j];
@@ -27,7 +27,7 @@ struct KMP {
 				printf("%d\n", i - lent + 1);
 				j = Next[j];
 			}
-		}
+		}	
 	}
 }kmp;
 
