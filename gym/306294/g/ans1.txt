@@ -1,0 +1,17 @@
+ASK a
+
+ASK c
+
+ASK b
+
+ASK ab
+
+ASK aba
+
+ASK abb
+
+ASK aab
+
+ASK bab
+
+ANSWER ab

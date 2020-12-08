@@ -1,0 +1,33 @@
+5 10 10 13
+1 1 5 WA
+1 1 6 AC
+2 1 1 AC
+3 5 5 WA
+3 5 6 AC
+3 7 1 AC
+3 13 10 AC
+5 1 1 AC
+5 2 1 WA
+5 2 2 AC
+21
+teamstatus 1 1
+teamstatus 2 2
+teamstatus 3 3
+teamstatus 4 4
+teamstatus 5 5
+minrank 1 1
+maxrank 1 5
+maxrank 2 5
+account 1 1
+account 2 1
+submitcount 1 1
+submitcount 2 1
+submitcount 9 13
+submitcount 10 13
+teamcount 1 1
+teamcount 2 1
+teamcount 3 2
+teamcount 10 1
+teamstatus 10 3
+teamstatus 1 2
+teamstatus 5 1
