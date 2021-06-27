@@ -35,7 +35,15 @@ constexpr int N = 1e5 + 10;
 int n; 
 
 void run() {
-
+	int x;
+	rd(x);
+	vector <int> vec(6, 0);
+	for (int i = 0; i < 6; ++i) {
+		vec[i] = x % 10;
+		x /= 10;
+	}
+	if (vec[0] + vec[1] + vec[2] == vec[3] + vec[4] + vec[5]) pt("You are lucky!");
+	else pt("Wish you good luck.");
 }
 
 int main() {
@@ -44,10 +52,10 @@ int main() {
 	cout << fixed << setprecision(20);
 	int _T = nextInt();
 	while (_T--) run(); 
-//  for (int kase = 1; kase <= _T; ++kase) {
-//      cout << "Case #" << kase << ": ";
-//      run();
-//  }
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

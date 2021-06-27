@@ -35,19 +35,26 @@ constexpr int N = 1e5 + 10;
 int n; 
 
 void run() {
-
+	db a, b;
+	rd(a, b);
+	b *= b;
+	db x = a * 1.0 / b;
+	pt(x);
+	if (x > 25) pt("PANG");
+	else pt("Hai Xing");
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
-	cout << fixed << setprecision(20);
-	int _T = nextInt();
+	cout << fixed << setprecision(1);
+	int _T = 1;
+	//nextInt();
 	while (_T--) run(); 
-//  for (int kase = 1; kase <= _T; ++kase) {
-//      cout << "Case #" << kase << ": ";
-//      run();
-//  }
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

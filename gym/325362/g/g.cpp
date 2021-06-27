@@ -34,16 +34,25 @@ inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 
 constexpr int N = 1e5 + 10; 
 int n; 
 
-void run() {
-
+int run() {
+    int a[2] = {0};
+    rd(n);
+    for (int i = 1; i <= n; ++i) {
+        int x = nextInt();
+        ++a[x % 2];
+    }
+    for (int i = 0; ; ++i) {
+        --a[i % 2];
+        if (a[0] <= 0 && a[1] <= 0) return i + 1;
+    }
 }
 
 int main() {
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
-	int _T = nextInt();
-	while (_T--) run(); 
+	int _T = 1;
+	while (_T--) pt(run()); 
 //  for (int kase = 1; kase <= _T; ++kase) {
 //      cout << "Case #" << kase << ": ";
 //      run();

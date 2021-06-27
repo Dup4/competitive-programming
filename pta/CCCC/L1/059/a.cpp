@@ -32,10 +32,43 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+
+bool equ(string s, string t) {
+	if (SZ(s) < SZ(t)) return false;
+	for (int i = 0; i < SZ(t); ++i) {
+		if (s.back() != t[i]) return false;
+		s.pop_back();
+	}
+	return true;
+}
+
+bool ok(string s) {
+	if (SZ(s) < 6) return false;
+	s.pop_back();
+	if (!equ(s, "gno")) return false;
+	while (1) {
+		char ch = s.back();
+		s.pop_back();
+		if (ch == ',') break;
+	}
+	if (!equ(s, "gno")) return false;
+	return true;
+}
 
 void run() {
-
+	string s;
+	getline(cin, s);
+	if (ok(s)) {
+		int cnt = 0;
+		while (cnt < 3) {
+			if (s.back() == ' ') ++cnt;
+			s.pop_back(); 
+		}	
+		s += " qiao ben zhong.";
+		cout << s << endl;
+	} else {
+		pt("Skipped");
+	}
 }
 
 int main() {
@@ -43,11 +76,13 @@ int main() {
 	cin.tie(nullptr); cout.tie(nullptr);
 	cout << fixed << setprecision(20);
 	int _T = nextInt();
+	string s;
+	getline(cin, s);
 	while (_T--) run(); 
-//  for (int kase = 1; kase <= _T; ++kase) {
-//      cout << "Case #" << kase << ": ";
-//      run();
-//  }
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

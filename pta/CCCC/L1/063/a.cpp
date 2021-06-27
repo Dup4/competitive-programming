@@ -35,7 +35,19 @@ constexpr int N = 1e5 + 10;
 int n; 
 
 void run() {
-
+	int a, b, c;
+	rd(a, b, c);
+	int _b[2] = {129, 130};
+	int _c[2] = {25, 27};
+	string res = "";
+	if (b < _b[a]) res += "duo chi yu!";
+	else if (b == _b[a]) res += "wan mei!";
+	else res += "ni li hai!";
+	res += " ";
+	if (c < _c[a]) res += "duo chi rou!";
+	else if (c == _c[a]) res += "wan mei!";
+	else res += "shao chi rou!";
+	cout << res << endl;
 }
 
 int main() {
@@ -44,10 +56,10 @@ int main() {
 	cout << fixed << setprecision(20);
 	int _T = nextInt();
 	while (_T--) run(); 
-//  for (int kase = 1; kase <= _T; ++kase) {
-//      cout << "Case #" << kase << ": ";
-//      run();
-//  }
+//    for (int kase = 1; kase <= _T; ++kase) {
+//        cout << "Case #" << kase << ": ";
+//        run();
+//    }
 //	while (cin >> n) run();
 //	run();
 	return 0;

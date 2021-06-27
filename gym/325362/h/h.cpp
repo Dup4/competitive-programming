@@ -32,10 +32,21 @@ void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); 
 inline ll qpow(ll base, ll n) { assert(n >= 0); ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
 //head
 constexpr int N = 1e5 + 10; 
-int n; 
+ll n; 
+
+// g(n) = g(n - 1) + f(n - 1)
+// f(n) = f(n - 1) + g(n)
 
 void run() {
-
+    rd(n);
+    vector <ll> f(n + 1), g(n + 1);
+    f[1] = 1;
+    g[1] = 0;
+    for (int i = 2; i <= n; ++i) {
+        g[i] = g[i - 1] + f[i - 1];
+        f[i] = f[i - 1] + g[i];
+    }
+    pt(f[n]);
 }
 
 int main() {
