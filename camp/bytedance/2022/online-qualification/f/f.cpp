@@ -13,183 +13,148 @@ using pII = pair<int, int>;
 using pLL = pair<ll, ll>;
 constexpr int mod = 1e9 + 7;
 template <class T1, class T2>
-inline void chadd(T1 &x, T2 y, int Mod = mod)
-{
-	x += y;
-	while (x >= Mod)
-		x -= Mod;
-	while (x < 0)
-		x += Mod;
+inline void chadd(T1 &x, T2 y, int Mod = mod) {
+    x += y;
+    while (x >= Mod) x -= Mod;
+    while (x < 0) x += Mod;
 }
 template <class T1, class T2>
-inline void chmax(T1 &x, T2 y)
-{
-	if (x < y)
-		x = y;
+inline void chmax(T1 &x, T2 y) {
+    if (x < y)
+        x = y;
 }
 template <class T1, class T2>
-inline void chmin(T1 &x, T2 y)
-{
-	if (x > y)
-		x = y;
+inline void chmin(T1 &x, T2 y) {
+    if (x > y)
+        x = y;
 }
-inline int nextInt()
-{
-	int x;
-	cin >> x;
-	return x;
+inline int nextInt() {
+    int x;
+    cin >> x;
+    return x;
 }
 void rd() {}
 template <class T, class... Ts>
-void rd(T &arg, Ts &...args)
-{
-	cin >> arg;
-	rd(args...);
+void rd(T &arg, Ts &...args) {
+    cin >> arg;
+    rd(args...);
 }
-#define dbg(x...)                         \
-	do                                      \
-	{                                       \
-		cout << "\033[32;1m" << #x << " -> "; \
-		err(x);                               \
-	} while (0)
-void err()
-{
-	cout << "\033[39;0m" << endl;
+#define dbg(x...)                             \
+    do {                                      \
+        cout << "\033[32;1m" << #x << " -> "; \
+        err(x);                               \
+    } while (0)
+void err() {
+    cout << "\033[39;0m" << endl;
 }
 template <class T, class... Ts>
-void err(const T &arg, const Ts &...args)
-{
-	cout << arg << ' ';
-	err(args...);
+void err(const T &arg, const Ts &...args) {
+    cout << arg << ' ';
+    err(args...);
 }
 template <template <typename...> class T, typename t, typename... A>
-void err(const T<t> &arg, const A &...args)
-{
-	for (auto &v : arg)
-		cout << v << ' ';
-	err(args...);
+void err(const T<t> &arg, const A &...args) {
+    for (auto &v : arg) cout << v << ' ';
+    err(args...);
 }
-void ptt() { cout << endl; }
-template <class T, class... Ts>
-void ptt(const T &arg, const Ts &...args)
-{
-	cout << ' ' << arg;
-	ptt(args...);
+void ptt() {
+    cout << endl;
 }
 template <class T, class... Ts>
-void pt(const T &arg, const Ts &...args)
-{
-	cout << arg;
-	ptt(args...);
+void ptt(const T &arg, const Ts &...args) {
+    cout << ' ' << arg;
+    ptt(args...);
+}
+template <class T, class... Ts>
+void pt(const T &arg, const Ts &...args) {
+    cout << arg;
+    ptt(args...);
 }
 void pt() {}
 template <template <typename...> class T, typename t, typename... A>
-void pt(const T<t> &arg, const A &...args)
-{
-	for (int i = 0, sze = arg.size(); i < sze; ++i)
-		cout << arg[i] << " \n"[i == sze - 1];
-	pt(args...);
+void pt(const T<t> &arg, const A &...args) {
+    for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1];
+    pt(args...);
 }
-inline ll qpow(ll base, ll n)
-{
-	assert(n >= 0);
-	ll res = 1;
-	while (n)
-	{
-		if (n & 1)
-			res = res * base % mod;
-		base = base * base % mod;
-		n >>= 1;
-	}
-	return res;
+inline ll qpow(ll base, ll n) {
+    assert(n >= 0);
+    ll res = 1;
+    while (n) {
+        if (n & 1)
+            res = res * base % mod;
+        base = base * base % mod;
+        n >>= 1;
+    }
+    return res;
 }
-//head
+// head
 constexpr int N = 5e5 + 10;
 int n;
 
-struct Trie
-{
-	struct node
-	{
-		int son[2];
-		int tot;
-		node()
-		{
-			son[0] = son[1] = -1;
-			tot = 0;
-		}
-	} t[N * 20];
+struct Trie {
+    struct node {
+        int son[2];
+        int tot;
+        node() {
+            son[0] = son[1] = -1;
+            tot = 0;
+        }
+    } t[N * 20];
 
-	int rt;
+    int rt;
 
-	void Init()
-	{
-	}
+    void Init() {}
 
-	void Insert(int x, int y)
-	{
-	}
+    void Insert(int x, int y) {}
 
-	void Delete(int x)
-	{
-	}
+    void Delete(int x) {}
 
-	int Query(int x)
-	{
-	}
+    int Query(int x) {}
 } trie;
 
-void run()
-{
-	cin >> n;
+void run() {
+    cin >> n;
 
-	deque<int> dq;
+    deque<int> dq;
 
-	int sum_xor = 0;
+    int sum_xor = 0;
 
-	for (int i = 1; i <= n; ++i)
-	{
-		int op, x;
-		cin >> op;
-		if (op == 1 || op == 2 || op == 5)
-		{
-			cin >> x;
-		}
+    for (int i = 1; i <= n; ++i) {
+        int op, x;
+        cin >> op;
+        if (op == 1 || op == 2 || op == 5) {
+            cin >> x;
+        }
 
-		if (op == 1)
-		{
-			dq.push_back(x);
-		}
+        if (op == 1) {
+            dq.push_back(x);
+        }
 
-		if (op == 2)
-		{
-			dq.push_front(x);
-		}
+        if (op == 2) {
+            dq.push_front(x);
+        }
 
-		if (op == 3)
-		{
-			dq.pop_back();
-		}
+        if (op == 3) {
+            dq.pop_back();
+        }
 
-		if (op == 4)
-		{
-			dq.pop_front();
-		}
-	}
+        if (op == 4) {
+            dq.pop_front();
+        }
+    }
 }
 
-int main()
-{
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr);
-	cout.tie(nullptr);
-	cout << fixed << setprecision(20);
-	run();
-	//  for (int kase = 1; kase <= _T; ++kase) {
-	//      cout << "Case #" << kase << ": ";
-	//      run();
-	//  }
-	//	while (cin >> n) run();
-	//	run();
-	return 0;
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    cout << fixed << setprecision(20);
+    run();
+    //  for (int kase = 1; kase <= _T; ++kase) {
+    //      cout << "Case #" << kase << ": ";
+    //      run();
+    //  }
+    //	while (cin >> n) run();
+    //	run();
+    return 0;
 }
