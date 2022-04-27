@@ -4,9 +4,10 @@ using namespace std;
 typedef long long ll;
 
 bool f(ll a, ll b, ll c, ll n) {
-    if (!a) return (((n + 1) & (b / c)) & 1ll) > 0;
+    if (!a)
+        return (((n + 1) & (b / c)) & 1ll) > 0;
     if (a >= c || b >= c) {
-        ll temp = (n & 1ll) ? (n + 1) / 2 * n : n / 2 * (n + 1);//先除后乘防止溢出
+        ll temp = (n & 1ll) ? (n + 1) / 2 * n : n / 2 * (n + 1);  //先除后乘防止溢出
         return ((a / c * temp + (b / c) * (n + 1) + f(a % c, b % c, c, n)) & 1ll) > 0;
     } else {
         ll m = (a * n + b) / c;

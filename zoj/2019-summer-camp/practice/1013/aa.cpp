@@ -4,7 +4,9 @@ using namespace std;
 const int MAXN = 100005;
 const long long INF = LLONG_MAX >> 1;
 
-long long gety(long long x, long long k, long long d) { return k * x + d; }
+long long gety(long long x, long long k, long long d) {
+    return k * x + d;
+}
 
 struct SegT {
     struct Node {
@@ -14,9 +16,13 @@ struct SegT {
 
         Node() {}
         Node(int pos) : lc(NULL), rc(NULL), l(pos), r(pos), k(0), d(INF), min(INF), minid(-1), rl(pos), rr(pos) {}
-        Node(Node *lc, Node *rc) : lc(lc), rc(rc), l(lc->l), r(rc->r), k(0), d(INF) { maintain(); }
+        Node(Node *lc, Node *rc) : lc(lc), rc(rc), l(lc->l), r(rc->r), k(0), d(INF) {
+            maintain();
+        }
 
-        long long gety(long long x) { return x * k + d; }
+        long long gety(long long x) {
+            return x * k + d;
+        }
 
         void maintain() {
             rl = (lc->rl != -1 ? lc->rl : rc->rl);
@@ -71,7 +77,8 @@ struct SegT {
         }
 
         void update(int l, int r, long long k, long long d) {
-            if (l > this->r || this->l > r) return;
+            if (l > this->r || this->l > r)
+                return;
             if (l <= this->l && this->r <= r) {
                 update(k, d);
                 return;
@@ -93,10 +100,11 @@ struct SegT {
             (pos <= mid ? lc : rc)->erase(pos);
             maintain();
         }
-    } *root, _pool[MAXN << 1], *_curr;
+    } * root, _pool[MAXN << 1], *_curr;
 
     Node *build(int l, int r) {
-        if (l == r) return new (_curr++) Node(l);
+        if (l == r)
+            return new (_curr++) Node(l);
         int mid = l + ((r - l) >> 1);
         return new (_curr++) Node(build(l, mid), build(mid + 1, r));
     }
@@ -106,9 +114,13 @@ struct SegT {
         root = build(1, n);
     }
 
-    void update(int l, int r, long long k, long long d) { root->update(l, r, k, d); }
+    void update(int l, int r, long long k, long long d) {
+        root->update(l, r, k, d);
+    }
 
-    void erase(int pos) { root->erase(pos); }
+    void erase(int pos) {
+        root->erase(pos);
+    }
 } segT;
 
 struct Edge {
@@ -134,17 +146,18 @@ int main() {
     std::fill(dist + 1, dist + n + 1, -1);
     for (int _ = 0; _ < n; _++) {
         int u = segT.root->minid;
-        if (u == -1) break;
-		cout << u << "\n";
+        if (u == -1)
+            break;
+        cout << u << "\n";
         dist[u] = segT.root->min;
-        if (dist[u] >= INF) break;
-        for (const Edge &e : G[u])
-            segT.update(e.l, e.r, e.k, e.d + dist[u]);
+        if (dist[u] >= INF)
+            break;
+        for (const Edge &e : G[u]) segT.update(e.l, e.r, e.k, e.d + dist[u]);
         segT.erase(u);
     }
 
     for (int i = 1; i <= n; i++) printf("%lld ", dist[i]);
     puts("");
-    
+
     return 0;
 }

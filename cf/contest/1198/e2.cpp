@@ -1,44 +1,44 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
+
 #define INF 0x3f3f3f3f
 #define N 1010
 #define M 100010
- 
+
 struct Edge {
     int to, flow, nxt;
- 
+
     Edge() {}
- 
+
     Edge(int to, int nxt, int flow) : to(to), nxt(nxt), flow(flow) {}
 } edge[M << 1];
- 
+
 struct node {
     int x[2], y[2];
- 
+
     void input() {
         scanf("%d %d %d %d", x, y, x + 1, y + 1);
         --x[0], --y[0];
     }
 } a[N];
- 
+
 int head[N], tot;
 int dep[N];
 int S, T, n, m;
 int X[N], Y[N];
- 
+
 void Init() {
     memset(head, -1, sizeof head);
     tot = 0;
 }
- 
+
 void addedge(int u, int v, int w, int rw = 0) {
     edge[tot] = Edge(v, head[u], w);
     head[u] = tot++;
     edge[tot] = Edge(u, head[v], rw);
     head[v] = tot++;
 }
- 
+
 bool BFS() {
     memset(dep, -1, sizeof dep);
     queue<int> q;
@@ -56,7 +56,7 @@ bool BFS() {
     }
     return dep[T] >= 0;
 }
- 
+
 int DFS(int u, int f) {
     if (u == T || f == 0) {
         return f;
@@ -73,10 +73,11 @@ int DFS(int u, int f) {
             }
         }
     }
-    if (!used) dep[u] = -1;
+    if (!used)
+        dep[u] = -1;
     return used;
 }
- 
+
 int solve() {
     int ans = 0;
     while (BFS()) {
@@ -84,9 +85,9 @@ int solve() {
     }
     return ans;
 }
- 
+
 int main() {
-//    freopen("input.txt", "r", stdin);
+    //    freopen("input.txt", "r", stdin);
     Init();
     scanf("%d %d", &n, &m);
     for (int i = 1; i <= m; ++i) {
@@ -113,7 +114,7 @@ int main() {
     }
     for (int i = 1; i < X[0]; ++i) {
         for (int j = 1; j < Y[0]; ++j) {
-            bool flag = false;  
+            bool flag = false;
             for (int k = 1; k <= m; ++k) {
                 if (a[k].x[0] <= X[i] && X[i + 1] <= a[k].x[1] && a[k].y[0] <= Y[j] && Y[j + 1] <= a[k].y[1]) {
                     flag = true;
@@ -121,7 +122,7 @@ int main() {
                 }
             }
             if (flag) {
-			//	cout << i << " " << X[0] + j << endl;
+                //	cout << i << " " << X[0] + j << endl;
                 addedge(i, X[0] + j, INF);
             }
         }

@@ -4,29 +4,29 @@ const double PI = 3.14159;
 
 #define db double
 class Circle {
-public :
-	db r;
-	Circle(db r) {
-		this->r = r;
-	}
-	bool operator < (const Circle &other) const {
-		return r < other.r;
-	}
-	bool operator <= (const Circle &other) const {
-		return r <= other.r;
-	}
-	bool operator == (const Circle &other) const {
-		return r == other.r;
-	}
-	bool operator != (const Circle &other) const {
-		return r != other.r;
-	}
-	bool operator > (const Circle &other) const {
-		return r > other.r;
-	}
-	bool operator >= (const Circle &other) const {
-		return r >= other.r;
-	}
+public:
+    db r;
+    Circle(db r) {
+        this->r = r;
+    }
+    bool operator<(const Circle &other) const {
+        return r < other.r;
+    }
+    bool operator<=(const Circle &other) const {
+        return r <= other.r;
+    }
+    bool operator==(const Circle &other) const {
+        return r == other.r;
+    }
+    bool operator!=(const Circle &other) const {
+        return r != other.r;
+    }
+    bool operator>(const Circle &other) const {
+        return r > other.r;
+    }
+    bool operator>=(const Circle &other) const {
+        return r >= other.r;
+    }
 };
 
 int main() {

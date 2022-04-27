@@ -3,93 +3,158 @@
 #include <bits/stdc++.h>
 #define fi first
 #define se second
-#define endl "\n" 
+#define endl "\n"
 using namespace std;
 using db = double;
 using ll = long long;
-using ull = unsigned long long; 
-using pII = pair <int, int>;
-using pLL = pair <ll, ll>;
+using ull = unsigned long long;
+using pII = pair<int, int>;
+using pLL = pair<ll, ll>;
 constexpr int mod = 1e9 + 7;
-template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; while (x >= mod) x -= mod; while (x < 0) x += mod; } 
-template <class T1, class T2> inline void chmax(T1 &x, T2 y) { if (x < y) x = y; }
-template <class T1, class T2> inline void chmin(T1 &x, T2 y) { if (x > y) x = y; }
-inline int rd() { int x; cin >> x; return x; }
-template <class T> inline void rd(T &x) { cin >> x; }
-template <class T> inline void rd(vector <T> &vec) { for (auto &it : vec) cin >> it; }  
-#define dbg(x...) do { cout << "\033[32;1m" << #x << " -> "; err(x); } while (0) 
-void err() { cout << "\033[39;0m" << endl; } 
-template <class T, class... Ts> void err(const T& arg, const Ts&... args) { cout << arg << ' '; err(args...); }
-template <template<typename...> class T, typename t, typename... A> 
-void err(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << ' '; err(args...); }
-void ptt() { cout << endl; }
-template <class T, class... Ts> void ptt(const T& arg, const Ts&... args) { cout << ' ' << arg; ptt(args...); }
-template <class T, class... Ts> void pt(const T& arg, const Ts&... args) { cout << arg; ptt(args...); }
+template <class T1, class T2>
+inline void chadd(T1 &x, T2 y) {
+    x += y;
+    while (x >= mod) x -= mod;
+    while (x < 0) x += mod;
+}
+template <class T1, class T2>
+inline void chmax(T1 &x, T2 y) {
+    if (x < y)
+        x = y;
+}
+template <class T1, class T2>
+inline void chmin(T1 &x, T2 y) {
+    if (x > y)
+        x = y;
+}
+inline int rd() {
+    int x;
+    cin >> x;
+    return x;
+}
+template <class T>
+inline void rd(T &x) {
+    cin >> x;
+}
+template <class T>
+inline void rd(vector<T> &vec) {
+    for (auto &it : vec) cin >> it;
+}
+#define dbg(x...)                             \
+    do {                                      \
+        cout << "\033[32;1m" << #x << " -> "; \
+        err(x);                               \
+    } while (0)
+void err() {
+    cout << "\033[39;0m" << endl;
+}
+template <class T, class... Ts>
+void err(const T &arg, const Ts &...args) {
+    cout << arg << ' ';
+    err(args...);
+}
+template <template <typename...> class T, typename t, typename... A>
+void err(const T<t> &arg, const A &...args) {
+    for (auto &v : arg) cout << v << ' ';
+    err(args...);
+}
+void ptt() {
+    cout << endl;
+}
+template <class T, class... Ts>
+void ptt(const T &arg, const Ts &...args) {
+    cout << ' ' << arg;
+    ptt(args...);
+}
+template <class T, class... Ts>
+void pt(const T &arg, const Ts &...args) {
+    cout << arg;
+    ptt(args...);
+}
 void pt() {}
-template <template<typename...> class T, typename t, typename... A>
-void pt(const T <t> &arg, const A&... args) { for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1]; pt(args...); }
-ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
-inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-//head
+template <template <typename...> class T, typename t, typename... A>
+void pt(const T<t> &arg, const A &...args) {
+    for (int i = 0, sze = arg.size(); i < sze; ++i) cout << arg[i] << " \n"[i == sze - 1];
+    pt(args...);
+}
+ll gcd(ll a, ll b) {
+    return b ? gcd(b, a % b) : a;
+}
+inline ll qpow(ll base, ll n) {
+    ll res = 1;
+    while (n) {
+        if (n & 1)
+            res = res * base % mod;
+        base = base * base % mod;
+        n >>= 1;
+    }
+    return res;
+}
+// head
 constexpr int N = 2e5 + 10;
-int n, m, K, T, a[N]; 
+int n, m, K, T, a[N];
 struct E {
-	int l, r, d;
-	E() {}
-	void scan() { cin >> l >> r >> d; --l; }
-	bool operator < (const E &other) const {
-		if (l != other.l)
-			return l < other.l;
-		return r < other.r;
-	}
-}e[N];
+    int l, r, d;
+    E() {}
+    void scan() {
+        cin >> l >> r >> d;
+        --l;
+    }
+    bool operator<(const E &other) const {
+        if (l != other.l)
+            return l < other.l;
+        return r < other.r;
+    }
+} e[N];
 bool check(int x) {
-	vector <pII> vec;
-	for (int i = 1; i <= K; ++i) {
-		if (a[x] < e[i].d) {
-			int l = e[i].l, r = e[i].r;
-			if (vec.empty() || l > vec.back().se) {
-				vec.push_back(pII(l, r));
-			} else {
-				chmax(vec.back().se, r);
-			}
-		}
-	}
-	vec.push_back(pII(m + 1, m + 1));
-	int time = 0;
-	int pre = 0;
-	for (auto &it : vec) {
-		time += it.fi - pre;
-		time += (it.se - it.fi) * 3;
-		pre = it.se;
-		if (time > T) return false;
-	}
-//	dbg(x, a[x], time);
-	return time <= T;
+    vector<pII> vec;
+    for (int i = 1; i <= K; ++i) {
+        if (a[x] < e[i].d) {
+            int l = e[i].l, r = e[i].r;
+            if (vec.empty() || l > vec.back().se) {
+                vec.push_back(pII(l, r));
+            } else {
+                chmax(vec.back().se, r);
+            }
+        }
+    }
+    vec.push_back(pII(m + 1, m + 1));
+    int time = 0;
+    int pre = 0;
+    for (auto &it : vec) {
+        time += it.fi - pre;
+        time += (it.se - it.fi) * 3;
+        pre = it.se;
+        if (time > T)
+            return false;
+    }
+    //	dbg(x, a[x], time);
+    return time <= T;
 }
 void run() {
-	for (int i = 1; i <= n; ++i) a[i] = rd();
-	for (int i = 1; i <= K; ++i) e[i].scan();
-	sort(e + 1, e + 1 + K);
-	sort(a + 1, a + 1 + n);
-	reverse(a + 1, a + 1 + n);
-	int l = 1, r = n, res = 0;
-	while (r - l >= 0) {
-		int mid = (l + r) >> 1;
-		if (check(mid)) {
-			res = mid;
-			l = mid + 1;
-		} else {
-			r = mid - 1;
-		}
-	}
-	pt(res);
+    for (int i = 1; i <= n; ++i) a[i] = rd();
+    for (int i = 1; i <= K; ++i) e[i].scan();
+    sort(e + 1, e + 1 + K);
+    sort(a + 1, a + 1 + n);
+    reverse(a + 1, a + 1 + n);
+    int l = 1, r = n, res = 0;
+    while (r - l >= 0) {
+        int mid = (l + r) >> 1;
+        if (check(mid)) {
+            res = mid;
+            l = mid + 1;
+        } else {
+            r = mid - 1;
+        }
+    }
+    pt(res);
 }
 
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr); cout.tie(nullptr);
-	cout << fixed << setprecision(20);
-	while (cin >> n >> m >> K >> T) run();
-	return 0;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    cout << fixed << setprecision(20);
+    while (cin >> n >> m >> K >> T) run();
+    return 0;
 }

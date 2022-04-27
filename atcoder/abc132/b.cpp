@@ -5,19 +5,19 @@ using namespace std;
 int n, a[N];
 
 int main() {
-	while (scanf("%d", &n) != EOF) {
-		for (int i = 1; i <= n; ++i) {
-			scanf("%d", a + i);
-		}
-		int res = 0;
-		for (int i = 2; i < n; ++i) {
-			int f = a[i] < a[i - 1];
-			int g = a[i] < a[i + 1];
-			if (f ^ g) {
-				++res;
-			}
-		}
-		printf("%d\n", res);
-	}
-	return 0;
+    while (scanf("%d", &n) != EOF) {
+        for (int i = 1; i <= n; ++i) {
+            scanf("%d", a + i);
+        }
+        int res = 0;
+        for (int i = 2; i < n; ++i) {
+            int f = a[i] < a[i - 1];
+            int g = a[i] < a[i + 1];
+            if (f ^ g) {
+                ++res;
+            }
+        }
+        printf("%d\n", res);
+    }
+    return 0;
 }

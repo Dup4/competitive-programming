@@ -11,17 +11,23 @@ int a[N];
 int vis[N];
 
 bool ok(int x, int y) {
-	if (x > y) swap(x, y);
-	if (x <= n && y <= n) {
-		if (x + 1 == y) return 1;
-	} else if (x > n) {
-		if (x + 1 == y) return 1;
-	} else {
-		if (x + n == y) return 1;
-		if (x - 1 + n == y) return 1;
-		if (x + 1 + n == y) return 1;
-	}
-	return 0;
+    if (x > y)
+        swap(x, y);
+    if (x <= n && y <= n) {
+        if (x + 1 == y)
+            return 1;
+    } else if (x > n) {
+        if (x + 1 == y)
+            return 1;
+    } else {
+        if (x + n == y)
+            return 1;
+        if (x - 1 + n == y)
+            return 1;
+        if (x + 1 + n == y)
+            return 1;
+    }
+    return 0;
 }
 
 int main() {

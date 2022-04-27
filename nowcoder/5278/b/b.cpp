@@ -21,8 +21,12 @@ struct node {
     int stu;
     db t;
 
-    void input() { scanf("%d %d %lf", &date, &stu, &t); }
-    void output() { printf("%8d %8d %.1f\n", date, stu, t); }
+    void input() {
+        scanf("%d %d %lf", &date, &stu, &t);
+    }
+    void output() {
+        printf("%8d %8d %.1f\n", date, stu, t);
+    }
 
     bool operator<(const node& other) const {
         if (date != other.date) {

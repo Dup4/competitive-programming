@@ -5,7 +5,7 @@ int n, m;
 int dp[N][N];
 char s[N], t[N];
 
-//dp[i][j]表示s的前i个字符和t的前j个字符的编辑距离
+// dp[i][j]表示s的前i个字符和t的前j个字符的编辑距离
 int main() {
     while (scanf("%s%s", s + 1, t + 1) != EOF) {
         int n = (int)strlen(s + 1), m = (int)strlen(t + 1);

@@ -3,25 +3,25 @@ using namespace std;
 #define ll long long
 const ll INFLL = 0x3f3f3f3f3f3f3f3f;
 struct Dinic {
-	static const int M = 2e6 + 10;
-	static const int N = 1e5 + 10;
+    static const int M = 2e6 + 10;
+    static const int N = 1e5 + 10;
     struct Edge {
         int to, nxt;
         ll flow;
         Edge() {}
         Edge(int to, int nxt, ll flow) : to(to), nxt(nxt), flow(flow) {}
     } edge[M];
-	int S, T;
+    int S, T;
     int head[N], tot;
     int dep[N];
     void init() {
         memset(head, -1, sizeof head);
         tot = 0;
     }
-	void set(int S, int T) {
-		this->S = S;
-		this->T = T;
-	}
+    void set(int S, int T) {
+        this->S = S;
+        this->T = T;
+    }
     void addedge(int u, int v, int w, int rw = 0) {
         edge[tot] = Edge(v, head[u], w);
         head[u] = tot++;
@@ -46,7 +46,8 @@ struct Dinic {
         return dep[T] >= 0;
     }
     ll DFS(int u, ll f) {
-        if (u == T || f == 0) return f;
+        if (u == T || f == 0)
+            return f;
         ll w, used = 0;
         for (int i = head[u]; ~i; i = edge[i].nxt) {
             if (edge[i].flow && dep[edge[i].to] == dep[u] + 1) {
@@ -54,10 +55,12 @@ struct Dinic {
                 edge[i].flow -= w;
                 edge[i ^ 1].flow += w;
                 used += w;
-                if (used == f) return f;
+                if (used == f)
+                    return f;
             }
         }
-        if (!used) dep[u] = -1;
+        if (!used)
+            dep[u] = -1;
         return used;
     }
     ll solve() {
@@ -67,40 +70,43 @@ struct Dinic {
         }
         return ans;
     }
-}dinic;
+} dinic;
 const int N = 3e3 + 10;
 int n, a[N];
-int gcd(int a, int b) { return b ? gcd(b, a % b) : a; }
+int gcd(int a, int b) {
+    return b ? gcd(b, a % b) : a;
+}
 inline bool issqr(ll x) {
-	ll mid = sqrt(x);
-	return mid * mid == x;
+    ll mid = sqrt(x);
+    return mid * mid == x;
 }
 
 int main() {
-	while (scanf("%d", &n) != EOF) {
-		dinic.init();
-		ll tot = 0;
-		int S = n + 1, T = S + 1;
-		dinic.set(S, T);
-		for (int i = 1; i <= n; ++i) {
-			scanf("%d", a + i);
-			tot += a[i];
-			if (a[i] & 1) {
-				dinic.addedge(S, i, a[i]);
-			} else {
-				dinic.addedge(i, T, a[i]);
-			}
-		}
-		for (int i = 1; i <= n; ++i) {
-			for (int j = i + 1; j <= n; ++j) {
-				int u = i, v = j;
-				if (issqr(1ll * a[u] * a[u] + 1ll * a[v] * a[v]) && gcd(a[u], a[v]) == 1) {
-					if (a[v] & 1) swap(u, v);
-					dinic.addedge(u, v, 0x3f3f3f3f);
-				}
-			}
-		}
-		printf("%lld\n", tot - dinic.solve());
-	}
-	return 0;
+    while (scanf("%d", &n) != EOF) {
+        dinic.init();
+        ll tot = 0;
+        int S = n + 1, T = S + 1;
+        dinic.set(S, T);
+        for (int i = 1; i <= n; ++i) {
+            scanf("%d", a + i);
+            tot += a[i];
+            if (a[i] & 1) {
+                dinic.addedge(S, i, a[i]);
+            } else {
+                dinic.addedge(i, T, a[i]);
+            }
+        }
+        for (int i = 1; i <= n; ++i) {
+            for (int j = i + 1; j <= n; ++j) {
+                int u = i, v = j;
+                if (issqr(1ll * a[u] * a[u] + 1ll * a[v] * a[v]) && gcd(a[u], a[v]) == 1) {
+                    if (a[v] & 1)
+                        swap(u, v);
+                    dinic.addedge(u, v, 0x3f3f3f3f);
+                }
+            }
+        }
+        printf("%lld\n", tot - dinic.solve());
+    }
+    return 0;
 }

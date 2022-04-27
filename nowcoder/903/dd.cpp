@@ -2,6 +2,6 @@
 using namespace std;
 
 int main() {
-	printf("%-*s\n", 10, "dss");
-	return 0;
+    printf("%-*s\n", 10, "dss");
+    return 0;
 }

@@ -6,13 +6,13 @@ int n, m;
 char G[N][N];
 
 int main() {
-	int T; scanf("%d", &T);
-	while (T--) {
-		scanf("%d%d", &n, &m);
-		for (int i = 1; i <= n; ++i) {
-			scanf("%s", G[i] + 1);
-		}	
-		
-	}
-	return 0;
+    int T;
+    scanf("%d", &T);
+    while (T--) {
+        scanf("%d%d", &n, &m);
+        for (int i = 1; i <= n; ++i) {
+            scanf("%s", G[i] + 1);
+        }
+    }
+    return 0;
 }

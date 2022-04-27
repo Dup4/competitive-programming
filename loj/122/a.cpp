@@ -12,7 +12,9 @@ struct Xor128 {
         return w = w ^ (w >> 19) ^ (t ^ (t >> 8));
     }
     //手抜き
-    inline unsigned next(unsigned n) { return next() % n; }
+    inline unsigned next(unsigned n) {
+        return next() % n;
+    }
 };
 
 // bottom upなTreap
@@ -24,12 +26,18 @@ template <typename Node>
 struct BottomupTreap {
     Xor128 rng;
     typedef Node *Ref;
-    static int size(Ref t) { return !t ? 0 : t->size; }
+    static int size(Ref t) {
+        return !t ? 0 : t->size;
+    }
 
-    unsigned nextRand() { return rng.next(); }
+    unsigned nextRand() {
+        return rng.next();
+    }
 
 private:
-    bool choiceRandomly(Ref l, Ref r) { return l->priority < r->priority; }
+    bool choiceRandomly(Ref l, Ref r) {
+        return l->priority < r->priority;
+    }
 
 public:
     Ref join(Ref l, Ref r) {
@@ -229,17 +237,31 @@ class EulerTourTreeWithMarks {
     //辺・頂点に対する属性
     std::vector<bool> edgeMark, vertexMark;
 
-    inline int getArcIndex(const Node *a) const { return a - &nodes[0]; }
+    inline int getArcIndex(const Node *a) const {
+        return a - &nodes[0];
+    }
 
-    inline int arc1(int ei) const { return ei; }
-    inline int arc2(int ei) const { return ei + (numVertices() - 1); }
+    inline int arc1(int ei) const {
+        return ei;
+    }
+    inline int arc2(int ei) const {
+        return ei + (numVertices() - 1);
+    }
 
 public:
-    inline int numVertices() const { return firstArc.size(); }
-    inline int numEdges() const { return numVertices() - 1; }
+    inline int numVertices() const {
+        return firstArc.size();
+    }
+    inline int numEdges() const {
+        return numVertices() - 1;
+    }
 
-    inline bool getEdgeMark(int a) const { return a < numEdges() ? edgeMark[a] : false; }
-    inline bool getVertexMark(int v) const { return vertexMark[v]; }
+    inline bool getEdgeMark(int a) const {
+        return a < numEdges() ? edgeMark[a] : false;
+    }
+    inline bool getVertexMark(int v) const {
+        return vertexMark[v];
+    }
 
 private:
     void updateMarks(int a, int v) {
@@ -264,9 +286,15 @@ public:
     public:
         TreeRef() {}
         TreeRef(const Node *ref_) : ref(ref_) {}
-        bool operator==(const TreeRef &that) const { return ref == that.ref; }
-        bool operator!=(const TreeRef &that) const { return ref != that.ref; }
-        bool isIsolatedVertex() const { return ref == NULL; }
+        bool operator==(const TreeRef &that) const {
+            return ref == that.ref;
+        }
+        bool operator!=(const TreeRef &that) const {
+            return ref != that.ref;
+        }
+        bool isIsolatedVertex() const {
+            return ref == NULL;
+        }
     };
 
     void init(int N) {
@@ -408,7 +436,7 @@ public:
 private:
     // callback : TreeEdgeIndex×2 -> Bool
     //引数は頂点をそこからのincident arcで示し、"(正方向 ? 0 : N-1) +
-    //treeEdgeIndex"を表す。方向はv,wの大小で処理すればよい
+    // treeEdgeIndex"を表す。方向はv,wの大小で処理すればよい
     // callbackは継続するかどうかをboolで返す。最後まで列挙し終えたかどうかを返す。
     template <int Mark, typename Callback>
     bool enumMarks(TreeRef tree, Callback callback) const {
@@ -455,9 +483,9 @@ public:
 //
 // References
 //・Holm, Jacob, Kristian De Lichtenberg, and Mikkel Thorup. "Poly-logarithmic deterministic fully-dynamic
-//algorithms for connectivity, minimum spanning tree, 2-edge, and biconnectivity." Journal of the ACM
+// algorithms for connectivity, minimum spanning tree, 2-edge, and biconnectivity." Journal of the ACM
 //(JACM) 48.4 (2001): 723-760. ・Iyer, Raj, et al. "An experimental study of polylogarithmic, fully dynamic,
-//connectivity algorithms." Journal of Experimental Algorithmics (JEA) 6 (2001): 4.
+// connectivity algorithms." Journal of Experimental Algorithmics (JEA) 6 (2001): 4.
 
 class HolmDeLichtenbergThorup {
     typedef HolmDeLichtenbergThorup This;
@@ -485,9 +513,15 @@ class HolmDeLichtenbergThorup {
     std::vector<bool> edgeVisited;
     std::vector<int> visitedEdges;  // : [EdgeIndex | TreeEdgeIndex]
 
-    int arc1(int ei) const { return ei; }
-    int arc2(int ei) const { return numMaxEdges() + ei; }
-    int arcEdge(int i) const { return i >= numMaxEdges() ? i - numMaxEdges() : i; }
+    int arc1(int ei) const {
+        return ei;
+    }
+    int arc2(int ei) const {
+        return numMaxEdges() + ei;
+    }
+    int arcEdge(int i) const {
+        return i >= numMaxEdges() ? i - numMaxEdges() : i;
+    }
 
     bool replace(int lv, int v, int w) {
         Forest &forest = forests[lv];
@@ -573,7 +607,9 @@ class HolmDeLichtenbergThorup {
             return true;
         }
     };
-    void enumLevelTreeEdges(int ti) { visitedEdges.push_back(ti); }
+    void enumLevelTreeEdges(int ti) {
+        visitedEdges.push_back(ti);
+    }
 
     //孤立点の時特別な処理をするなどしなければいけないのでヘルパー
     template <typename Callback>
@@ -590,8 +626,7 @@ class HolmDeLichtenbergThorup {
         int lv;
         Callback callback;
 
-        EnumIncidentArcs(This *thisp_, int lv_, Callback callback_)
-            : thisp(thisp_), lv(lv_), callback(callback_) {}
+        EnumIncidentArcs(This *thisp_, int lv_, Callback callback_) : thisp(thisp_), lv(lv_), callback(callback_) {}
 
         inline bool operator()(int tii) const {
             return thisp->enumIncidentArcsWithTreeArc(tii, lv, callback);
@@ -625,8 +660,7 @@ class HolmDeLichtenbergThorup {
     struct FindReplacementEdge {
         TreeRef uRoot;
         int *replacementEdge;
-        FindReplacementEdge(TreeRef uRoot_, int *replacementEdge_)
-            : uRoot(uRoot_), replacementEdge(replacementEdge_) {}
+        FindReplacementEdge(TreeRef uRoot_, int *replacementEdge_) : uRoot(uRoot_), replacementEdge(replacementEdge_) {}
 
         inline bool operator()(This *thisp, int a) const {
             return thisp->findReplacementEdge(a, uRoot, replacementEdge);
@@ -717,8 +751,12 @@ class HolmDeLichtenbergThorup {
 public:
     HolmDeLichtenbergThorup() : numVertices_m(0), numSamplings(0) {}
 
-    int numVertices() const { return numVertices_m; }
-    int numMaxEdges() const { return edgeLevel.size(); }
+    int numVertices() const {
+        return numVertices_m;
+    }
+    int numMaxEdges() const {
+        return edgeLevel.size();
+    }
 
     void init(int N, int M) {
         numVertices_m = N;
@@ -807,37 +845,42 @@ public:
         return splitted;
     }
 
-    bool isConnected(int v, int w) const { return forests[0].isConnected(v, w); }
+    bool isConnected(int v, int w) const {
+        return forests[0].isConnected(v, w);
+    }
 };
 typedef HolmDeLichtenbergThorup FullyDynamicConnectivity;
-map <int, map<int, int>> mp;
+map<int, map<int, int>> mp;
 
 int main() {
-	int n, m;
-	scanf("%d%d", &n, &m);
-	mp.clear();
-	FullyDynamicConnectivity fdc;
-	fdc.init(n + 1, m + 1);
-	int posE = 0;
-	int lstans = 0;
-	for (int i = 1, op, u, v, _u, _v; i <= m; ++i) {
-		scanf("%d%d%d", &op, &u, &v);
-		u ^= lstans;
-		v ^= lstans;
-		_u = u, _v = v;
-		if (u < v) swap(u, v);
-		if (op == 0) {
-			mp[u][v] = ++posE;
-			fdc.insertEdge(posE, u, v);
-		} else if (op == 1) {
-			fdc.deleteEdge(mp[u][v]);
-			mp[u].erase(v);
-		} else {
-			int ok = fdc.isConnected(u, v);
-			if (ok) lstans = _u;
-			else lstans = _v;
-			printf("%c\n", "NY"[ok]);
-		}
-	}
-	return 0;
+    int n, m;
+    scanf("%d%d", &n, &m);
+    mp.clear();
+    FullyDynamicConnectivity fdc;
+    fdc.init(n + 1, m + 1);
+    int posE = 0;
+    int lstans = 0;
+    for (int i = 1, op, u, v, _u, _v; i <= m; ++i) {
+        scanf("%d%d%d", &op, &u, &v);
+        u ^= lstans;
+        v ^= lstans;
+        _u = u, _v = v;
+        if (u < v)
+            swap(u, v);
+        if (op == 0) {
+            mp[u][v] = ++posE;
+            fdc.insertEdge(posE, u, v);
+        } else if (op == 1) {
+            fdc.deleteEdge(mp[u][v]);
+            mp[u].erase(v);
+        } else {
+            int ok = fdc.isConnected(u, v);
+            if (ok)
+                lstans = _u;
+            else
+                lstans = _v;
+            printf("%c\n", "NY"[ok]);
+        }
+    }
+    return 0;
 }

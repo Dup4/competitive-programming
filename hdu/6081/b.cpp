@@ -1,9 +1,9 @@
-#include <cstdio>
-#include <iostream>
-#include <cstring>
 #include <algorithm>
-#include <queue>
+#include <cstdio>
+#include <cstring>
+#include <iostream>
 #include <numeric>
+#include <queue>
 
 typedef long long LL;
 
@@ -20,17 +20,22 @@ int n, m;
 void init() {
     memset(head + 1, -1, sizeof(int) * n);
     memset(link + 1, -1, sizeof(int) * n);
-    for (int i = 1; i <= n; ++i)
-        fa[i] = i;
+    for (int i = 1; i <= n; ++i) fa[i] = i;
     ecnt = 0;
 }
 
 void add_edge(int u, int v, int w) {
-    to[ecnt] = v; weight[ecnt] = w; next[ecnt] = head[u]; head[u] = ecnt++;
-    to[ecnt] = u; weight[ecnt] = w; next[ecnt] = head[v]; head[v] = ecnt++;
+    to[ecnt] = v;
+    weight[ecnt] = w;
+    next[ecnt] = head[u];
+    head[u] = ecnt++;
+    to[ecnt] = u;
+    weight[ecnt] = w;
+    next[ecnt] = head[v];
+    head[v] = ecnt++;
 }
 
-int findset(int u) { // 并查集
+int findset(int u) {  // 并查集
     return u == fa[u] ? u : fa[u] = findset(fa[u]);
 }
 
@@ -57,8 +62,10 @@ int MinimumCutPhase(int cnt, int &s, int &t) {
         }
         t = 0;
         while (!t) {
-            if (que.empty()) return 0; // 图不连通
-            auto pa = que.top(); que.pop();
+            if (que.empty())
+                return 0;  // 图不连通
+            auto pa = que.top();
+            que.pop();
             if (val[pa.second] == pa.first)
                 t = pa.second;
         }

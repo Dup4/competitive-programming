@@ -1,2 +1,2 @@
 #include <bits/stdc++.h>
-using 
+using

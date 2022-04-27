@@ -37,7 +37,7 @@ bool SPFA(int s, int t, int w) {
         int u = q.front();
         q.pop();
         vis[u] = false;
-        for (auto e: G[u]) {
+        for (auto e : G[u]) {
             int v = e.v;
             ll cost = e.w;
             if (dis[v] > dis[u] + cost) {

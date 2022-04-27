@@ -37,7 +37,7 @@ int dfs(int n, int ns, int dep) {
 
 int clique(int n) {
     int i, j, ns;
-    for (mx = 0, i = n - 1; i >= 0; i--) {   //  vertex: 0 ~ n-1
+    for (mx = 0, i = n - 1; i >= 0; i--) {  //  vertex: 0 ~ n-1
         for (ns = 0, j = i + 1; j < n; j++) {
             if (g[i][j]) {
                 stk[1][ns++] = j;
@@ -50,11 +50,10 @@ int clique(int n) {
 }
 
 int main() {
-	while (scanf("%d", &n), n) {
-		for (int i = 0; i < n; ++i)
-			for (int j = 0; j < n; ++j)
-				scanf("%d", g[i] + j);
-		printf("%d\n", clique(n));
-	}
-	return 0;
+    while (scanf("%d", &n), n) {
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < n; ++j) scanf("%d", g[i] + j);
+        printf("%d\n", clique(n));
+    }
+    return 0;
 }

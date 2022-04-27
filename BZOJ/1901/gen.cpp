@@ -3,5 +3,5 @@ using namespace std;
 mt19937 rnd(time(0));
 
 int main() {
-	return 0;
+    return 0;
 }

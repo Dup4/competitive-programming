@@ -2,7 +2,7 @@
 using namespace std;
 const int N = 1e3 + 10, INF = 0x3f3f3f3f;
 int n, m, ans, dis[N][N], rk[N][N];
- 
+
 int main() {
     while (scanf("%d%d", &n, &m) != EOF) {
         memset(dis, 0x3f, sizeof dis);
@@ -17,11 +17,13 @@ int main() {
             }
         }
         for (int k = 1; k <= n; ++k) {
-            for (int i = 1; i <= n; ++i) if (k != i) {
-                for (int j = 1; j <= n; ++j) if (i != j && k != j) {
-                    dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
+            for (int i = 1; i <= n; ++i)
+                if (k != i) {
+                    for (int j = 1; j <= n; ++j)
+                        if (i != j && k != j) {
+                            dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j]);
+                        }
                 }
-            }
         }
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= n; ++j) {

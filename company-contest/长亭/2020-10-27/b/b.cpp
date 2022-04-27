@@ -7,17 +7,19 @@ using ll = long long;
 const int N = 1e6 + 10;
 const int INF = 0x3f3f3f3f;
 int n, p, t[N], vis[N];
-vector <vector<int>> G;
+vector<vector<int>> G;
 
 int ok(int x) {
-    if (t[1] >= x) return 0;
-    queue <int> que;
+    if (t[1] >= x)
+        return 0;
+    queue<int> que;
     que.push(1);
     int cnt = 1;
     for (int i = 1; i <= n; ++i) vis[i] = 0;
     vis[1] = 1;
     while (!que.empty()) {
-        int u = que.front(); que.pop();
+        int u = que.front();
+        que.pop();
         for (auto &v : G[u]) {
             if (!vis[v] && t[v] < x) {
                 que.push(v);
@@ -30,13 +32,15 @@ int ok(int x) {
 }
 
 int main() {
-    int _T; scanf("%d", &_T);
+    int _T;
+    scanf("%d", &_T);
     while (_T--) {
         scanf("%d%d", &n, &p);
         for (int i = 1; i <= n; ++i) {
             scanf("%d", t + i);
         }
-        G.clear(); G.resize(n + 1);
+        G.clear();
+        G.resize(n + 1);
         for (int i = 1, m, x; i <= n; ++i) {
             scanf("%d", &m);
             G[i].clear();
@@ -56,7 +60,8 @@ int main() {
                 l = mid + 1;
             }
         }
-        if (res == INF) res = -1;
+        if (res == INF)
+            res = -1;
         printf("%d\n", res);
     }
     return 0;

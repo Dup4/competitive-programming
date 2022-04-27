@@ -24,7 +24,7 @@ inline void upd(int rt) {
 }
 inline void push(int rt) {
     LL &adt = pool[rt].tag;
-    if(!adt)
+    if (!adt)
         return;
     int lch = pool[rt].lch, rch = pool[rt].rch;
     pool[lch].val += adt;
@@ -36,15 +36,15 @@ inline void push(int rt) {
     adt = 0;
 }
 inline pair<int, int> split(int rt, int sz) {
-    if(!rt)
+    if (!rt)
         return make_pair(0, 0);
     push(rt);
     int lch = pool[rt].lch, rch = pool[rt].rch;
-    if(pool[lch].sz + 1 > sz) {
+    if (pool[lch].sz + 1 > sz) {
         pool[lch].fa = 0;
         pair<int, int> tr = split(lch, sz);
         pool[rt].lch = lch = tr.second;
-        if(lch)
+        if (lch)
             pool[lch].fa = rt;
         upd(rt);
         return make_pair(tr.first, rt);
@@ -52,22 +52,22 @@ inline pair<int, int> split(int rt, int sz) {
         pool[rch].fa = 0;
         pair<int, int> tr = split(rch, sz - pool[lch].sz - 1);
         pool[rt].rch = rch = tr.first;
-        if(rch)
+        if (rch)
             pool[rch].fa = rt;
         upd(rt);
         return make_pair(rt, tr.second);
     }
 }
 inline int merge(int x, int y) {
-    if(!x || !y)
+    if (!x || !y)
         return x | y;
-    else if(pool[x].key < pool[y].key) {
+    else if (pool[x].key < pool[y].key) {
         push(x);
         int rch = pool[x].rch;
         pool[rch].fa = 0;
         rch = merge(rch, y);
         pool[x].rch = rch;
-        if(rch)
+        if (rch)
             pool[rch].fa = x;
         upd(x);
         return x;
@@ -77,7 +77,7 @@ inline int merge(int x, int y) {
         pool[lch].fa = 0;
         lch = merge(x, lch);
         pool[y].lch = lch;
-        if(lch)
+        if (lch)
             pool[lch].fa = y;
         upd(y);
         return y;
@@ -112,18 +112,18 @@ int main() {
     int n, rt = 0;
     tot = 1;
     scanf("%d", &n);
-    for(int i = 1; i <= n; ++i) {
+    for (int i = 1; i <= n; ++i) {
         int x;
         scanf("%d", &x);
         insertNode(rt, i, x);
     }
     scanf("%d", &n);
-    while(n--) {
+    while (n--) {
         int typ, l, r, v;
         scanf("%d%d", &typ, &l);
-        if(typ == 1) {
+        if (typ == 1) {
             insertNode(rt, l, 0);
-        } else if(typ == 2) {
+        } else if (typ == 2) {
             scanf("%d%d", &r, &v);
             addValue(rt, l, r, v);
         } else {

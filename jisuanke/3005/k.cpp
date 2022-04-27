@@ -38,7 +38,8 @@ void RUN() {
         }
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j < i; ++j) {
-                if (a[i] == a[j]) continue;
+                if (a[i] == a[j])
+                    continue;
                 mp[pii((a[i].x + a[j].x) / 2, (a[i].y + a[j].y) / 2)] += 2;
             }
         }

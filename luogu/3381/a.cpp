@@ -20,7 +20,7 @@ struct Min_Cost_Max_Flow {
     //调用前初始化
     void Init(int n) {
         V = n;
-        for (int i = 0; i <= V; ++i)G[i].clear();
+        for (int i = 0; i <= V; ++i) G[i].clear();
     }
 
     //加边
@@ -29,7 +29,7 @@ struct Min_Cost_Max_Flow {
         G[to].push_back(edge(from, 0, -cost, G[from].size() - 1));
     }
 
-    //flow是自己传进去的变量，就是最后的最大流，返回的是最小费用
+    // flow是自己传进去的变量，就是最后的最大流，返回的是最小费用
     int Min_cost_max_flow(int s, int t, int f, int &flow) {
         int res = 0;
         fill(H, H + 1 + V, 0);
@@ -42,7 +42,8 @@ struct Min_Cost_Max_Flow {
                 pair<int, int> now = q.top();
                 q.pop();
                 int v = now.second;
-                if (dis[v] < now.first)continue;
+                if (dis[v] < now.first)
+                    continue;
                 for (int i = 0, sze = (int)G[v].size(); i < sze; ++i) {
                     edge &e = G[v][i];
                     if (e.capacity > 0 && dis[e.to] > dis[v] + e.cost + H[v] - H[e.to]) {
@@ -53,10 +54,11 @@ struct Min_Cost_Max_Flow {
                     }
                 }
             }
-            if (dis[t] == INF)break;
-            for (int i = 0; i <= V; ++i)H[i] += dis[i];
+            if (dis[t] == INF)
+                break;
+            for (int i = 0; i <= V; ++i) H[i] += dis[i];
             int d = f;
-            for (int v = t; v != s; v = PreV[v])d = min(d, G[PreV[v]][PreE[v]].capacity);
+            for (int v = t; v != s; v = PreV[v]) d = min(d, G[PreV[v]][PreE[v]].capacity);
             f -= d;
             flow += d;
             res += d * H[t];
@@ -81,7 +83,8 @@ struct Min_Cost_Max_Flow {
                 pair<int, int> now = q.top();
                 q.pop();
                 int v = now.second;
-                if (dis[v] > now.first)continue;
+                if (dis[v] > now.first)
+                    continue;
                 for (int i = 0, sze = (int)G[v].size(); i < sze; ++i) {
                     edge &e = G[v][i];
                     if (e.capacity > 0 && dis[e.to] < dis[v] + e.cost + H[v] - H[e.to]) {
@@ -92,10 +95,11 @@ struct Min_Cost_Max_Flow {
                     }
                 }
             }
-            if (dis[t] == -INF)break;
-            for (int i = 0; i <= V; ++i)H[i] += dis[i];
+            if (dis[t] == -INF)
+                break;
+            for (int i = 0; i <= V; ++i) H[i] += dis[i];
             int d = f;
-            for (int v = t; v != s; v = PreV[v])d = min(d, G[PreV[v]][PreE[v]].capacity);
+            for (int v = t; v != s; v = PreV[v]) d = min(d, G[PreV[v]][PreE[v]].capacity);
             f -= d;
             flow += d;
             res += d * H[t];
@@ -113,14 +117,14 @@ int n, m, s, t;
 int flow, cost;
 
 int main() {
-	while (scanf("%d%d%d%d", &n, &m, &s, &t) != EOF) {
-		MCMF.Init(n);
-		for (int i = 1, u, v, w, f; i <= m; ++i) {
-			scanf("%d%d%d%d", &u, &v, &w, &f);
-			MCMF.addedge(u, v, w, f);
-		}
-		cost = MCMF.Min_cost_max_flow(s, t, INF, flow);
-		printf("%d %d\n", flow, cost);
-	}
+    while (scanf("%d%d%d%d", &n, &m, &s, &t) != EOF) {
+        MCMF.Init(n);
+        for (int i = 1, u, v, w, f; i <= m; ++i) {
+            scanf("%d%d%d%d", &u, &v, &w, &f);
+            MCMF.addedge(u, v, w, f);
+        }
+        cost = MCMF.Min_cost_max_flow(s, t, INF, flow);
+        printf("%d %d\n", flow, cost);
+    }
     return 0;
 }

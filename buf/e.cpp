@@ -5,14 +5,14 @@ static int n = 0;
 void dfs(int a[], int iLen, int iStart) {
     if (iLen == iStart) {
         for (int i = 0; i < iLen; ++i) {
-			cout << a[i] << " \n"[i == iLen - 1];
+            cout << a[i] << " \n"[i == iLen - 1];
         }
         n++;
     } else {
-        for(int j = iStart; j < iLen; ++j) {
-			swap(a[iStart], a[j]);
+        for (int j = iStart; j < iLen; ++j) {
+            swap(a[iStart], a[j]);
             dfs(a, iLen, iStart + 1);
-			swap(a[iStart], a[j]);
+            swap(a[iStart], a[j]);
         }
     }
 }

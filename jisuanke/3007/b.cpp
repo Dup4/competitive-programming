@@ -11,8 +11,10 @@ const db eps = 1e-8;
 const ll p = 1e9 + 7;
 
 int sgn(db x) {
-    if (fabs(x) < eps) return 0;
-    else return x > 0 ? 1 : -1;
+    if (fabs(x) < eps)
+        return 0;
+    else
+        return x > 0 ? 1 : -1;
 }
 
 int n, m, k;
@@ -36,7 +38,8 @@ int find(int x) {
 void Union(int x, int y) {
     x = find(x), y = find(y);
     if (x != y) {
-        if (sze[x] > sze[y]) swap(x, y);
+        if (sze[x] > sze[y])
+            swap(x, y);
         fa[x] = y;
         sze[y] += sze[x];
     }
@@ -55,9 +58,11 @@ void RUN() {
         vis[a[i]] = 1;
     }
     for (int u = 1; u <= n; ++u) {
-        if (vis[u]) continue;
+        if (vis[u])
+            continue;
         for (auto v : G[u]) {
-            if (vis[v]) continue;
+            if (vis[v])
+                continue;
             Union(u, v);
         }
     }
@@ -72,11 +77,14 @@ void RUN() {
                     break;
                 }
             }
-            if (!F) continue;
+            if (!F)
+                continue;
             ll cnt = 0;
             for (auto v : G[u]) {
-                if (vis[v]) continue;
-                if (find(v) == 1) continue;
+                if (vis[v])
+                    continue;
+                if (find(v) == 1)
+                    continue;
                 cnt += sze[find(v)];
             }
             db tmp = 1.0 * cnt / G[u].size();
@@ -89,7 +97,6 @@ void RUN() {
 }
 
 int main() {
-
     int _T;
     scanf("%d", &_T);
     while (_T--) {

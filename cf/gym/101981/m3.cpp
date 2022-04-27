@@ -2,12 +2,12 @@
 using namespace std;
 
 void out(char *s) {
-	cout << s << endl;
+    cout << s << endl;
 }
 
 int main() {
-	char s[110];
-	cin >> (s + 1);
-	out(s + 1);
-	return 0;
+    char s[110];
+    cin >> (s + 1);
+    out(s + 1);
+    return 0;
 }

@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
+
 #define N 510
 int n, m;
 char s[N];
 int G[N][N], l[N][N], r[N][N], up[N][N];
- 
+
 int get(int G[][N]) {
     for (int i = 1; i <= n; ++i) {
         for (int j = 1; j <= m; ++j) {
@@ -27,7 +27,7 @@ int get(int G[][N]) {
             }
         }
     }
-	int x = 0;
+    int x = 0;
     for (int i = 1; i <= n; ++i) {
         for (int j = 1; j <= m; ++j) {
             if (i > 1 && G[i][j] == 1 && G[i][j] == G[i - 1][j]) {
@@ -38,25 +38,26 @@ int get(int G[][N]) {
             if (G[i][j] == 1) {
                 int tcol = r[i][j] - l[i][j] + 1;
                 int trow = up[i][j];
-				int tx = min(tcol, trow);
-				x = max(x, tx);
+                int tx = min(tcol, trow);
+                x = max(x, tx);
             }
         }
     }
-	return x * x;
+    return x * x;
 }
- 
+
 int main() {
-	int T; scanf("%d", &T);
+    int T;
+    scanf("%d", &T);
     while (T--) {
-		scanf("%d%d", &n, &m);
+        scanf("%d%d", &n, &m);
         for (int i = 1; i <= n; ++i) {
-			scanf("%s", s + 1);
+            scanf("%s", s + 1);
             for (int j = 1; j <= m; ++j) {
-            	G[i][j] = s[j] == '.' ? 1 : 0;
-			}
+                G[i][j] = s[j] == '.' ? 1 : 0;
+            }
         }
-    	printf("%d\n", get(G));
-	}
+        printf("%d\n", get(G));
+    }
     return 0;
 }

@@ -8,10 +8,11 @@ int n, q;
 int ans[N];
 
 struct Add {
-    ll t; int x;
+    ll t;
+    int x;
     Add() {}
     Add(ll t, int x) : t(t), x(x) {}
-    bool operator < (const Add &other) const {
+    bool operator<(const Add &other) const {
         return t < other.t;
     }
 };
@@ -20,15 +21,15 @@ struct Query {
     int f, id;
     ll t;
     Query() {}
-    Query(int f, int id, ll t): f(f), id(id), t(t) {}
-    bool operator < (const Query &other) const {
+    Query(int f, int id, ll t) : f(f), id(id), t(t) {}
+    bool operator<(const Query &other) const {
         return t < other.t;
     }
 };
 
 struct M {
-    vector <Add> addVec;
-    vector <Query> queryVec;
+    vector<Add> addVec;
+    vector<Query> queryVec;
     void init() {
         addVec.clear();
         queryVec.clear();
@@ -50,10 +51,11 @@ struct M {
             ans[i.id] += res * i.f;
         }
     }
-}m;
+} m;
 
 int main() {
-    int _T; scanf("%d", &_T);
+    int _T;
+    scanf("%d", &_T);
     while (_T--) {
         scanf("%d", &n);
         m.init();
@@ -68,11 +70,11 @@ int main() {
             ll l, r;
             scanf("%llu%llu", &l, &r);
             m.queryVec.emplace_back(1, i, r);
-            if (l > 0) m.queryVec.emplace_back(-1, i, l - 1);
+            if (l > 0)
+                m.queryVec.emplace_back(-1, i, l - 1);
         }
         m.gao();
-        for (int i = 1; i <= q; ++i)
-            printf("%d\n", ans[i]);
+        for (int i = 1; i <= q; ++i) printf("%d\n", ans[i]);
     }
     return 0;
 }

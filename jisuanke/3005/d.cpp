@@ -13,8 +13,10 @@ void preKMP(char x[], int m, int kmpNext[]) {
     i = 0;
     while (i < m) {
         while (j != -1 && x[j] != x[i]) j = kmpNext[j];
-        if (x[++i] == x[++j]) kmpNext[i] = kmpNext[j];
-        else kmpNext[i] = j;
+        if (x[++i] == x[++j])
+            kmpNext[i] = kmpNext[j];
+        else
+            kmpNext[i] = j;
     }
 }
 

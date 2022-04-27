@@ -10,24 +10,24 @@ int n, k;
 db w[N];
 
 int main() {
-	while (cin >> n >> k) {
-		db sum = 0;
-		for (int i = 1; i <= n; ++i) {
-			cin >> w[i];
-			sum += w[i];
-		}
-		while (k--) {
-			for (int i = 1; i <= n; ++i) {
-				w[i] += w[i] / sum;
-			}
-			sum = 0;
-			for (int i = 1; i <= n; ++i) {
-				sum += w[i];
-			}
-		}
-		for (int i = 1; i <= n; ++i) {
-			cout << w[i] << " \n"[i == n];
-		}
-	}
-	return 0;
+    while (cin >> n >> k) {
+        db sum = 0;
+        for (int i = 1; i <= n; ++i) {
+            cin >> w[i];
+            sum += w[i];
+        }
+        while (k--) {
+            for (int i = 1; i <= n; ++i) {
+                w[i] += w[i] / sum;
+            }
+            sum = 0;
+            for (int i = 1; i <= n; ++i) {
+                sum += w[i];
+            }
+        }
+        for (int i = 1; i <= n; ++i) {
+            cout << w[i] << " \n"[i == n];
+        }
+    }
+    return 0;
 }

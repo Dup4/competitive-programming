@@ -9,10 +9,10 @@ int main() {
 }
 /* 请在下面编写sumDigits函数 */
 int sumDigits(int n) {
-	int res = 0;
-	while (n) {
-		res += n % 10;
-		n /= 10;
-	}
-	return res;
+    int res = 0;
+    while (n) {
+        res += n % 10;
+        n /= 10;
+    }
+    return res;
 }

@@ -5,7 +5,8 @@ const int mod = 1e9 + 7;
 int a[N];
 
 int main() {
-    int n; cin >> n;
+    int n;
+    cin >> n;
     for (int i = 1; i <= n * 2; ++i) scanf("%d", a + i);
     sort(a + 1, a + 1 + n * 2);
     long long res = 1;

@@ -33,7 +33,7 @@ int tot;
 int head[N];
 int dis[N];
 bool used[N];
-vector<int>vec[2];
+vector<int> vec[2];
 
 void Init() {
     tot = 0;
@@ -59,7 +59,8 @@ int gao(const vector<int> &V) {
     while (!pq.empty()) {
         int u = pq.top().u;
         pq.pop();
-        if (used[u]) continue;
+        if (used[u])
+            continue;
         used[u] = true;
         for (int i = head[u]; ~i; i = edge[i].nxt) {
             int v = edge[i].to, w = edge[i].w;
@@ -76,7 +77,6 @@ int gao(const vector<int> &V) {
     return res;
 }
 
-
 void RUN() {
     scanf("%d %d %d %d %d", &n, &e, &s, &k, &c);
     Init();
@@ -92,9 +92,9 @@ void RUN() {
     }
     int res1 = gao(vec[0]);
     int res2 = gao(vec[1]);
-//    for (int i = 1; i <= k; ++i) {
-//        res2 = min(res2, gao(a[i]));
-//    }
+    //    for (int i = 1; i <= k; ++i) {
+    //        res2 = min(res2, gao(a[i]));
+    //    }
     if (res1 > res2 * c) {
         printf("%d\n", res2);
     } else {
@@ -107,8 +107,8 @@ int main() {
     freopen("input.txt", "r", stdin);
 #endif
 
-//    ios::sync_with_stdio(false);
-//    cin.tie(nullptr), cout.tie(nullptr);
+    //    ios::sync_with_stdio(false);
+    //    cin.tie(nullptr), cout.tie(nullptr);
     int _T;
     scanf("%d", &_T);
     while (_T--) {

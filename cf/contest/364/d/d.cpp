@@ -2,9 +2,10 @@
 using namespace std;
 using ll = long long;
 const int N = 1e6 + 10;
-int n, m, f[N];  
-ll a[N], ans, fac[N], bk[N]; int tot;
-vector <ll> vec;
+int n, m, f[N];
+ll a[N], ans, fac[N], bk[N];
+int tot;
+vector<ll> vec;
 mt19937 rd(time(0));
 inline ll gcd(ll a, ll b) {
     return b ? gcd(b, a % b) : a;
@@ -49,8 +50,8 @@ struct Mill {
             return 0;
         } else if (n == 2) {
             return 1;
-        
-        } else if (! (n & 1)) {
+
+        } else if (!(n & 1)) {
             return 0;
         }
         for (int i = 0; i < S; ++i) {
@@ -63,7 +64,8 @@ struct Mill {
     inline ll pollard_rho(ll n, int c) {
         ll i = 1, k = 2, x = rd() % n, y = x, d;
         while (1) {
-            ++i; x = (mul(x, x, n) + c) % n;
+            ++i;
+            x = (mul(x, x, n) + c) % n;
             d = gcd(y - x, n);
             if (d > 1 && d < n) {
                 return d;
@@ -92,14 +94,14 @@ struct Mill {
         findfac(m, c);
         findfac(n / m, c);
     }
-    inline void gao(ll _n, vector <ll> &vec) {
+    inline void gao(ll _n, vector<ll> &vec) {
         vec.clear();
         n = _n;
         tot = 0;
-        findfac(n, C); 
-        sort(fac + 1, fac + 1 + tot);   
+        findfac(n, C);
+        sort(fac + 1, fac + 1 + tot);
         for (int i = 1; i <= tot; ++i) bk[i] = fac[i];
-        vec.push_back(1); 
+        vec.push_back(1);
         int sze;
         for (int i = 1; i <= tot; ++i) {
             if (i == 1 || bk[i - 1] % bk[i]) {
@@ -111,17 +113,20 @@ struct Mill {
                 vec.push_back(bk[i] * vec[j]);
             }
         }
-        sort(vec.begin(), vec.end()); 
+        sort(vec.begin(), vec.end());
     }
-}mill;
+} mill;
 
-inline int id(ll x) { return lower_bound(vec.begin(), vec.end(), x) - vec.begin(); }
+inline int id(ll x) {
+    return lower_bound(vec.begin(), vec.end(), x) - vec.begin();
+}
 void gao(ll x) {
-    if (x == 1) return;
+    if (x == 1)
+        return;
     mill.gao(x, vec);
     sort(fac + 1, fac + 1 + tot);
-    tot = unique(fac + 1, fac + 1 + tot) - fac - 1; 
-    memset(f, 0, sizeof f); 
+    tot = unique(fac + 1, fac + 1 + tot) - fac - 1;
+    memset(f, 0, sizeof f);
     for (int i = 1; i <= n; ++i) {
         ll G = gcd(x, a[i]);
         ++f[id(G)];
@@ -129,11 +134,12 @@ void gao(ll x) {
     int sze = vec.size();
     for (int i = 1; i <= tot; ++i) {
         int j, k;
-        for (j = k = sze - 1; j >= 0; --j) if (vec[j] % fac[i] == 0) {
-            ll goal = vec[j] / fac[i];
-            while (vec[k] > goal) --k;
-            f[k] += f[j];
-        }
+        for (j = k = sze - 1; j >= 0; --j)
+            if (vec[j] % fac[i] == 0) {
+                ll goal = vec[j] / fac[i];
+                while (vec[k] > goal) --k;
+                f[k] += f[j];
+            }
     }
     for (int i = sze - 1; i >= 0; --i) {
         if (f[i] >= m) {
@@ -143,18 +149,16 @@ void gao(ll x) {
     }
 }
 
-
 int main() {
     while (scanf("%d", &n) != EOF) {
-		m = (n + 1) / 2;
-        for (int i = 1; i <= n; ++i)
-            scanf("%lld", a + i);
+        m = (n + 1) / 2;
+        for (int i = 1; i <= n; ++i) scanf("%lld", a + i);
         ans = 1;
         for (int i = 1; i <= 8; ++i) {
             int x = (rd() % n + n) % n + 1;
             gao(a[x]);
         }
-        printf("%lld\n", ans); 
+        printf("%lld\n", ans);
     }
     return 0;
-}   
+}

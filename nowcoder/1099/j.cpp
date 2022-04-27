@@ -1,13 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
- 
+
 #define ll long long
 #define N 2000010
 const ll p = 1e9 + 7;
 int n, m, k;
 int f[N];
- 
-void DFS(vector <int> &vec, int i, int x, int p) {
+
+void DFS(vector<int> &vec, int i, int x, int p) {
     if (i < (int)vec.size()) {
         DFS(vec, i + 1, x, p);
         DFS(vec, i + 1, x ^ vec[i], -p);
@@ -15,7 +15,7 @@ void DFS(vector <int> &vec, int i, int x, int p) {
         f[x] += p;
     }
 }
- 
+
 void FWT(int *x, int len) {
     for (int i = 2; i <= len; i <<= 1) {
         int step = i >> 1;
@@ -28,7 +28,7 @@ void FWT(int *x, int len) {
         }
     }
 }
- 
+
 ll qmod(ll base, ll n) {
     ll res = 1;
     while (n) {
@@ -40,12 +40,12 @@ ll qmod(ll base, ll n) {
     }
     return res;
 }
- 
+
 int main() {
     while (scanf("%d%d%d", &n, &m, &k) != EOF) {
         for (int i = 0; i < 1 << k; ++i) f[i] = 0;
         for (int i = 1; i <= n; ++i) {
-            vector <int> a(m);
+            vector<int> a(m);
             for (auto &it : a) scanf("%d", &it);
             DFS(a, 0, 0, 1);
         }

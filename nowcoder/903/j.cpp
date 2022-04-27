@@ -1,15 +1,15 @@
 #include <bits/stdc++.h>
- 
+
 using namespace std;
- 
+
 const int maxn = 1e6 + 10;
- 
-struct Edge{
+
+struct Edge {
     int to, nxt;
-    Edge(){}
-    Edge(int to, int nxt): to(to), nxt(nxt){}
-}edge[maxn << 1];
- 
+    Edge() {}
+    Edge(int to, int nxt) : to(to), nxt(nxt) {}
+} edge[maxn << 1];
+
 int n;
 int arr[maxn];
 int head[maxn], tot;
@@ -19,7 +19,7 @@ int sze[maxn];
 int cnt[maxn];
 int cnt2[maxn];
 int du[maxn];
- 
+
 void Init() {
     tot = 0;
     memset(head, -1, sizeof head);
@@ -32,16 +32,18 @@ void Init() {
         du[i] = 0;
     }
 }
- 
+
 void addedge(int u, int v) {
-    edge[tot] = Edge(v, head[u]); head[u] = tot++;
-    edge[tot] = Edge(u, head[v]); head[v] = tot++;
+    edge[tot] = Edge(v, head[u]);
+    head[u] = tot++;
+    edge[tot] = Edge(u, head[v]);
+    head[v] = tot++;
 }
- 
+
 int find(int x) {
     return x == fa[x] ? fa[x] : fa[x] = find(fa[x]);
 }
- 
+
 void Unin(int x, int y) {
     x = find(x);
     y = find(y);
@@ -55,10 +57,10 @@ void Unin(int x, int y) {
         }
     }
 }
- 
+
 void solve() {
     int ans = 0;
-    queue<int>q;
+    queue<int> q;
     for (int i = 1; i <= n; ++i) {
         if (du[i] == 1) {
             q.push(i);
@@ -70,9 +72,9 @@ void solve() {
         for (int i = head[u]; ~i; i = edge[i].nxt) {
             int v = edge[i].to;
             if (!vis[u] && !vis[v]) {
-				vis[u] = vis[v] = 1;
-			}
-			--du[v];
+                vis[u] = vis[v] = 1;
+            }
+            --du[v];
             if (du[v] == 1) {
                 q.push(v);
             }
@@ -93,9 +95,9 @@ void solve() {
     }
     printf("%d\n", ans);
 }
- 
+
 int main() {
-    while(~scanf("%d", &n)) {
+    while (~scanf("%d", &n)) {
         Init();
         for (int i = 1, x; i <= n; ++i) {
             scanf("%d", &x);

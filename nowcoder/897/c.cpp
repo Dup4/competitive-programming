@@ -7,9 +7,9 @@ int n;
 struct Graph {
     struct node {
         int to, nx, w;
-        node () {}
-        node (int to, int nx, int w) : to(to), nx(nx), w(w) {}
-    }a[N << 1];
+        node() {}
+        node(int to, int nx, int w) : to(to), nx(nx), w(w) {}
+    } a[N << 1];
     int head[N], pos;
     void init(int n) {
         for (int i = 1; i <= n; ++i) {
@@ -18,11 +18,14 @@ struct Graph {
         pos = 0;
     }
     void add(int u, int v, int w) {
-        a[++pos] = node(v, head[u], w); head[u] = pos;
-        a[++pos] = node(u, head[v], w); head[v] = pos;
+        a[++pos] = node(v, head[u], w);
+        head[u] = pos;
+        a[++pos] = node(u, head[v], w);
+        head[v] = pos;
     }
-}G;
-#define erp(u) for (int it = G.head[u], v = G.a[it].to, w = G.a[it].w; it; it = G.a[it].nx, v = G.a[it].to, w = G.a[it].w)
+} G;
+#define erp(u) \
+    for (int it = G.head[u], v = G.a[it].to, w = G.a[it].w; it; it = G.a[it].nx, v = G.a[it].to, w = G.a[it].w)
 
 ll res;
 int vis[N];
@@ -31,7 +34,7 @@ void getroot(int u, int fa) {
     sze[u] = 1;
     f[u] = 0;
     erp(u) if (!vis[v] && v != fa) {
-        getroot(v, u); 
+        getroot(v, u);
         sze[u] += sze[v];
         f[u] = max(f[u], sze[v]);
     }
@@ -60,7 +63,9 @@ void add(int u, int fa) {
 
 void solve(int u) {
     vis[u] = 1;
-    cnt[0] = 1; cnt[1] = 0; cnt[2] = 0;
+    cnt[0] = 1;
+    cnt[1] = 0;
+    cnt[2] = 0;
     deep[u] = 0;
     erp(u) if (!vis[v]) {
         deep[v] = w % 3;
@@ -68,7 +73,8 @@ void solve(int u) {
         add(v, u);
     }
     erp(u) if (!vis[v]) {
-        sum = f[0] = sze[v]; root = 0;
+        sum = f[0] = sze[v];
+        root = 0;
         getroot(v, 0);
         solve(root);
     }
@@ -81,7 +87,8 @@ void init(int n) {
     }
 }
 int main() {
-    int T; scanf("%d", &T);
+    int T;
+    scanf("%d", &T);
     while (T--) {
         scanf("%d", &n);
         init(n);
@@ -90,7 +97,8 @@ int main() {
             G.add(u, v, w);
         }
         res = 0;
-        sum = f[0] = n; root = 0;
+        sum = f[0] = n;
+        root = 0;
         getroot(1, 0);
         solve(root);
         printf("%lld\n", res);

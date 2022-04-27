@@ -5,9 +5,9 @@ const int N = 110;
 int n, k;
 int a[N], b[N], c[N];
 
-
 int main() {
-    int _T; scanf("%d", &_T);
+    int _T;
+    scanf("%d", &_T);
     while (_T--) {
         scanf("%d%d", &n, &k);
         for (int i = 1; i <= n; ++i) scanf("%d", a + i);
@@ -18,7 +18,8 @@ int main() {
         do {
             int now = 0;
             for (int i = 1; i <= min(n, k); ++i) {
-                if (b[c[i]] >= a[i]) ++now;
+                if (b[c[i]] >= a[i])
+                    ++now;
                 // cout << c[i] << " \n"[i == min(n, k)];
             }
             res = max(res, now);

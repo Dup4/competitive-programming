@@ -5,18 +5,18 @@ using namespace std;
 char s[N];
 
 int main() {
-	int n, x, y;
-	while (scanf("%d%d%d", &n, &x, &y) != EOF) {
-		scanf("%s", s + 1);
-		int res = 0;
-		for (int i = n; i >= n - x + 1; --i) {
-			if (n - i == y) {
-				res += (s[i] == '0');
-			} else {
-				res += (s[i] == '1');
-			}
-		}
-		printf("%d\n", res);
-	}
-	return 0;
+    int n, x, y;
+    while (scanf("%d%d%d", &n, &x, &y) != EOF) {
+        scanf("%s", s + 1);
+        int res = 0;
+        for (int i = n; i >= n - x + 1; --i) {
+            if (n - i == y) {
+                res += (s[i] == '0');
+            } else {
+                res += (s[i] == '1');
+            }
+        }
+        printf("%d\n", res);
+    }
+    return 0;
 }

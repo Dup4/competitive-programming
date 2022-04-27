@@ -11,8 +11,10 @@ const ll p = 1e9 + 7;
 const db eps = 1e-8;
 
 int sgn(db x) {
-    if (fabs(x) < eps) return 0;
-    else return x > 0 ? 1 : -1;
+    if (fabs(x) < eps)
+        return 0;
+    else
+        return x > 0 ? 1 : -1;
 }
 
 ll qpow(ll x, ll n) {
@@ -51,7 +53,8 @@ void DFS(int u, int pre) {
 void gao(int u, int pre) {
     int cnt = 0, hight = h[u] - 1;
     for (auto v : G[u]) {
-        if (v == pre) continue;
+        if (v == pre)
+            continue;
         if (h[v] == hight) {
             gao(v, u);
         } else {
@@ -65,7 +68,8 @@ void gao(int u, int pre) {
     }
     ll res = 1, sum = 0;
     for (auto v : G[u]) {
-        if (v == pre) continue;
+        if (v == pre)
+            continue;
         sum = (sum + f[v]) % p;
     }
     for (int i = 1; i <= cnt; ++i) {
@@ -96,8 +100,8 @@ int main() {
     freopen("input.txt", "r", stdin);
 #endif
 
-//    ios::sync_with_stdio(false);
-//    cin.tie(nullptr), cout.tie(nullptr);
+    //    ios::sync_with_stdio(false);
+    //    cin.tie(nullptr), cout.tie(nullptr);
 
     RUN();
 

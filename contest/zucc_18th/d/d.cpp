@@ -5,7 +5,7 @@ const int N = 1e6 + 10;
 int a[N], _a[N], b[N], _b[N], c[N];
 
 int main() {
-    int n; 
+    int n;
     scanf("%d", &n);
     memset(c, 0, sizeof c);
     for (int i = 1; i <= n; ++i) scanf("%d", a + i);

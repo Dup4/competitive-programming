@@ -12,8 +12,8 @@ void err() {
     cout << endl;
 }
 
-template<class T, class... Ts>
-void err(const T &arg, const Ts &... args) {
+template <class T, class... Ts>
+void err(const T &arg, const Ts &...args) {
     cout << arg << ' ';
     err(args...);
 }
@@ -49,7 +49,7 @@ void RUN() {
                 cout << "fake news!" << endl;
             }
         }
-		cout << n << endl;
+        cout << n << endl;
         if (n < 0) {
             F = false;
         }

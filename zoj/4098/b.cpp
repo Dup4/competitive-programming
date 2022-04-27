@@ -1,4 +1,4 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -24,7 +24,8 @@ ll res, sum, k;
 ll qpow(ll x, ll n) {
     ll res = 1;
     while (n) {
-        if (n & 1) res = res * x % mod;
+        if (n & 1)
+            res = res * x % mod;
         x = x * x % mod;
         n >>= 1;
     }
@@ -43,7 +44,8 @@ void DFS(int pos, ll res1, ll res2, ll cnt) {
         return;
     }
     for (int i = pos + 1; i <= n + 1; ++i) {
-        if (vis[p[i].id]) continue;
+        if (vis[p[i].id])
+            continue;
         if (i == n + 1) {
             DFS(i, res1, res2, cnt);
             break;
@@ -57,7 +59,7 @@ void DFS(int pos, ll res1, ll res2, ll cnt) {
         }
         if (!flag) {
             DFS(i, (res1 + res1 * w[p[i].id] % mod * w[p[i].id] % mod) % mod, (res2 + res2 * w[p[i].id] % mod) % mod,
-                cnt * 2);
+                    cnt * 2);
             break;
         }
         DFS(i, res1, res2, cnt);
@@ -84,7 +86,8 @@ void dfs(int root, ll res1, ll sum1, ll k1) {
         return;
     }
     for (int i = root + 1; i <= n + 1; i++) {
-        if (vis[p[i].id]) continue;
+        if (vis[p[i].id])
+            continue;
         if (i == n + 1) {
             dfs(i, res1, sum1, k1);
             break;
@@ -98,7 +101,7 @@ void dfs(int root, ll res1, ll sum1, ll k1) {
         }
         if (fg == 0) {
             dfs(i, (res1 + res1 * w[p[i].id] % mod * w[p[i].id] % mod) % mod, (sum1 + sum1 * w[p[i].id] % mod) % mod,
-                k1 * 2);
+                    k1 * 2);
             break;
         }
         dfs(i, res1, sum1, k1);
@@ -118,7 +121,7 @@ void dfs(int root, ll res1, ll sum1, ll k1) {
 }
 
 int main() {
-//    freopen("Text.txt", "r", stdin);
+    //    freopen("Text.txt", "r", stdin);
     scanf("%d%d", &n, &m);
     for (int i = 1; i <= n; i++) {
         scanf("%lld", &w[i]);

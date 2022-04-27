@@ -6,10 +6,9 @@ int h, w, n, x, y;
 char s[N], t[N];
 
 int main() {
-	while (scanf("%d%d%d", &h, &w, &n) != EOF) {
-		scanf("%d%d", &x, &y);
-		scanf("%s%s", s + 1, t + 1);
-		
-	}
-	return 0;
+    while (scanf("%d%d%d", &h, &w, &n) != EOF) {
+        scanf("%d%d", &x, &y);
+        scanf("%s%s", s + 1, t + 1);
+    }
+    return 0;
 }

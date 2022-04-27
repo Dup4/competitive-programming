@@ -5,8 +5,8 @@ using namespace std;
 ll n;
 
 int main() {
-	while (scanf("%lld", &n) != EOF) {
-		printf("%lld\n", 7 + (1ll * n * (11 + n) >> 1));
-	}
-	return 0;
+    while (scanf("%lld", &n) != EOF) {
+        printf("%lld\n", 7 + (1ll * n * (11 + n) >> 1));
+    }
+    return 0;
 }

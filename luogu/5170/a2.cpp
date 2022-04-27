@@ -20,10 +20,13 @@ Query solve(ll a, ll b, ll c, ll n) {
     if (a >= c || b >= c) {
         tmp = solve(a % c, b % c, c, n);
         ans.f = (tmp.f + (a / c) * n % mod * (n + 1) % mod * inv2 % mod + (b / c) * (n + 1) % mod) % mod;
-        ans.g = (tmp.g + (a / c) * n % mod * (n + 1) % mod * (2 * n + 1) % mod * inv6 % mod + (b / c) * n % mod * (n + 1) % mod * inv2 % mod) % mod;
-        ans.h = ((a / c) * (a / c) % mod * n % mod * (n + 1) % mod * (2 * n + 1) % mod * inv6 % mod + 
-                (b / c) * (b / c) % mod * (n + 1) % mod + (a / c) * (b / c) % mod * n % mod * (n + 1) % mod + 
-                tmp.h + 2 * (a / c) % mod * tmp.g % mod + 2 * (b / c) % mod * tmp.f % mod) % mod;
+        ans.g = (tmp.g + (a / c) * n % mod * (n + 1) % mod * (2 * n + 1) % mod * inv6 % mod +
+                        (b / c) * n % mod * (n + 1) % mod * inv2 % mod) %
+                mod;
+        ans.h = ((a / c) * (a / c) % mod * n % mod * (n + 1) % mod * (2 * n + 1) % mod * inv6 % mod +
+                        (b / c) * (b / c) % mod * (n + 1) % mod + (a / c) * (b / c) % mod * n % mod * (n + 1) % mod +
+                        tmp.h + 2 * (a / c) % mod * tmp.g % mod + 2 * (b / c) % mod * tmp.f % mod) %
+                mod;
         return ans;
     }
     ll m = (a * n + b) / c;
@@ -34,16 +37,16 @@ Query solve(ll a, ll b, ll c, ll n) {
     return ans;
 }
 
-
 int main() {
-	int T; scanf("%d", &T);
+    int T;
+    scanf("%d", &T);
     ll n, a, b, c;
     while (T--) {
-		scanf("%lld%lld%lld%lld", &n, &a, &b, &c);
+        scanf("%lld%lld%lld%lld", &n, &a, &b, &c);
         Query ans = solve(a, b, c, n);
-		ans.f = (ans.f + mod) % mod;
-		ans.g = (ans.g + mod) % mod;
-		ans.h = (ans.h + mod) % mod;
+        ans.f = (ans.f + mod) % mod;
+        ans.g = (ans.g + mod) % mod;
+        ans.h = (ans.h + mod) % mod;
         printf("%lld %lld %lld\n", ans.f, ans.h, ans.g);
     }
     return 0;

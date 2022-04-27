@@ -26,7 +26,9 @@ struct E {
 
     E(int a, int b, int x, int id, int op) : a(a), b(b), x(x), id(id), op(op) {}
 
-    bool operator<(const E& other) const { return x < other.x; }
+    bool operator<(const E& other) const {
+        return x < other.x;
+    }
 };
 
 struct node {
@@ -35,7 +37,9 @@ struct node {
 
     node(int id, int x) : id(id), x(x) {}
 
-    bool operator<(const node& other) const { return x < other.x; }
+    bool operator<(const node& other) const {
+        return x < other.x;
+    }
 };
 
 int n, m, top;

@@ -3,14 +3,12 @@
 int main()
 
 {
+    char str[81];
+    printf("Please input a string:\n");
 
-char str[81];
-printf("Please input a string:\n");
+    scanf("%[^\n]", &str);
 
-scanf("%[^\n]",&str);
+    printf("The string is:\n%s\n", str);
 
-printf("The string is:\n%s\n",str);
-
-return 0;
-
+    return 0;
 }

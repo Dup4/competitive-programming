@@ -3,79 +3,139 @@
 #include <bits/stdc++.h>
 #define fi first
 #define se second
-#define endl "\n" 
+#define endl "\n"
 using namespace std;
 using db = double;
 using ll = long long;
-using ull = unsigned long long; 
-using pII = pair <int, int>;
-using pLL = pair <ll, ll>;
+using ull = unsigned long long;
+using pII = pair<int, int>;
+using pLL = pair<ll, ll>;
 constexpr int mod = 1e9 + 7;
-template <class T1, class T2> inline void chadd(T1 &x, T2 y) { x += y; while (x >= mod) x -= mod; while (x < 0) x += mod; } 
-template <class T1, class T2> inline void chmax(T1 &x, T2 y) { if (x < y) x = y; }
-template <class T1, class T2> inline void chmin(T1 &x, T2 y) { if (x > y) x = y; }
-inline int rd() { int x; cin >> x; return x; }
-template <class T> inline void rd(T &x) { cin >> x; }
-template <class T> inline void rd(vector <T> &vec) { for (auto &it : vec) cin >> it; }  
-#define dbg(x...) do { cout << "\033[32;1m" << #x << " -> "; err(x); } while (0) 
-void err() { cout << "\033[39;0m" << endl; } 
-template <class T, class... Ts> void err(const T& arg, const Ts&... args) { cout << arg << ' '; err(args...); }
-template <template<typename...> class T, typename t, typename... A> 
-void err(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << ' '; err(args...); }
-inline void pt() { cout << endl; } 
-template <class T, class... Ts> void pt(const T& arg, const Ts&... args) { cout << arg << ' '; pt(args...); }
-template <template<typename...> class T, typename t, typename... A> 
-void pt(const T <t> &arg, const A&... args) { for (auto &v : arg) cout << v << ' '; pt(args...); }
-ll gcd(ll a, ll b) { return b ? gcd(b, a % b) : a; }
-inline ll qpow(ll base, ll n) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base % mod; n >>= 1; } return res; }
-//head
+template <class T1, class T2>
+inline void chadd(T1 &x, T2 y) {
+    x += y;
+    while (x >= mod) x -= mod;
+    while (x < 0) x += mod;
+}
+template <class T1, class T2>
+inline void chmax(T1 &x, T2 y) {
+    if (x < y)
+        x = y;
+}
+template <class T1, class T2>
+inline void chmin(T1 &x, T2 y) {
+    if (x > y)
+        x = y;
+}
+inline int rd() {
+    int x;
+    cin >> x;
+    return x;
+}
+template <class T>
+inline void rd(T &x) {
+    cin >> x;
+}
+template <class T>
+inline void rd(vector<T> &vec) {
+    for (auto &it : vec) cin >> it;
+}
+#define dbg(x...)                             \
+    do {                                      \
+        cout << "\033[32;1m" << #x << " -> "; \
+        err(x);                               \
+    } while (0)
+void err() {
+    cout << "\033[39;0m" << endl;
+}
+template <class T, class... Ts>
+void err(const T &arg, const Ts &...args) {
+    cout << arg << ' ';
+    err(args...);
+}
+template <template <typename...> class T, typename t, typename... A>
+void err(const T<t> &arg, const A &...args) {
+    for (auto &v : arg) cout << v << ' ';
+    err(args...);
+}
+inline void pt() {
+    cout << endl;
+}
+template <class T, class... Ts>
+void pt(const T &arg, const Ts &...args) {
+    cout << arg << ' ';
+    pt(args...);
+}
+template <template <typename...> class T, typename t, typename... A>
+void pt(const T<t> &arg, const A &...args) {
+    for (auto &v : arg) cout << v << ' ';
+    pt(args...);
+}
+ll gcd(ll a, ll b) {
+    return b ? gcd(b, a % b) : a;
+}
+inline ll qpow(ll base, ll n) {
+    ll res = 1;
+    while (n) {
+        if (n & 1)
+            res = res * base % mod;
+        base = base * base % mod;
+        n >>= 1;
+    }
+    return res;
+}
+// head
 constexpr int N = 1e5 + 10;
-int n; pII a[10];
-int Move[][2] = {
-	{0, 1},
-	{0, -1},
-	{1, 0},
-	{-1, 0}
-};
+int n;
+pII a[10];
+int Move[][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
 bool ok() {
-	vector <pII> vec;
-	for (int i = 0; i < 4; ++i) vec.push_back(a[i]);
-	for (int i = 0; i < 4; ++i)
-		for (int j = i + 1; j < 4; ++j) {
-			if (vec[i].fi == vec[j].fi && vec[i].se == vec[j].se)
-				return false;
-		}
-	sort(vec.begin(), vec.end(), [&](pII x, pII y) { 
-		if (x.fi == y.fi) return x.se < y.se;
-		return x.fi < y.fi;		
-	});
-	if (vec[3].fi - vec[0].fi != vec[3].se - vec[0].se) return false;
-	if (vec[3].fi - vec[0].fi <= 0) return false;
-	if (vec[1].fi != vec[0].fi || vec[1].se != vec[3].se) return false;
-	if (vec[2].se != vec[0].se || vec[2].fi != vec[3].fi) return false;
-//	if (vec[0].fi != vec[1].fi || vec[2].fi != vec[3].fi || vec[1].fi == vec[2].fi) return false;
-//	if (vec[0].se != vec[2].se || vec[1].se != vec[3].se || vec[0].se == vec[1].se) return false;
-	return true;
+    vector<pII> vec;
+    for (int i = 0; i < 4; ++i) vec.push_back(a[i]);
+    for (int i = 0; i < 4; ++i)
+        for (int j = i + 1; j < 4; ++j) {
+            if (vec[i].fi == vec[j].fi && vec[i].se == vec[j].se)
+                return false;
+        }
+    sort(vec.begin(), vec.end(), [&](pII x, pII y) {
+        if (x.fi == y.fi)
+            return x.se < y.se;
+        return x.fi < y.fi;
+    });
+    if (vec[3].fi - vec[0].fi != vec[3].se - vec[0].se)
+        return false;
+    if (vec[3].fi - vec[0].fi <= 0)
+        return false;
+    if (vec[1].fi != vec[0].fi || vec[1].se != vec[3].se)
+        return false;
+    if (vec[2].se != vec[0].se || vec[2].fi != vec[3].fi)
+        return false;
+    //	if (vec[0].fi != vec[1].fi || vec[2].fi != vec[3].fi || vec[1].fi == vec[2].fi) return false;
+    //	if (vec[0].se != vec[2].se || vec[1].se != vec[3].se || vec[0].se == vec[1].se) return false;
+    return true;
 }
 void run() {
-	for (int i = 1; i < 4; ++i) cin >> a[i].fi >> a[i].se;
-	if (ok()) return pt("wen");
-	for (int i = 0; i < 4; ++i) {
-		for (int j = 0; j < 4; ++j) {
-			a[i].fi += Move[j][0];
-			a[i].se += Move[j][1];
-			if (ok()) return pt("hai xing");
-			a[i].fi -= Move[j][0];
-			a[i].se -= Move[j][1];
-		}
-	}
-	pt("wo jue de bu xing");
+    for (int i = 1; i < 4; ++i) cin >> a[i].fi >> a[i].se;
+    if (ok())
+        return pt("wen");
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            a[i].fi += Move[j][0];
+            a[i].se += Move[j][1];
+            if (ok())
+                return pt("hai xing");
+            a[i].fi -= Move[j][0];
+            a[i].se -= Move[j][1];
+        }
+    }
+    pt("wo jue de bu xing");
 }
 
 int main() {
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr); cout.tie(nullptr);
-	cout << fixed << setprecision(20);
-	while (cin >> a[0].fi >> a[0].se) run();
-	return 0;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    cout.tie(nullptr);
+    cout << fixed << setprecision(20);
+    while (cin >> a[0].fi >> a[0].se) run();
+    return 0;
 }

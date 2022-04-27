@@ -2,11 +2,11 @@
 using namespace std;
 
 struct node {
-	int x;
+    int x;
 };
 
 int main() {
-	node a = node();
-	cout << a.x << endl;
-	return 0;
+    node a = node();
+    cout << a.x << endl;
+    return 0;
 }
