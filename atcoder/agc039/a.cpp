@@ -99,7 +99,7 @@ void run() {
         chmin(res, min(f[n][0], f[n][1]) + 1ll * (min(g[n][0], g[n][1]) + 1) * (k - 1));
         //	chmin(res, 1ll * (f[n][1] + min(f[n][0], f[n][1])) * (k / 2) + (k % 2 ? min(f[n][0], f[n][1]) : 0));
         //	chmin(res, 1ll * (min(g[n][0], g[n][1]) + 1 + min(f[n][0], f[n][1])) * (k / 2) + (k % 2 ? min(g[n][0],
-        //g[n][1]) + 1 : 0));
+        // g[n][1]) + 1 : 0));
         chmin(res, 1ll * (g[n][1] + 1) * (k / 2) + 1ll * (k - k / 2) * min(f[n][0], f[n][1]));
         pt(res);
     }

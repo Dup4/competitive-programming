@@ -42,7 +42,7 @@ struct Hash {
     }
     inline pLL get(int l, int r) {
         //	return (a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0] * mod[0] + (a[1][r] -
-        //a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1];
+        // a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1];
         return pLL((a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0],
                 (a[1][r] - a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1]);
     }

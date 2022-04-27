@@ -100,7 +100,7 @@ ll inv(ll a, ll mod) {
 }
 namespace NTT {
 //	ll qpow(ll base, ll n, ll mod) { ll res = 1; while (n) { if (n & 1) res = res * base % mod; base = base * base %
-//mod; n >>= 1; } return res; } 	ll inv(ll a, ll mod) { return qpow(a, mod - 2, mod); }
+// mod; n >>= 1; } return res; } 	ll inv(ll a, ll mod) { return qpow(a, mod - 2, mod); }
 int fn, fl;
 // int wn[N << 2], rev[N << 2];
 //	static const int m1 = 469762049, m2 = 998244353, m3 = 1004535809, g = 3;

@@ -75,7 +75,7 @@ int main() {
         DFS2(1);
         //	for (int i = 1; i <= n; ++i)
         //		printf("%d %d %d %d %d %lld %lld %d\n", i, mf[i][0].fi, mf[i][0].se, mf[i][1].fi, mf[i][1].se,
-        //f[i], g[i], mg[i]);
+        // f[i], g[i], mg[i]);
         for (int u = 1; u <= n; ++u) {
             int Max = 0, num;
             for (auto v : G[u])

@@ -111,7 +111,7 @@ struct Hash {
         return (a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0] * mod[0] +
                (a[1][r] - a[1][l - 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1];
         //	return pLL((a[0][r] - a[0][l - 1] * base[0][r - l + 1] % mod[0] + mod[0]) % mod[0], (a[1][r] - a[1][l -
-        //1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1]);
+        // 1] * base[1][r - l + 1] % mod[1] + mod[1]) % mod[1]);
     }
 } hs;
 ll Hash::base[2][10] = {{0}, {0}};
