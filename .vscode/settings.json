@@ -13,7 +13,7 @@
         "--enable-config",
         "--pretty",
         "--clang-tidy",
-        "--pch-storage=memory",
+        "--pch-storage=disk",
     ],
     "files.associations": {
         "BUILD": "starlark",
