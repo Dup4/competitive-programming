@@ -1,0 +1,11 @@
+CompileFlags:
+    Add:
+        - -W
+        - -Wall
+        - -std=c++17
+        - -DLOCAL
+        - -fsanitize=undefined
+        # - --target=x86_64-x86_64-g++
+        - --include-directory=/usr/include/c++/8
+        - --include-directory=/usr/include/x86_64-linux-gnu/c++/8
+    Compiler: /usr/bin/g++
